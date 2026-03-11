@@ -7,6 +7,7 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/map/presentation/hive_map_screen.dart';
+import '../../features/sensors/presentation/add_sensor_screen.dart';
 import '../../features/sensors/presentation/my_sensors_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../config/env.dart';
@@ -54,7 +55,7 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: Routes.addSensor,
-        builder: (_, __) => const _PlaceholderScreen(title: 'Add Sensor'),
+        builder: (_, __) => const AddSensorScreen(),
       ),
       GoRoute(
         path: '${Routes.sensors}/:id',

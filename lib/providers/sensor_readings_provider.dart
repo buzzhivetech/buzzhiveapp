@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/sensor_reading.dart';
 import '../repositories/sensor_data_repository.dart';
 import 'linked_sensors_provider.dart';
+import 'service_providers.dart';
 
 final sensorDataRepositoryProvider = Provider<SensorDataRepository>((ref) {
-  return SensorDataRepositoryImpl();
+  return SensorDataRepositoryImpl(ref.watch(firebaseSensorDataServiceProvider));
 });
 
 /// Latest readings per firebase_sensor_id for the current user's linked sensors.

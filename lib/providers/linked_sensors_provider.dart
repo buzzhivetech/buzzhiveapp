@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_sensor_link.dart';
 import '../repositories/sensor_link_repository.dart';
 import 'auth_provider.dart';
+import 'service_providers.dart';
 
 final sensorLinkRepositoryProvider = Provider<SensorLinkRepository>((ref) {
-  return SensorLinkRepositoryImpl();
+  return SensorLinkRepositoryImpl(ref.watch(supabaseUserDataServiceProvider));
 });
 
 final linkedSensorsProvider = FutureProvider<List<UserSensorLink>>((ref) async {

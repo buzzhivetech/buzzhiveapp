@@ -13,14 +13,19 @@ Flutter iOS app: Supabase auth, Firebase sensor data, dashboard parity.
 
 ## Environment
 
-1. Copy `.env.example` to `.env` and set values (or use dart-define).
-2. Run with defines (example):
+The app loads config from a `.env` file in the project root (via flutter_dotenv). If `.env` is missing, it falls back to `--dart-define` and may show "Supabase not configured".
+
+1. Copy `.env.example` to `.env` in the project root.
+2. Set `SUPABASE_URL` and `SUPABASE_ANON_KEY` in `.env`.
+3. Run `flutter run` (no dart-define needed when using .env).
+
+Alternatively, run with defines:
 
 ```bash
 flutter run --dart-define=SUPABASE_URL=your-url --dart-define=SUPABASE_ANON_KEY=your-key
 ```
 
-For Firebase, set `FIREBASE_*` or run `flutterfire configure` and use the generated `lib/firebase_options.dart` (then use that in `lib/core/config/firebase_options.dart` or import it from `main.dart`).
+For Firebase, set `FIREBASE_*` in .env or use dart-define; or run `flutterfire configure`.
 
 ## Setup
 

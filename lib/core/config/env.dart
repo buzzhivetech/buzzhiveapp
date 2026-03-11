@@ -1,5 +1,7 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// Runtime environment and API keys.
-/// Set via --dart-define or build-time env (e.g. SUPABASE_URL=...).
+/// Reads from .env file first (via flutter_dotenv), then --dart-define.
 /// Firebase keys live in [firebase_options.dart].
 class Env {
   Env._();
@@ -9,15 +11,13 @@ class Env {
     defaultValue: false,
   );
 
-  static const String supabaseUrl = String.fromEnvironment(
-    'SUPABASE_URL',
-    defaultValue: '',
-  );
+  static String get supabaseUrl =>
+      dotenv.env['SUPABASE_URL']?.trim() ??
+      const String.fromEnvironment('SUPABASE_URL', defaultValue: '');
 
-  static const String supabaseAnonKey = String.fromEnvironment(
-    'SUPABASE_ANON_KEY',
-    defaultValue: '',
-  );
+  static String get supabaseAnonKey =>
+      dotenv.env['SUPABASE_ANON_KEY']?.trim() ??
+      const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
 
   static bool get hasSupabaseConfig =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
