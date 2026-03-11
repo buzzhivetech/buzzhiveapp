@@ -1,41 +1,60 @@
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+
 import '../core/errors/app_exception.dart';
+import '../services/supabase/supabase_auth_service.dart';
 
 /// Supabase auth: sign up, sign in, sign out, session.
 abstract class AuthRepository {
-  /// Current session if logged in.
   Stream<bool> get authStateChanges;
-
-  /// Sign in with email and password.
   Future<void> signIn(String email, String password);
-
-  /// Sign up with email and password.
   Future<void> signUp(String email, String password);
-
-  /// Sign out.
   Future<void> signOut();
-
-  /// Current user id if authenticated.
   String? get currentUserId;
 }
 
-/// Stub implementation; replace with Supabase client.
 class AuthRepositoryImpl implements AuthRepository {
+  AuthRepositoryImpl(this._authService);
+
+  final SupabaseAuthService _authService;
+
   @override
-  Stream<bool> get authStateChanges => Stream.value(false);
+  Stream<bool> get authStateChanges => _authService.authStateChanges.map((state) {
+        return state.session != null;
+      });
+
+  @override
+  String? get currentUserId => _authService.currentUserId;
 
   @override
   Future<void> signIn(String email, String password) async {
-    throw const AuthException('Not implemented: configure Supabase');
+    try {
+      await _authService.signInWithPassword(email: email, password: password);
+    } on supabase.AuthException catch (e) {
+      throw AuthException(e.message, code: e.statusCode);
+    } on Object catch (e) {
+      throw AuthException(e.toString());
+    }
   }
 
   @override
   Future<void> signUp(String email, String password) async {
-    throw const AuthException('Not implemented: configure Supabase');
+    try {
+      await _authService.signUp(email: email, password: password);
+    } on supabase.AuthException catch (e) {
+      throw AuthException(e.message, code: e.statusCode);
+    } on Object catch (e) {
+      throw AuthException(e.toString());
+    }
   }
 
   @override
-  Future<void> signOut() async {}
-
-  @override
-  String? get currentUserId => null;
+  Future<void> signOut() async {
+    try {
+      await _authService.signOut();
+    } on supabase.AuthException catch (e) {
+      throw AuthException(e.message, code: e.statusCode);
+    } on Object catch (e) {
+      throw AuthException(e.toString());
+    }
+  }
 }
