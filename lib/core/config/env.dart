@@ -1,5 +1,6 @@
-/// Runtime environment and feature flags.
-/// Values can be set from dart-defines or from a generated env file.
+/// Runtime environment and API keys.
+/// Set via --dart-define or build-time env (e.g. SUPABASE_URL=...).
+/// Firebase keys live in [firebase_options.dart].
 class Env {
   Env._();
 
@@ -18,5 +19,6 @@ class Env {
     defaultValue: '',
   );
 
-  static bool get hasSupabaseConfig => supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
+  static bool get hasSupabaseConfig =>
+      supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 }
