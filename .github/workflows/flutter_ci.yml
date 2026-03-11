@@ -43,8 +43,12 @@ jobs:
         run: flutter pub get
 
       - name: Create .env for asset bundle
-        run: cp .env.example .env 2>/dev/null || true; test -f .env || echo "SUPABASE_URL=
-SUPABASE_ANON_KEY=" > .env
+        run: |
+          cp .env.example .env 2>/dev/null || true
+          if [ ! -f .env ]; then
+            echo "SUPABASE_URL=" > .env
+            echo "SUPABASE_ANON_KEY=" >> .env
+          fi
 
       - name: Build iOS (no codesign)
         run: flutter build ios --no-codesign --release
