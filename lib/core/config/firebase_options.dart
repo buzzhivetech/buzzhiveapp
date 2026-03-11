@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 
 /// Default Firebase options from environment or dart-defines.
 FirebaseOptions get defaultFirebaseOptions {
+  // ignore: prefer_const_constructors - FirebaseOptions has no const constructor
   return FirebaseOptions(
     apiKey: const String.fromEnvironment(
       'FIREBASE_API_KEY',
