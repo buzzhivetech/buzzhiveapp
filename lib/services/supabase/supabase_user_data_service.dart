@@ -6,6 +6,26 @@ class SupabaseUserDataService {
 
   SupabaseClient get _client => Supabase.instance.client;
 
+  /// Fetch profile for user (RLS: own row only).
+  Future<Map<String, dynamic>?> getProfile(String userId) async {
+    final res = await _client
+        .from('profiles')
+        .select()
+        .eq('id', userId)
+        .maybeSingle();
+    return res == null ? null : Map<String, dynamic>.from(res);
+  }
+
+  /// Update profile (RLS: own row only).
+  Future<void> updateProfile(String userId, {String? displayName, String? avatarUrl}) async {
+    final updates = <String, dynamic>{
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    };
+    if (displayName != null) updates['display_name'] = displayName;
+    if (avatarUrl != null) updates['avatar_url'] = avatarUrl;
+    await _client.from('profiles').update(updates).eq('id', userId);
+  }
+
   /// List sensors linked to this user (join user_sensor_links + sensors).
   /// Returns list of maps with keys: display_name, linked_at, sensor (map or list).
   Future<List<Map<String, dynamic>>> fetchLinkedSensors(String userId) async {
@@ -59,6 +79,18 @@ class SupabaseUserDataService {
       'user_id': userId,
       'sensor_id': sensorId,
     });
+  }
+
+  /// Rename a linked sensor (updates display_name on user_sensor_links).
+  Future<void> renameLinkedSensor({
+    required String userId,
+    required String sensorId,
+    required String displayName,
+  }) async {
+    await _client
+        .from('user_sensor_links')
+        .update({'display_name': displayName})
+        .match({'user_id': userId, 'sensor_id': sensorId});
   }
 
   /// Check if user already has this sensor linked (by firebase_sensor_id).

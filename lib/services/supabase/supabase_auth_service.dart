@@ -43,4 +43,19 @@ class SupabaseAuthService {
 
   /// Sign out.
   Future<void> signOut() => _auth.signOut();
+
+  /// Update email (sends confirmation to new address).
+  Future<void> updateEmail(String newEmail) {
+    return _auth.updateUser(UserAttributes(email: newEmail));
+  }
+
+  /// Update password (user must be recently authenticated).
+  Future<void> updatePassword(String newPassword) {
+    return _auth.updateUser(UserAttributes(password: newPassword));
+  }
+
+  /// Delete the current user's account via server-side function.
+  Future<void> deleteAccount() async {
+    await Supabase.instance.client.rpc('delete_user_account');
+  }
 }

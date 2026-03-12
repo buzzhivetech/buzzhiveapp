@@ -53,7 +53,8 @@ drop policy if exists "Users can view linked sensors" on public.sensors;
 create policy "Users can view linked sensors" on public.sensors for select
   using (id in (select sensor_id from public.user_sensor_links where user_id = auth.uid()));
 drop policy if exists "Authenticated users can create sensors" on public.sensors;
-create policy "Authenticated users can create sensors" on public.sensors for insert to authenticated with check (true);
+-- Allow insert when JWT has a user (anon key with logged-in user uses role anon, not authenticated)
+create policy "Authenticated users can create sensors" on public.sensors for insert with check (auth.uid() is not null);
 
 -- User_sensor_links: own links only
 drop policy if exists "Users can view own links" on public.user_sensor_links;

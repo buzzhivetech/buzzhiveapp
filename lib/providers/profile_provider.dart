@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/profile.dart';
 import '../repositories/profile_repository.dart';
 import 'auth_provider.dart';
+import 'service_providers.dart';
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  return ProfileRepositoryImpl();
+  return ProfileRepositoryImpl(ref.watch(supabaseUserDataServiceProvider));
 });
 
 final profileProvider = FutureProvider<Profile?>((ref) async {

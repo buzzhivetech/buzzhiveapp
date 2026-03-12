@@ -9,11 +9,11 @@ import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/map/presentation/hive_map_screen.dart';
 import '../../features/sensors/presentation/add_sensor_screen.dart';
 import '../../features/sensors/presentation/my_sensors_screen.dart';
-import '../../features/settings/presentation/settings_screen.dart';
+import '../../features/settings/presentation/account_screen.dart';
 import '../config/env.dart';
+import 'main_shell.dart';
 import 'routes.dart';
 
-/// Builds [GoRouter] with auth redirect and shell for main tabs.
 GoRouter createAppRouter({
   required String initialLocation,
   required bool isAuthenticated,
@@ -41,18 +41,28 @@ GoRouter createAppRouter({
         path: Routes.home,
         redirect: (_, __) => Routes.dashboard,
       ),
-      GoRoute(
-        path: Routes.dashboard,
-        builder: (_, __) => const DashboardScreen(),
+
+      // Main app shell with bottom navigation
+      ShellRoute(
+        builder: (_, GoRouterState state, child) =>
+            MainShell(location: state.matchedLocation, child: child),
+        routes: [
+          GoRoute(
+            path: Routes.dashboard,
+            builder: (_, __) => const DashboardScreen(),
+          ),
+          GoRoute(
+            path: Routes.sensors,
+            builder: (_, __) => const MySensorsScreen(),
+          ),
+          GoRoute(
+            path: Routes.settings,
+            builder: (_, __) => const AccountScreen(),
+          ),
+        ],
       ),
-      GoRoute(
-        path: Routes.analytics,
-        builder: (_, __) => const AnalyticsScreen(),
-      ),
-      GoRoute(
-        path: Routes.sensors,
-        builder: (_, __) => const MySensorsScreen(),
-      ),
+
+      // Full-screen routes (no bottom nav)
       GoRoute(
         path: Routes.addSensor,
         builder: (_, __) => const AddSensorScreen(),
@@ -64,16 +74,16 @@ GoRouter createAppRouter({
         ),
       ),
       GoRoute(
+        path: Routes.analytics,
+        builder: (_, __) => const AnalyticsScreen(),
+      ),
+      GoRoute(
         path: Routes.map,
         builder: (_, __) => const HiveMapScreen(),
       ),
       GoRoute(
         path: Routes.alerts,
         builder: (_, __) => const AlertsScreen(),
-      ),
-      GoRoute(
-        path: Routes.settings,
-        builder: (_, __) => const SettingsScreen(),
       ),
       GoRoute(
         path: Routes.profileEdit,

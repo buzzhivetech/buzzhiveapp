@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/routes.dart';
+import '../../../core/widgets/async_value_widget.dart';
+import '../../../core/widgets/error_display.dart';
+import '../../../core/widgets/loading_indicator.dart';
 import '../../../models/sensor_reading.dart';
 import '../../../models/user_sensor_link.dart';
 import '../../../providers/linked_sensors_provider.dart';
@@ -19,22 +22,18 @@ class DashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Dashboard')),
-      body: linksAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => _ErrorState(
-          message: err.toString(),
-          onRetry: () => ref.invalidate(linkedSensorsProvider),
-        ),
+      body: AsyncValueWidget<List<UserSensorLink>>(
+        value: linksAsync,
+        loadingMessage: 'Loading sensors…',
+        onRetry: () => ref.invalidate(linkedSensorsProvider),
         data: (links) {
           if (links.isEmpty) {
-            return _EmptyState(
-              onAddSensor: () => context.push(Routes.addSensor),
-            );
+            return _EmptyState(onAddSensor: () => context.push(Routes.addSensor));
           }
           return readingsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, _) => _ErrorState(
-              message: err.toString(),
+            loading: () => const LoadingIndicator(message: 'Loading readings…'),
+            error: (err, _) => ErrorDisplay(
+              error: err,
               onRetry: () {
                 ref.invalidate(linkedSensorsProvider);
                 ref.invalidate(latestReadingsProvider);
@@ -100,50 +99,6 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Something went wrong',
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-              textAlign: TextAlign.center,
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 24),
-            FilledButton(onPressed: onRetry, child: const Text('Retry')),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _DashboardContent extends StatelessWidget {
   const _DashboardContent({
     required this.links,
@@ -165,12 +120,11 @@ class _DashboardContent extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.only(top: 8, bottom: 24),
         children: [
-          for (final link in links) ...[
+          for (final link in links)
             _SensorSection(
               link: link,
               reading: readingsMap[link.sensor.firebaseSensorId],
             ),
-          ],
         ],
       ),
     );
@@ -199,19 +153,13 @@ class _SensorSection extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Row(
             children: [
-              Icon(
-                Icons.sensors,
-                color: Theme.of(context).colorScheme.outline,
-              ),
+              Icon(Icons.sensors, color: Theme.of(context).colorScheme.outline),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      label,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+                    Text(label, style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(height: 4),
                     Text(
                       'Waiting for data…',
@@ -228,9 +176,6 @@ class _SensorSection extends StatelessWidget {
       );
     }
 
-    return SensorReadingCard(
-      sensorLabel: label,
-      reading: reading!,
-    );
+    return SensorReadingCard(sensorLabel: label, reading: reading!);
   }
 }

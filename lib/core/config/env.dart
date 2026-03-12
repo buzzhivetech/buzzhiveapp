@@ -6,19 +6,35 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Env {
   Env._();
 
-  static const bool isProduction = bool.fromEnvironment(
-    'dart.vm.product',
-    defaultValue: false,
-  );
+  // -- Environment name --
+
+  static String get appEnv =>
+      _fromEnv('APP_ENV', const String.fromEnvironment('APP_ENV', defaultValue: 'development'));
+
+  static bool get isDevelopment => appEnv == 'development';
+  static bool get isStaging => appEnv == 'staging';
+  static bool get isProduction =>
+      appEnv == 'production' || const bool.fromEnvironment('dart.vm.product', defaultValue: false);
+
+  // -- Supabase --
 
   static String get supabaseUrl =>
-      dotenv.env['SUPABASE_URL']?.trim() ??
-      const String.fromEnvironment('SUPABASE_URL', defaultValue: '');
+      _fromEnv('SUPABASE_URL', const String.fromEnvironment('SUPABASE_URL', defaultValue: ''));
 
   static String get supabaseAnonKey =>
-      dotenv.env['SUPABASE_ANON_KEY']?.trim() ??
-      const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
+      _fromEnv('SUPABASE_ANON_KEY', const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: ''));
 
   static bool get hasSupabaseConfig =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
+
+  // -- Helpers --
+
+  static String _fromEnv(String key, String fallback) {
+    try {
+      final value = (dotenv.env[key] ?? '').trim();
+      return value.isNotEmpty ? value : fallback;
+    } on Object {
+      return fallback;
+    }
+  }
 }

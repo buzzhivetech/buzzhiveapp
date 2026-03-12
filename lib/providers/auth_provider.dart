@@ -13,5 +13,12 @@ final authStateProvider = StreamProvider<bool>((ref) {
 });
 
 final currentUserIdProvider = Provider<String?>((ref) {
+  ref.watch(authStateProvider);
   return ref.watch(authRepositoryProvider).currentUserId;
+});
+
+/// Current user email from Supabase session (for account display only).
+final currentUserEmailProvider = Provider<String?>((ref) {
+  ref.watch(authStateProvider);
+  return ref.watch(supabaseAuthServiceProvider).currentUser?.email;
 });
