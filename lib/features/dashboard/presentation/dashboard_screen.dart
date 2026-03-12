@@ -8,6 +8,7 @@ import '../../../core/widgets/error_display.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../models/sensor_reading.dart';
 import '../../../models/user_sensor_link.dart';
+import '../../../providers/ble_providers.dart';
 import '../../../providers/linked_sensors_provider.dart';
 import '../../../providers/sensor_readings_provider.dart';
 import 'package:buzzhive_app/features/dashboard/presentation/widgets/sensor_reading_card.dart';
@@ -21,7 +22,12 @@ class DashboardScreen extends ConsumerWidget {
     final readingsAsync = ref.watch(latestReadingsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard')),
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+        actions: [
+          _PendingSyncButton(),
+        ],
+      ),
       body: AsyncValueWidget<List<UserSensorLink>>(
         value: linksAsync,
         loadingMessage: 'Loading sensors…',
@@ -177,5 +183,21 @@ class _SensorSection extends StatelessWidget {
     }
 
     return SensorReadingCard(sensorLabel: label, reading: reading!);
+  }
+}
+
+class _PendingSyncButton extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pending = ref.watch(pendingSyncCountProvider).valueOrNull ?? 0;
+    if (pending == 0) return const SizedBox.shrink();
+    return IconButton(
+      onPressed: () => context.push(Routes.syncStatus),
+      tooltip: '$pending readings pending upload',
+      icon: Badge.count(
+        count: pending,
+        child: const Icon(Icons.cloud_upload_outlined),
+      ),
+    );
   }
 }

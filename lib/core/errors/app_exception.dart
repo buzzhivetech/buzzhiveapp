@@ -33,3 +33,13 @@ class NotFoundException extends AppException {
 class FirebaseReadException extends AppException {
   const FirebaseReadException(super.message, {super.code});
 }
+
+/// Bluetooth transfer errors.
+class BleTransferException extends AppException {
+  const BleTransferException(super.message, {super.code});
+}
+
+/// Sync/upload errors.
+class SyncException extends AppException {
+  const SyncException(super.message, {super.code});
+}

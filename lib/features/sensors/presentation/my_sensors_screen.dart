@@ -86,9 +86,22 @@ class MySensorsScreen extends ConsumerWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(Routes.addSensor),
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: 'sync',
+            onPressed: () => context.push(Routes.syncStatus),
+            tooltip: 'Sync status',
+            child: const Icon(Icons.cloud_sync),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton(
+            heroTag: 'add',
+            onPressed: () => context.push(Routes.addSensor),
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
@@ -182,10 +195,29 @@ class _SensorListTileState extends ConsumerState<_SensorListTile> {
               height: 24,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : IconButton(
-              icon: const Icon(Icons.link_off),
-              onPressed: _unlink,
-              tooltip: 'Unlink',
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.bluetooth),
+                  onPressed: () => context.push(
+                    Routes.bleDownload,
+                    extra: {
+                      'sensorId': widget.link.sensor.id,
+                      'firebaseSensorId': widget.link.sensor.firebaseSensorId,
+                      'sensorName': widget.link.displayName ??
+                          widget.link.sensor.displayName ??
+                          widget.link.sensor.firebaseSensorId,
+                    },
+                  ),
+                  tooltip: 'Download via Bluetooth',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.link_off),
+                  onPressed: _unlink,
+                  tooltip: 'Unlink',
+                ),
+              ],
             ),
     );
   }

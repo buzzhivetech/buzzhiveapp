@@ -14,4 +14,6 @@ class Routes {
   static const String alerts = '/alerts';
   static const String settings = '/settings';
   static const String profileEdit = '/profile/edit';
+  static const String bleDownload = '/ble/download';
+  static const String syncStatus = '/ble/sync';
 }

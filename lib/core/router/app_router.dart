@@ -5,6 +5,8 @@ import '../../features/analytics/presentation/analytics_screen.dart';
 import '../../features/alerts/presentation/alerts_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
+import '../../features/bluetooth/presentation/ble_download_screen.dart';
+import '../../features/bluetooth/presentation/sync_status_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/map/presentation/hive_map_screen.dart';
 import '../../features/sensors/presentation/add_sensor_screen.dart';
@@ -88,6 +90,21 @@ GoRouter createAppRouter({
       GoRoute(
         path: Routes.profileEdit,
         builder: (_, __) => const _PlaceholderScreen(title: 'Edit Profile'),
+      ),
+      GoRoute(
+        path: Routes.bleDownload,
+        builder: (_, GoRouterState state) {
+          final extra = state.extra as Map<String, String>? ?? {};
+          return BleDownloadScreen(
+            sensorId: extra['sensorId'] ?? '',
+            firebaseSensorId: extra['firebaseSensorId'] ?? '',
+            sensorName: extra['sensorName'] ?? 'Sensor',
+          );
+        },
+      ),
+      GoRoute(
+        path: Routes.syncStatus,
+        builder: (_, __) => const SyncStatusScreen(),
       ),
     ],
   );
