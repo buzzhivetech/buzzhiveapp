@@ -40,7 +40,7 @@ void main() {
       when(() => mockData.upsertSensor(firebaseSensorId: any(named: 'firebaseSensorId'), displayName: any(named: 'displayName')))
           .thenAnswer((_) async => 'sensor-uuid');
       when(() => mockData.insertUserSensorLink(userId: any(named: 'userId'), sensorId: any(named: 'sensorId'), displayName: any(named: 'displayName')))
-          .thenThrow(supabase.PostgrestException(message: 'duplicate', code: '23505'));
+          .thenThrow(const supabase.PostgrestException(message: 'duplicate', code: '23505'));
 
       expect(
         () => repo.linkSensor('uid', '10001'),
@@ -50,7 +50,7 @@ void main() {
 
     test('throws AppException on other PostgrestException', () async {
       when(() => mockData.upsertSensor(firebaseSensorId: any(named: 'firebaseSensorId'), displayName: any(named: 'displayName')))
-          .thenThrow(supabase.PostgrestException(message: 'RLS', code: '42501'));
+          .thenThrow(const supabase.PostgrestException(message: 'RLS', code: '42501'));
 
       expect(
         () => repo.linkSensor('uid', '10001'),

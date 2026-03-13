@@ -116,7 +116,7 @@ class BleTransferRepository {
               receivedCount++;
               lastSeq = seq;
               await _store.updateSessionProgress(
-                sessionId!,
+                sessionId,
                 receivedCount: receivedCount,
                 lastSeq: lastSeq,
               );

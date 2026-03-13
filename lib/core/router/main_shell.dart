@@ -85,7 +85,7 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
                 SlideTransition(
                   position: _outgoingChild != null
                       ? Tween(begin: inOffset, end: Offset.zero).animate(curved)
-                      : AlwaysStoppedAnimation(Offset.zero),
+                      : const AlwaysStoppedAnimation(Offset.zero),
                   child: widget.child,
                 ),
               ],

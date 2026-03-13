@@ -42,7 +42,7 @@ void main() {
 
     test('throws AppException on PostgrestException', () async {
       when(() => mockData.getProfile(any())).thenThrow(
-        supabase.PostgrestException(message: 'RLS denied', code: '42501'),
+        const supabase.PostgrestException(message: 'RLS denied', code: '42501'),
       );
 
       expect(
