@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../core/constants/app_constants.dart';
+
 /// A sensor reading stored locally, pending upload to Firebase.
 class PendingReading extends Equatable {
   const PendingReading({
@@ -60,6 +62,34 @@ class PendingReading extends Equatable {
         'fz': fz,
         'id': firebaseKey,
         'timestamp': sensorTimestampMs,
+      };
+
+  /// Future-facing JSON projection of the shared protobuf envelope.
+  Map<String, dynamic> toTelemetryEnvelopeMap() => {
+        'schema_version': AppConstants.schemaVersion,
+        'message_type': AppConstants.messageTypeTelemetry,
+        'device_type': AppConstants.deviceTypeHiveSensor,
+        'device_id': firebaseSensorId,
+        'timestamp_device_ms': sensorTimestampMs,
+        'sequence_number': sequence,
+        'source': 'ble_app_sync',
+        'payload': {
+          'temperature_c': temp,
+          'humidity_pct': hum,
+          'voc_index': gas,
+          'sound_level_db': db,
+          'microphone_hz': mic,
+          'accel': {
+            'x': ax,
+            'y': ay,
+            'z': az,
+          },
+          'force': {
+            'x': fx,
+            'y': fy,
+            'z': fz,
+          },
+        },
       };
 
   @override
