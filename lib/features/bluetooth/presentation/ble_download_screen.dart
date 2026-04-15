@@ -32,9 +32,13 @@ class _BleDownloadScreenState extends ConsumerState<BleDownloadScreen> {
   StreamSubscription<int>? _downloadSub;
   int _receivedCount = 0;
 
+  /// BLE device ID remembered for this sensor (if any).
+  String? _rememberedBleId;
+
   @override
   void initState() {
     super.initState();
+    _loadRememberedDevice();
     _startScan();
   }
 
@@ -43,6 +47,14 @@ class _BleDownloadScreenState extends ConsumerState<BleDownloadScreen> {
     _scanSub?.cancel();
     _downloadSub?.cancel();
     super.dispose();
+  }
+
+  Future<void> _loadRememberedDevice() async {
+    final store = ref.read(rememberedSensorStoreProvider);
+    final sensor = await store.getByFirebaseId(widget.firebaseSensorId);
+    if (sensor != null && mounted) {
+      setState(() => _rememberedBleId = sensor.bleDeviceId);
+    }
   }
 
   void _startScan() {
@@ -91,6 +103,9 @@ class _BleDownloadScreenState extends ConsumerState<BleDownloadScreen> {
         if (mounted) {
           setState(() => _phase = _Phase.done);
           ref.invalidate(pendingSyncCountProvider);
+          ref
+              .read(rememberedSensorStoreProvider)
+              .updateLastSeen(widget.firebaseSensorId);
         }
       },
       onError: (Object e) {
@@ -154,9 +169,29 @@ class _BleDownloadScreenState extends ConsumerState<BleDownloadScreen> {
               itemCount: _discovered.length,
               itemBuilder: (_, i) {
                 final device = _discovered.values.elementAt(i);
+                final isRemembered =
+                    _rememberedBleId != null && device.id == _rememberedBleId;
                 return ListTile(
-                  leading: Icon(Icons.bluetooth, color: theme.colorScheme.primary),
-                  title: Text(device.name.isNotEmpty ? device.name : 'Unknown'),
+                  leading: Icon(
+                    isRemembered ? Icons.sensors : Icons.bluetooth,
+                    color: isRemembered
+                        ? theme.colorScheme.tertiary
+                        : theme.colorScheme.primary,
+                  ),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                            device.name.isNotEmpty ? device.name : 'Unknown'),
+                      ),
+                      if (isRemembered)
+                        Chip(
+                          label: const Text('Your sensor'),
+                          labelStyle: theme.textTheme.labelSmall,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                    ],
+                  ),
                   subtitle: Text('RSSI: ${device.rssi} dBm'),
                   trailing: FilledButton(
                     onPressed: () => _connectAndDownload(device),

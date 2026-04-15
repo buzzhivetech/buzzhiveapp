@@ -8,6 +8,7 @@ import '../core/errors/app_exception.dart';
 import '../core/utils/app_logger.dart';
 import '../core/utils/crc16.dart';
 import '../models/ble_transfer_session.dart';
+import '../proto/buzzhive_telemetry.pb.dart';
 import '../services/bluetooth/ble_sensor_transfer_service.dart';
 import '../services/local/local_packet_store.dart';
 
@@ -166,7 +167,22 @@ class BleTransferRepository {
   }
 
   /// Parse a DATA frame payload into sensor values.
-  /// Binary layout (all little-endian float32 except timestamp which is int64):
+  /// Tries the legacy 52-byte binary format first, then falls back to
+  /// protobuf decoding for future firmware versions.
+  Map<String, double>? _parseDataPayload(Uint8List payload) {
+    if (payload.length == 52) {
+      return _parseBinaryPayload(payload);
+    }
+    final proto = _parseProtobufPayload(payload);
+    if (proto != null) return proto;
+    AppLogger.warn(
+      'Unrecognized payload format (${payload.length} bytes)',
+      name: _log,
+    );
+    return null;
+  }
+
+  /// Legacy 52-byte little-endian binary format:
   ///   [0..7]   timestamp ms (int64 LE)
   ///   [8..11]  temp   (float32 LE)
   ///   [12..15] hum    (float32 LE)
@@ -179,12 +195,8 @@ class BleTransferRepository {
   ///   [40..43] fx     (float32 LE)
   ///   [44..47] fy     (float32 LE)
   ///   [48..51] fz     (float32 LE)
-  ///   Total = 52 bytes
-  Map<String, double>? _parseDataPayload(Uint8List payload) {
-    if (payload.length < 52) {
-      AppLogger.warn('Data payload too short (${payload.length} < 52)', name: _log);
-      return null;
-    }
+  Map<String, double>? _parseBinaryPayload(Uint8List payload) {
+    if (payload.length < 52) return null;
     final bd = ByteData.sublistView(payload);
     final tsMs = bd.getInt64(0, Endian.little);
     return {
@@ -201,5 +213,33 @@ class BleTransferRepository {
       'fy': bd.getFloat32(44, Endian.little).toDouble(),
       'fz': bd.getFloat32(48, Endian.little).toDouble(),
     };
+  }
+
+  /// Decode a protobuf-encoded HiveSensorTelemetry payload.
+  /// Returns null if the bytes are not valid protobuf.
+  Map<String, double>? _parseProtobufPayload(Uint8List payload) {
+    try {
+      final msg = HiveSensorTelemetry.fromBuffer(payload);
+      final accel = msg.hasAccel() ? msg.accel : null;
+      final force = msg.hasForce() ? msg.force : null;
+      AppLogger.info('Decoded protobuf HiveSensorTelemetry', name: _log);
+      return {
+        'ts': DateTime.now().millisecondsSinceEpoch.toDouble(),
+        'temp': msg.temperatureC.toDouble(),
+        'hum': msg.humidityPct.toDouble(),
+        'gas': msg.vocIndex.toDouble(),
+        'mic': msg.microphoneHz.toDouble(),
+        'db': msg.soundLevelDb.toDouble(),
+        'ax': accel?.x.toDouble() ?? 0,
+        'ay': accel?.y.toDouble() ?? 0,
+        'az': accel?.z.toDouble() ?? 0,
+        'fx': force?.x.toDouble() ?? 0,
+        'fy': force?.y.toDouble() ?? 0,
+        'fz': force?.z.toDouble() ?? 0,
+      };
+    } on Object catch (e) {
+      AppLogger.warn('Protobuf decode failed: $e', name: _log);
+      return null;
+    }
   }
 }

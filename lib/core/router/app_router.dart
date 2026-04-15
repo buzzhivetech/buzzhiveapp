@@ -10,6 +10,7 @@ import '../../features/bluetooth/presentation/sync_status_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/map/presentation/hive_map_screen.dart';
 import '../../features/sensors/presentation/add_sensor_screen.dart';
+import '../../features/sensors/presentation/ble_sensor_discovery_screen.dart';
 import '../../features/sensors/presentation/my_sensors_screen.dart';
 import '../../features/settings/presentation/account_screen.dart';
 import '../config/env.dart';
@@ -68,6 +69,10 @@ GoRouter createAppRouter({
       GoRoute(
         path: Routes.addSensor,
         builder: (_, __) => const AddSensorScreen(),
+      ),
+      GoRoute(
+        path: Routes.bleSensorDiscovery,
+        builder: (_, __) => const BleSensorDiscoveryScreen(),
       ),
       GoRoute(
         path: '${Routes.sensors}/:id',

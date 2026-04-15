@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package buzzhive.v1;
+
+option java_multiple_files = true;
+option java_package = "com.buzzhive.telemetry.v1";
+
+enum DeviceType {
+  DEVICE_TYPE_UNSPECIFIED = 0;
+  DEVICE_TYPE_HIVE_SENSOR = 1;
+  DEVICE_TYPE_HIVE_SCALE = 2;
+  DEVICE_TYPE_RECEIVER = 3;
+  DEVICE_TYPE_MOBILE_APP = 4;
+}
+
+enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED = 0;
+  MESSAGE_TYPE_TELEMETRY = 1;
+  MESSAGE_TYPE_HEARTBEAT = 2;
+  MESSAGE_TYPE_PAIRING = 3;
+  MESSAGE_TYPE_CONFIG_ACK = 4;
+  MESSAGE_TYPE_STATUS = 5;
+}
+
+message Vector3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+message HiveSensorTelemetry {
+  float temperature_c = 1;
+  float humidity_pct = 2;
+  float voc_index = 3;
+  float sound_level_db = 4;
+  float microphone_hz = 5;
+  Vector3 accel = 6;
+  Vector3 force = 7;
+  float battery_volts = 8;
+}
+
+message HiveScaleTelemetry {
+  float weight_kg = 1;
+  float battery_volts = 2;
+  float ambient_temperature_c = 3;
+}
+
+message ReceiverStatus {
+  bool wifi_connected = 1;
+  string ip_address = 2;
+  uint64 last_ntp_sync_ms = 3;
+  repeated string managed_hive_ids = 4;
+  string firmware_version = 5;
+}
+
+message PairingEvent {
+  string pairing_state = 1;
+  string detail = 2;
+}
+
+message BuzzHiveEnvelope {
+  string schema_version = 1;
+  MessageType message_type = 2;
+  DeviceType device_type = 3;
+  string device_id = 4;
+  string receiver_id = 5;
+  string hive_id = 6;
+  string account_id = 7;
+  uint64 timestamp_device_ms = 8;
+  uint64 sequence_number = 9;
+  string firmware_version = 10;
+  string source = 11;
+
+  oneof payload {
+    HiveSensorTelemetry hive_sensor = 20;
+    HiveScaleTelemetry hive_scale = 21;
+    ReceiverStatus receiver_status = 22;
+    PairingEvent pairing = 23;
+  }
+}
