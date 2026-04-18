@@ -153,13 +153,34 @@ class _SensorSection extends StatelessWidget {
         'Sensor ${link.sensor.firebaseSensorId}';
 
     if (reading == null) {
-      return Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      return _WaitingForFirstReadingCard(label: label);
+    }
+
+    return SensorReadingCard(sensorLabel: label, reading: reading!);
+  }
+}
+
+/// Placeholder card shown while a freshly claimed sensor has not yet written
+/// to Firebase. Tapping it jumps the user straight into the BLE download
+/// flow so they can force-sync any offline readings stored on the device.
+class _WaitingForFirstReadingCard extends StatelessWidget {
+  const _WaitingForFirstReadingCard({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: InkWell(
+        onTap: () => context.push(Routes.bleDownload),
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
             children: [
-              Icon(Icons.sensors, color: Theme.of(context).colorScheme.outline),
+              Icon(Icons.hourglass_empty, color: cs.primary),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -168,21 +189,27 @@ class _SensorSection extends StatelessWidget {
                     Text(label, style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(height: 4),
                     Text(
-                      'Waiting for data…',
+                      'Waiting for first reading',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: cs.onSurface,
+                          ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Tap to sync stored readings over Bluetooth',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: cs.onSurfaceVariant,
                           ),
                     ),
                   ],
                 ),
               ),
+              Icon(Icons.chevron_right, color: cs.outline),
             ],
           ),
         ),
-      );
-    }
-
-    return SensorReadingCard(sensorLabel: label, reading: reading!);
+      ),
+    );
   }
 }
 

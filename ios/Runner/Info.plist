@@ -49,6 +49,8 @@
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>BuzzHive uses Bluetooth to download sensor data when you are near a hive.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>BuzzHive needs camera access to scan the QR code on your sensor.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
