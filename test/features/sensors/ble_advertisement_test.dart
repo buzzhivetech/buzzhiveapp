@@ -28,8 +28,26 @@ void main() {
       expect(BleAdvertisementIdentity.tryParse('Unknown'), isNull);
     });
 
-    test('returns null when name is just the prefix', () {
-      expect(BleAdvertisementIdentity.tryParse('BuzzHive-'), isNull);
+    test('parses generic BuzzHive_Sensor name without an id', () {
+      final id = BleAdvertisementIdentity.tryParse('BuzzHive_Sensor');
+      expect(id, isNotNull);
+      expect(id!.deviceId, isNull);
+      expect(id.isIdentified, isFalse);
+      expect(id.localName, 'BuzzHive_Sensor');
+    });
+
+    test('identified advertisement reports isIdentified=true', () {
+      final id = BleAdvertisementIdentity.tryParse('BuzzHive-42');
+      expect(id!.isIdentified, isTrue);
+    });
+
+    test('treats "BuzzHive-" alone as unidentified rather than a parse failure',
+        () {
+      // "BuzzHive-" is shorter than/equal to the identified prefix, so the
+      // dashed parse bails; the generic/brand-prefix branch then accepts it.
+      final id = BleAdvertisementIdentity.tryParse('BuzzHive-');
+      expect(id, isNotNull);
+      expect(id!.deviceId, isNull);
     });
 
     test('returns null when name is null', () {

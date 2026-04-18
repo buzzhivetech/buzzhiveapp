@@ -22,11 +22,29 @@ class BleSensorTransferService {
 
   // --- Scanning ---
 
-  /// Scan for BuzzHive sensors advertising our service UUID.
+  /// Scan for BuzzHive sensors advertising our (future) custom service UUID.
+  ///
+  /// Used by the data-transfer flow once firmware ships with the custom
+  /// service. For customer onboarding (claim-by-BLE) use
+  /// [scanForUnclaimedSensors], which matches the currently-shipping
+  /// Battery-Service-based advertisement.
   Stream<DiscoveredDevice> scanForSensors() {
     AppLogger.info('Starting BLE scan for BuzzHive sensors', name: _log);
     return _ble.scanForDevices(
       withServices: [BleProtocol.serviceUuid],
+      scanMode: ScanMode.lowLatency,
+    );
+  }
+
+  /// Scan for in-the-field BuzzHive sensors using the current firmware's
+  /// advertisement (Battery Service `180F`). The caller should further
+  /// filter by local name prefix (`BuzzHive`) to drop non-BuzzHive
+  /// battery devices (headphones, wearables, etc.).
+  Stream<DiscoveredDevice> scanForUnclaimedSensors() {
+    AppLogger.info('Starting BLE scan for unclaimed BuzzHive sensors',
+        name: _log);
+    return _ble.scanForDevices(
+      withServices: [Uuid.parse('180F')],
       scanMode: ScanMode.lowLatency,
     );
   }

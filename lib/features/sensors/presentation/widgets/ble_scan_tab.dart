@@ -11,8 +11,10 @@ import '../../domain/ble_advertisement.dart';
 /// Secondary onboarding path: scan for nearby BuzzHive advertisements and
 /// claim the selected device with its sticker claim code.
 ///
-/// The device ID is parsed from the advertisement name (`BuzzHive-<id>`) so
-/// no firmware change is required; just the sticker claim code.
+/// Two advertisement formats are handled (see [BleAdvertisementIdentity]):
+///   * `BuzzHive-<id>` — preferred; device ID comes straight from the scan.
+///   * `BuzzHive_Sensor` — legacy firmware; we prompt the user for the ID
+///     printed on the sticker after they pick the device.
 class BleScanTab extends ConsumerStatefulWidget {
   const BleScanTab({super.key});
 
@@ -39,7 +41,7 @@ class _BleScanTabState extends ConsumerState<BleScanTab> {
       _sensors.clear();
     });
     _scanSub?.cancel();
-    _scanSub = service.scanForSensors().listen(
+    _scanSub = service.scanForUnclaimedSensors().listen(
       (device) {
         final identity = BleAdvertisementIdentity.tryParse(device.name);
         if (identity == null) return;
@@ -63,13 +65,25 @@ class _BleScanTabState extends ConsumerState<BleScanTab> {
 
   Future<void> _onSensorTapped(_DiscoveredSensor sensor) async {
     _stopScan();
+
+    String? deviceId = sensor.identity.deviceId;
+    if (deviceId == null) {
+      // Legacy firmware doesn't advertise the ID. Ask for it.
+      deviceId = await showDialog<String>(
+        context: context,
+        builder: (ctx) => const _DeviceIdDialog(),
+      );
+      if (deviceId == null || deviceId.isEmpty) return;
+    }
+
+    if (!mounted) return;
     final claimCode = await showDialog<String>(
       context: context,
-      builder: (ctx) => _ClaimCodeDialog(deviceId: sensor.identity.deviceId),
+      builder: (ctx) => _ClaimCodeDialog(deviceId: deviceId!),
     );
     if (claimCode == null) return;
     ref.read(deviceClaimControllerProvider.notifier).claim(
-          deviceId: sensor.identity.deviceId,
+          deviceId: deviceId,
           claimCode: claimCode,
         );
   }
@@ -79,7 +93,6 @@ class _BleScanTabState extends ConsumerState<BleScanTab> {
     final statusAsync = ref.watch(bleAdapterStatusProvider);
 
     statusAsync.whenData((status) {
-      // Kick off a scan the first time the adapter is reported as ready.
       if (status == BleStatus.ready &&
           _adapterStatus != BleStatus.ready &&
           _scanSub == null) {
@@ -121,8 +134,7 @@ class _BleScanTabState extends ConsumerState<BleScanTab> {
   Widget _buildScanList(DeviceClaimState claimState) {
     final submitting = claimState is DeviceClaimSubmitting;
     final sensors = _sensors.values.toList()
-      ..sort((a, b) =>
-          (b.device.rssi).compareTo(a.device.rssi)); // strongest first
+      ..sort((a, b) => b.device.rssi.compareTo(a.device.rssi));
 
     return Column(
       children: [
@@ -164,29 +176,53 @@ class _BleScanTabState extends ConsumerState<BleScanTab> {
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                   itemCount: sensors.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 8),
-                  itemBuilder: (ctx, i) {
-                    final s = sensors[i];
-                    return Card(
-                      child: ListTile(
-                        leading: const Icon(Icons.sensors),
-                        title: Text(s.identity.localName),
-                        subtitle: Text(
-                          'Device ID: ${s.identity.deviceId}    RSSI: ${s.device.rssi}',
-                        ),
-                        trailing: submitting
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Icon(Icons.chevron_right),
-                        onTap: submitting ? null : () => _onSensorTapped(s),
-                      ),
-                    );
-                  },
+                  itemBuilder: (ctx, i) => _SensorTile(
+                    sensor: sensors[i],
+                    submitting: submitting,
+                    onTap: () => _onSensorTapped(sensors[i]),
+                  ),
                 ),
         ),
       ],
+    );
+  }
+}
+
+class _SensorTile extends StatelessWidget {
+  const _SensorTile({
+    required this.sensor,
+    required this.submitting,
+    required this.onTap,
+  });
+
+  final _DiscoveredSensor sensor;
+  final bool submitting;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final identity = sensor.identity;
+    final title = identity.isIdentified
+        ? 'BuzzHive ${identity.deviceId}'
+        : 'BuzzHive sensor';
+    final subtitle = identity.isIdentified
+        ? 'Device ID: ${identity.deviceId}    RSSI: ${sensor.device.rssi}'
+        : 'Tap to enter device ID    RSSI: ${sensor.device.rssi}';
+
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.sensors),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: submitting
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.chevron_right),
+        onTap: submitting ? null : onTap,
+      ),
     );
   }
 }
@@ -218,6 +254,61 @@ class _Message extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DeviceIdDialog extends StatefulWidget {
+  const _DeviceIdDialog();
+
+  @override
+  State<_DeviceIdDialog> createState() => _DeviceIdDialogState();
+}
+
+class _DeviceIdDialogState extends State<_DeviceIdDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Device ID'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'This sensor does not broadcast its ID. '
+            'Enter the device ID printed on the sticker.',
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Device ID',
+              hintText: 'e.g. 15',
+              border: OutlineInputBorder(),
+            ),
+            onSubmitted: (v) => Navigator.of(context).pop(v.trim()),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
+          child: const Text('Next'),
+        ),
+      ],
     );
   }
 }
