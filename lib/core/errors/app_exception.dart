@@ -43,3 +43,22 @@ class BleTransferException extends AppException {
 class SyncException extends AppException {
   const SyncException(super.message, {super.code});
 }
+
+/// Device claim/onboarding errors. The [code] matches the `error_code`
+/// returned by the `claim_sensor` Supabase RPC (see [ClaimErrorCode]).
+class ClaimException extends AppException {
+  const ClaimException(super.message, {super.code});
+}
+
+/// Error codes returned by the `claim_sensor` RPC.
+/// Keep these strings in sync with supabase/migrations/20250105000001_claim_sensor_rpc.sql.
+class ClaimErrorCode {
+  ClaimErrorCode._();
+
+  static const String notAuthenticated = 'not_authenticated';
+  static const String rateLimited = 'rate_limited';
+  static const String unknownDevice = 'unknown_device';
+  static const String disabledDevice = 'disabled_device';
+  static const String alreadyClaimed = 'already_claimed';
+  static const String wrongCode = 'wrong_code';
+}

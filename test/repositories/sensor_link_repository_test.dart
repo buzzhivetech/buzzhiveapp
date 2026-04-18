@@ -17,48 +17,6 @@ void main() {
     repo = SensorLinkRepositoryImpl(mockData);
   });
 
-  group('linkSensor', () {
-    test('upserts sensor then inserts link', () async {
-      when(() => mockData.upsertSensor(
-            firebaseSensorId: '10001',
-            displayName: 'Hive A',
-          )).thenAnswer((_) async => 'sensor-uuid');
-      when(() => mockData.insertUserSensorLink(
-            userId: 'uid',
-            sensorId: 'sensor-uuid',
-            displayName: 'Hive A',
-          )).thenAnswer((_) async {});
-
-      final sensor = await repo.linkSensor('uid', '10001', displayName: 'Hive A');
-      expect(sensor.firebaseSensorId, '10001');
-      expect(sensor.id, 'sensor-uuid');
-      verify(() => mockData.upsertSensor(firebaseSensorId: '10001', displayName: 'Hive A')).called(1);
-      verify(() => mockData.insertUserSensorLink(userId: 'uid', sensorId: 'sensor-uuid', displayName: 'Hive A')).called(1);
-    });
-
-    test('throws ValidationException on duplicate (23505)', () async {
-      when(() => mockData.upsertSensor(firebaseSensorId: any(named: 'firebaseSensorId'), displayName: any(named: 'displayName')))
-          .thenAnswer((_) async => 'sensor-uuid');
-      when(() => mockData.insertUserSensorLink(userId: any(named: 'userId'), sensorId: any(named: 'sensorId'), displayName: any(named: 'displayName')))
-          .thenThrow(const supabase.PostgrestException(message: 'duplicate', code: '23505'));
-
-      expect(
-        () => repo.linkSensor('uid', '10001'),
-        throwsA(isA<ValidationException>()),
-      );
-    });
-
-    test('throws AppException on other PostgrestException', () async {
-      when(() => mockData.upsertSensor(firebaseSensorId: any(named: 'firebaseSensorId'), displayName: any(named: 'displayName')))
-          .thenThrow(const supabase.PostgrestException(message: 'RLS', code: '42501'));
-
-      expect(
-        () => repo.linkSensor('uid', '10001'),
-        throwsA(isA<AppException>().having((e) => e.code, 'code', '42501')),
-      );
-    });
-  });
-
   group('getLinkedSensors', () {
     test('returns parsed list', () async {
       when(() => mockData.fetchLinkedSensors('uid')).thenAnswer((_) async => [
@@ -86,6 +44,16 @@ void main() {
       final links = await repo.getLinkedSensors('uid');
       expect(links, isEmpty);
     });
+
+    test('maps PostgrestException to AppException with code', () async {
+      when(() => mockData.fetchLinkedSensors('uid'))
+          .thenThrow(const supabase.PostgrestException(message: 'RLS', code: '42501'));
+
+      expect(
+        () => repo.getLinkedSensors('uid'),
+        throwsA(isA<AppException>().having((e) => e.code, 'code', '42501')),
+      );
+    });
   });
 
   group('unlinkSensor', () {
@@ -95,6 +63,23 @@ void main() {
 
       await repo.unlinkSensor('uid', 's-1');
       verify(() => mockData.deleteUserSensorLink(userId: 'uid', sensorId: 's-1')).called(1);
+    });
+  });
+
+  group('renameSensor', () {
+    test('calls renameLinkedSensor', () async {
+      when(() => mockData.renameLinkedSensor(
+            userId: 'uid',
+            sensorId: 's-1',
+            displayName: 'Back yard',
+          )).thenAnswer((_) async {});
+
+      await repo.renameSensor('uid', 's-1', 'Back yard');
+      verify(() => mockData.renameLinkedSensor(
+            userId: 'uid',
+            sensorId: 's-1',
+            displayName: 'Back yard',
+          )).called(1);
     });
   });
 }

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/firebase/firebase_sensor_data_service.dart';
 import '../services/supabase/supabase_auth_service.dart';
+import '../services/supabase/supabase_claim_service.dart';
 import '../services/supabase/supabase_user_data_service.dart';
 
 final supabaseAuthServiceProvider = Provider<SupabaseAuthService>((ref) {
@@ -10,6 +11,10 @@ final supabaseAuthServiceProvider = Provider<SupabaseAuthService>((ref) {
 
 final supabaseUserDataServiceProvider = Provider<SupabaseUserDataService>((ref) {
   return SupabaseUserDataService();
+});
+
+final supabaseClaimServiceProvider = Provider<SupabaseClaimService>((ref) {
+  return SupabaseClaimService();
 });
 
 final firebaseSensorDataServiceProvider = Provider<FirebaseSensorDataService>((ref) {
