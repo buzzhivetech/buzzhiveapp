@@ -36,7 +36,7 @@ FirebaseOptions get defaultFirebaseOptions {
         : const String.fromEnvironment('FIREBASE_AUTH_DOMAIN', defaultValue: ''),
     databaseURL: _fromEnv('FIREBASE_DATABASE_URL').isNotEmpty
         ? _fromEnv('FIREBASE_DATABASE_URL')
-        : const String.fromEnvironment('FIREBASE_DATABASE_URL', defaultValue: 'https://buzz-hive-1c599-default-rtdb.firebaseio.com'),
+        : const String.fromEnvironment('FIREBASE_DATABASE_URL', defaultValue: 'https://buzz-hive-v0.firebaseio.com'),
     storageBucket: _fromEnv('FIREBASE_STORAGE_BUCKET').isNotEmpty
         ? _fromEnv('FIREBASE_STORAGE_BUCKET')
         : const String.fromEnvironment('FIREBASE_STORAGE_BUCKET', defaultValue: ''),
