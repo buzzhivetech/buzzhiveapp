@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+// Source of truth: /Users/mbron/Documents/buzzhive/Buzzhive-V0/buzzhive.proto
+// This is an app-local copy kept in sync with the firmware schema.
+// To regenerate Dart classes after edits, see docs/ble-firmware-protocol.md.
+
+message BuzzHiveMessage {
+    oneof payload {     // Memory is only allocated for one type of payload
+        SensorData sensor_data = 1;
+        ScaleData scale_data = 2;
+    }
+}
+
+// Payload containing the data from ALL_FUNC.ino
+message SensorData {
+    int32 node_id = 1;
+    float mic_freq = 2;
+    float mic_db = 3;
+    float freq_x = 4;
+    float freq_y = 5;
+    float freq_z = 6;
+    float max_x = 7;
+    float max_y = 8;
+    float max_z = 9;
+    float temp = 10;
+    float humid = 11;
+    float gas = 12;
+    float vbat = 13;
+}
+
+// Temporary payload for scale data
+message ScaleData {
+    int32 node_id = 1;
+    float weight_kg = 2;
+    float battery = 3;
+}
