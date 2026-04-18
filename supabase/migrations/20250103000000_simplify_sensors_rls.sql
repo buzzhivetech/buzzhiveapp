@@ -3,10 +3,14 @@
 -- Access control lives on user_sensor_links, not sensors.
 -- Run this in Supabase SQL Editor to fix 42501 errors.
 
--- Drop all existing sensors policies
+-- Drop all existing sensors policies (old names from 20250101/20250102
+-- and the new names below, so this file is safe to re-apply).
 drop policy if exists "Users can view linked sensors" on public.sensors;
 drop policy if exists "Authenticated users can create sensors" on public.sensors;
 drop policy if exists "Users can update sensors when linking" on public.sensors;
+drop policy if exists "Logged-in users can read sensors" on public.sensors;
+drop policy if exists "Logged-in users can insert sensors" on public.sensors;
+drop policy if exists "Logged-in users can update sensors" on public.sensors;
 
 -- Any logged-in user can SELECT any sensor row
 create policy "Logged-in users can read sensors" on public.sensors
