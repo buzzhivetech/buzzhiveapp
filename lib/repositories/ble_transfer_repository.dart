@@ -1,17 +1,69 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
-import '../core/constants/ble_protocol.dart';
 import '../core/errors/app_exception.dart';
 import '../core/utils/app_logger.dart';
-import '../core/utils/crc16.dart';
+import '../features/sensors/domain/ble_advertisement.dart';
+import '../generated/proto/buzzhive.pb.dart';
 import '../models/ble_transfer_session.dart';
 import '../services/bluetooth/ble_sensor_transfer_service.dart';
 import '../services/local/local_packet_store.dart';
 
-/// Orchestrates a BLE download session: connect, receive frames, parse, persist.
+/// State emitted by [BleTransferRepository.syncSingleReading] as it walks
+/// through the one-shot BLE pull lifecycle.
+sealed class SensorSyncState {
+  const SensorSyncState();
+}
+
+class SensorSyncIdle extends SensorSyncState {
+  const SensorSyncIdle();
+}
+
+/// Scanning for the targeted sensor by its advertised name.
+class SensorSyncScanning extends SensorSyncState {
+  const SensorSyncScanning();
+}
+
+/// Found the device and opening the GATT connection.
+class SensorSyncConnecting extends SensorSyncState {
+  const SensorSyncConnecting();
+}
+
+/// Connected and subscribed; waiting for the firmware's push.
+class SensorSyncWaiting extends SensorSyncState {
+  const SensorSyncWaiting();
+}
+
+/// One reading was decoded and persisted locally. The caller should now
+/// trigger an upload (e.g. `SyncRepository.syncNow()`).
+class SensorSyncSuccess extends SensorSyncState {
+  const SensorSyncSuccess({
+    required this.firebaseSensorId,
+    required this.sensorTimestampMs,
+  });
+
+  final String firebaseSensorId;
+  final int sensorTimestampMs;
+}
+
+/// Terminal failure state; [message] is safe to surface to the user.
+class SensorSyncFailure extends SensorSyncState {
+  const SensorSyncFailure(this.message, {this.code});
+
+  final String message;
+  final String? code;
+}
+
+/// Orchestrates a single-shot BLE pull from the currently-shipping firmware:
+///   1. scan for the sensor by advertised name
+///   2. connect + negotiate MTU
+///   3. subscribe to `180F/2A19` and wait for the first protobuf frame
+///   4. decode, map to `PendingReading`, and persist locally
+///
+/// Emits progress as [SensorSyncState] on the returned stream and closes it
+/// on either success or failure. Cancelling the subscription aborts the
+/// session and releases the BLE connection.
 class BleTransferRepository {
   BleTransferRepository(this._ble, this._store);
 
@@ -22,184 +74,189 @@ class BleTransferRepository {
   Stream<BleStatus> get adapterStatus => _ble.statusStream;
   BleStatus get currentAdapterStatus => _ble.currentStatus;
 
-  Stream<DiscoveredDevice> scanForSensors() => _ble.scanForSensors();
-
-  /// Run a full download session. Yields progress updates (received count).
-  /// The caller should listen to the stream; on completion it closes.
-  Stream<int> downloadSession({
-    required String deviceId,
+  /// Pull one reading from the sensor advertised as [advertisedName]
+  /// (e.g. `BuzzHive-15`). Persists the reading into the local SQLite
+  /// queue and emits [SensorSyncSuccess] when done.
+  Stream<SensorSyncState> syncSingleReading({
+    required String advertisedName,
     required String sensorId,
     required String firebaseSensorId,
+    Duration timeout = const Duration(seconds: 90),
   }) async* {
+    StreamSubscription<DiscoveredDevice>? scanSub;
     StreamSubscription<ConnectionStateUpdate>? connSub;
-    StreamSubscription<List<int>>? dataSub;
-    int? sessionId;
+    StreamSubscription<List<int>>? payloadSub;
 
     try {
-      // 1. Connect
-      final connCompleter = Completer<void>();
-      connSub = _ble.connectToDevice(deviceId).listen((update) {
-        if (update.connectionState == DeviceConnectionState.connected &&
-            !connCompleter.isCompleted) {
-          connCompleter.complete();
-        }
-        if (update.connectionState == DeviceConnectionState.disconnected &&
-            !connCompleter.isCompleted) {
-          connCompleter.completeError(
-            const BleTransferException('Device disconnected during setup'),
-          );
-        }
-      }, onError: (Object e) {
-        if (!connCompleter.isCompleted) connCompleter.completeError(e);
-      });
+      yield const SensorSyncScanning();
 
-      await connCompleter.future;
-      AppLogger.info('Connected to $deviceId', name: _log);
+      // 1. Scan until we see a device whose name matches our target.
+      final device = await _findDevice(
+        advertisedName: advertisedName,
+        timeout: timeout,
+        onSub: (s) => scanSub = s,
+      );
+      await scanSub?.cancel();
+      scanSub = null;
 
-      await _ble.requestMtu(deviceId);
+      // 2. Connect.
+      yield const SensorSyncConnecting();
+      final connected = Completer<void>();
+      connSub = _ble.connectToDevice(device.id).listen(
+        (update) {
+          switch (update.connectionState) {
+            case DeviceConnectionState.connected:
+              if (!connected.isCompleted) connected.complete();
+            case DeviceConnectionState.disconnected:
+              if (!connected.isCompleted) {
+                connected.completeError(
+                  const BleTransferException(
+                    'Device disconnected before handshake',
+                  ),
+                );
+              }
+            case DeviceConnectionState.connecting:
+            case DeviceConnectionState.disconnecting:
+              break;
+          }
+        },
+        onError: (Object e) {
+          if (!connected.isCompleted) connected.completeError(e);
+        },
+      );
+      await connected.future.timeout(
+        timeout,
+        onTimeout: () => throw const BleTransferException(
+          'Timed out connecting to sensor',
+        ),
+      );
+      await _ble.requestMtu(device.id);
 
-      // 2. Create local session
-      sessionId = await _store.createSession(
-        sensorId: sensorId,
-        firebaseSensorId: firebaseSensorId,
+      // 3. Subscribe and wait for the first protobuf push.
+      yield const SensorSyncWaiting();
+      final payload = Completer<List<int>>();
+      payloadSub = _ble.subscribeToLegacyPayload(device.id).listen(
+        (bytes) {
+          if (!payload.isCompleted) payload.complete(bytes);
+        },
+        onError: (Object e) {
+          if (!payload.isCompleted) payload.completeError(e);
+        },
+      );
+      final bytes = await payload.future.timeout(
+        timeout,
+        onTimeout: () => throw const BleTransferException(
+          'Sensor did not push a reading in time',
+        ),
       );
 
-      // 3. Subscribe to data notifications
-      var receivedCount = 0;
-      var lastSeq = -1;
-      final transferDone = Completer<void>();
-
-      dataSub = _ble.subscribeToData(deviceId).listen((raw) async {
-        final frame = Uint8List.fromList(raw);
-        if (frame.length < BleProtocol.frameOverheadBytes) return;
-
-        if (!Crc16.verify(frame)) {
-          AppLogger.warn('CRC mismatch on frame, skipping', name: _log);
-          return;
-        }
-
-        final type = frame[0];
-        final seq = (frame[1] << 8) | frame[2];
-        final payload = frame.sublist(3, frame.length - 2);
-
-        switch (type) {
-          case BleProtocol.frameTypeSessionStart:
-            final expectedCount = payload.length >= 2
-                ? (payload[0] << 8) | payload[1]
-                : 0;
-            await _store.updateSessionProgress(sessionId!, receivedCount: 0);
-            AppLogger.info(
-              'Session start: expecting $expectedCount readings',
-              name: _log,
-            );
-
-          case BleProtocol.frameTypeData:
-            final reading = _parseDataPayload(payload);
-            if (reading != null) {
-              await _store.insertReading(
-                sessionId: sessionId!,
-                firebaseSensorId: firebaseSensorId,
-                sequence: seq,
-                temp: reading['temp']!,
-                hum: reading['hum']!,
-                gas: reading['gas']!,
-                mic: reading['mic']!,
-                db: reading['db']!,
-                ax: reading['ax']!,
-                ay: reading['ay']!,
-                az: reading['az']!,
-                fx: reading['fx']!,
-                fy: reading['fy']!,
-                fz: reading['fz']!,
-                sensorTimestampMs: reading['ts']!.toInt(),
-              );
-              receivedCount++;
-              lastSeq = seq;
-              await _store.updateSessionProgress(
-                sessionId,
-                receivedCount: receivedCount,
-                lastSeq: lastSeq,
-              );
-            }
-
-          case BleProtocol.frameTypeSessionEnd:
-            AppLogger.info('Session end received ($receivedCount readings)', name: _log);
-            if (!transferDone.isCompleted) transferDone.complete();
-        }
-      }, onError: (Object e) {
-        if (!transferDone.isCompleted) transferDone.completeError(e);
-      });
-
-      // 4. Tell sensor to start
-      await _ble.sendStartTransfer(deviceId);
-
-      // 5. Yield progress periodically while waiting for completion
-      while (!transferDone.isCompleted) {
-        await Future.delayed(const Duration(milliseconds: 250));
-        yield receivedCount;
-        if (transferDone.isCompleted) break;
+      // 4. Decode + persist.
+      final reading = _decode(bytes);
+      if (reading == null) {
+        throw const BleTransferException(
+          'Received payload but could not decode sensor data',
+        );
       }
-      await transferDone.future;
-      yield receivedCount;
-
-      // 6. ACK and finalize
-      if (lastSeq >= 0) {
-        await _ble.sendAckBatch(deviceId, lastSeq);
-      }
+      final sessionId = await _store.createSession(
+        sensorId: sensorId,
+        firebaseSensorId: firebaseSensorId,
+        expectedCount: 1,
+      );
+      final timestampMs = DateTime.now().toUtc().millisecondsSinceEpoch;
+      await _store.insertReading(
+        sessionId: sessionId,
+        firebaseSensorId: firebaseSensorId,
+        sequence: 0,
+        temp: reading.temp,
+        hum: reading.humid,
+        gas: reading.gas,
+        mic: reading.micFreq,
+        db: reading.micDb,
+        ax: reading.maxX,
+        ay: reading.maxY,
+        az: reading.maxZ,
+        fx: reading.freqX,
+        fy: reading.freqY,
+        fz: reading.freqZ,
+        sensorTimestampMs: timestampMs,
+      );
+      await _store.updateSessionProgress(sessionId, receivedCount: 1);
       await _store.completeSession(sessionId, TransferSessionStatus.complete);
-      AppLogger.info('Download session $sessionId complete: $receivedCount readings', name: _log);
-    } on BleTransferException {
-      if (sessionId != null) {
-        await _store.completeSession(sessionId, TransferSessionStatus.failed);
-      }
-      rethrow;
+      AppLogger.info(
+        'BLE pull complete for $firebaseSensorId (session $sessionId)',
+        name: _log,
+      );
+
+      yield SensorSyncSuccess(
+        firebaseSensorId: firebaseSensorId,
+        sensorTimestampMs: timestampMs,
+      );
+    } on BleTransferException catch (e) {
+      AppLogger.warn('BLE pull failed: ${e.message}', name: _log);
+      yield SensorSyncFailure(e.message, code: e.code);
     } on Object catch (e, st) {
-      AppLogger.error('Download session failed', name: _log, error: e, stackTrace: st);
-      if (sessionId != null) {
-        await _store.completeSession(sessionId, TransferSessionStatus.failed);
-      }
-      throw BleTransferException(e.toString());
+      AppLogger.error('BLE pull errored', name: _log, error: e, stackTrace: st);
+      yield SensorSyncFailure(e.toString());
     } finally {
-      await dataSub?.cancel();
+      await payloadSub?.cancel();
       await connSub?.cancel();
+      await scanSub?.cancel();
     }
   }
 
-  /// Parse a DATA frame payload into sensor values.
-  /// Binary layout (all little-endian float32 except timestamp which is int64):
-  ///   [0..7]   timestamp ms (int64 LE)
-  ///   [8..11]  temp   (float32 LE)
-  ///   [12..15] hum    (float32 LE)
-  ///   [16..19] gas    (float32 LE)
-  ///   [20..23] mic    (float32 LE)
-  ///   [24..27] db     (float32 LE)
-  ///   [28..31] ax     (float32 LE)
-  ///   [32..35] ay     (float32 LE)
-  ///   [36..39] az     (float32 LE)
-  ///   [40..43] fx     (float32 LE)
-  ///   [44..47] fy     (float32 LE)
-  ///   [48..51] fz     (float32 LE)
-  ///   Total = 52 bytes
-  Map<String, double>? _parseDataPayload(Uint8List payload) {
-    if (payload.length < 52) {
-      AppLogger.warn('Data payload too short (${payload.length} < 52)', name: _log);
+  Future<DiscoveredDevice> _findDevice({
+    required String advertisedName,
+    required Duration timeout,
+    required void Function(StreamSubscription<DiscoveredDevice>) onSub,
+  }) {
+    final completer = Completer<DiscoveredDevice>();
+    // Case-insensitive match to be resilient to OS quirks on iOS which
+    // sometimes reports a cached, differently-cased local name.
+    final target = advertisedName.toLowerCase();
+    final sub = _ble.scanForUnclaimedSensors().listen(
+      (device) {
+        if (completer.isCompleted) return;
+        final name = device.name.trim();
+        if (name.toLowerCase() == target) {
+          completer.complete(device);
+          return;
+        }
+        // Fallback: legacy firmware without NODE_ID in the name advertises
+        // as `BuzzHive_Sensor`. Accept the first such match — the caller
+        // has already resolved the target sensor contextually.
+        final parsed = BleAdvertisementIdentity.tryParse(name);
+        if (parsed != null && !parsed.isIdentified) {
+          completer.complete(device);
+        }
+      },
+      onError: (Object e) {
+        if (!completer.isCompleted) completer.completeError(e);
+      },
+    );
+    onSub(sub);
+    return completer.future.timeout(
+      timeout,
+      onTimeout: () {
+        sub.cancel();
+        throw BleTransferException(
+          'Could not find sensor "$advertisedName" nearby',
+        );
+      },
+    );
+  }
+
+  /// Decode a protobuf push into its [SensorData] payload, or null if the
+  /// message did not carry sensor data (e.g. ScaleData variant).
+  SensorData? _decode(List<int> bytes) {
+    try {
+      final msg = BuzzHiveMessage.fromBuffer(bytes);
+      if (msg.whichPayload() == BuzzHiveMessage_Payload.sensorData) {
+        return msg.sensorData;
+      }
+      return null;
+    } on Object catch (e) {
+      AppLogger.warn('Protobuf decode failed: $e', name: _log);
       return null;
     }
-    final bd = ByteData.sublistView(payload);
-    final tsMs = bd.getInt64(0, Endian.little);
-    return {
-      'ts': tsMs.toDouble(),
-      'temp': bd.getFloat32(8, Endian.little).toDouble(),
-      'hum': bd.getFloat32(12, Endian.little).toDouble(),
-      'gas': bd.getFloat32(16, Endian.little).toDouble(),
-      'mic': bd.getFloat32(20, Endian.little).toDouble(),
-      'db': bd.getFloat32(24, Endian.little).toDouble(),
-      'ax': bd.getFloat32(28, Endian.little).toDouble(),
-      'ay': bd.getFloat32(32, Endian.little).toDouble(),
-      'az': bd.getFloat32(36, Endian.little).toDouble(),
-      'fx': bd.getFloat32(40, Endian.little).toDouble(),
-      'fy': bd.getFloat32(44, Endian.little).toDouble(),
-      'fz': bd.getFloat32(48, Endian.little).toDouble(),
-    };
   }
 }

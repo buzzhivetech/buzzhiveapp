@@ -1,19 +1,40 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
-import '../../core/constants/ble_protocol.dart';
 import '../../core/utils/app_logger.dart';
 
-/// Low-level BLE operations: scan, connect, send commands, receive data frames.
-/// No persistence or domain logic — that belongs in the repository.
+/// Low-level BLE operations: scan, connect, subscribe to notifications.
+///
+/// This service targets the **current** firmware protocol: the sensor
+/// advertises the standard Battery Service (`0x180F`) and pushes a single
+/// protobuf-encoded [BuzzHiveMessage] on characteristic `0x2A19` whenever a
+/// client subscribes. No commands are sent from the phone.
+///
+/// No persistence or domain logic lives here — that belongs in the
+/// repository.
 class BleSensorTransferService {
   BleSensorTransferService({FlutterReactiveBle? ble})
       : _ble = ble ?? FlutterReactiveBle();
 
   final FlutterReactiveBle _ble;
   static const _log = 'BLE';
+
+  /// Battery Service UUID advertised by the current sensor firmware.
+  static final legacyServiceUuid = Uuid.parse('180F');
+
+  /// Battery Level characteristic used by the firmware as the payload pipe.
+  static final legacyCharacteristicUuid = Uuid.parse('2A19');
+
+  /// Desired MTU. Current firmware payload is ~70 bytes, so 185 is plenty and
+  /// stays under Android's default 517 cap.
+  static const int _desiredMtu = 185;
+
+  /// How long we prescan before opening a connection.
+  static const Duration _prescanDuration = Duration(seconds: 5);
+
+  /// How long we wait for the OS to open the connection.
+  static const Duration _connectionTimeout = Duration(seconds: 15);
 
   // --- Adapter state ---
 
@@ -22,125 +43,64 @@ class BleSensorTransferService {
 
   // --- Scanning ---
 
-  /// Scan for BuzzHive sensors advertising our (future) custom service UUID.
-  ///
-  /// Used by the data-transfer flow once firmware ships with the custom
-  /// service. For customer onboarding (claim-by-BLE) use
-  /// [scanForUnclaimedSensors], which matches the currently-shipping
-  /// Battery-Service-based advertisement.
-  Stream<DiscoveredDevice> scanForSensors() {
-    AppLogger.info('Starting BLE scan for BuzzHive sensors', name: _log);
-    return _ble.scanForDevices(
-      withServices: [BleProtocol.serviceUuid],
-      scanMode: ScanMode.lowLatency,
-    );
-  }
-
   /// Scan for in-the-field BuzzHive sensors using the current firmware's
   /// advertisement (Battery Service `180F`). The caller should further
-  /// filter by local name prefix (`BuzzHive`) to drop non-BuzzHive
+  /// filter by local-name prefix (`BuzzHive`) to drop non-BuzzHive
   /// battery devices (headphones, wearables, etc.).
   Stream<DiscoveredDevice> scanForUnclaimedSensors() {
-    AppLogger.info('Starting BLE scan for unclaimed BuzzHive sensors',
+    AppLogger.info('Starting BLE scan for BuzzHive sensors (180F)',
         name: _log);
     return _ble.scanForDevices(
-      withServices: [Uuid.parse('180F')],
+      withServices: [legacyServiceUuid],
       scanMode: ScanMode.lowLatency,
     );
   }
 
   // --- Connection ---
 
-  /// Connect to a device and negotiate MTU.  Returns a stream of connection
-  /// state updates; the caller should wait for [DeviceConnectionState.connected]
-  /// before issuing commands.
+  /// Connect to a device. Returns a stream of connection state updates;
+  /// the caller should wait for [DeviceConnectionState.connected] before
+  /// subscribing to characteristics.
   Stream<ConnectionStateUpdate> connectToDevice(String deviceId) {
     AppLogger.info('Connecting to BLE device $deviceId', name: _log);
     return _ble.connectToAdvertisingDevice(
       id: deviceId,
-      withServices: [BleProtocol.serviceUuid],
-      prescanDuration: BleProtocol.prescanDuration,
-      connectionTimeout: BleProtocol.connectionTimeout,
+      withServices: [legacyServiceUuid],
+      prescanDuration: _prescanDuration,
+      connectionTimeout: _connectionTimeout,
       servicesWithCharacteristicsToDiscover: {
-        BleProtocol.serviceUuid: [
-          BleProtocol.controlCharUuid,
-          BleProtocol.dataCharUuid,
-          BleProtocol.statusCharUuid,
-        ],
+        legacyServiceUuid: [legacyCharacteristicUuid],
       },
     );
   }
 
   /// Negotiate MTU after connection.  Returns the actual negotiated MTU.
+  /// No-op on iOS (handled by the OS) but important on Android where the
+  /// default 23-byte MTU would truncate our ~70-byte protobuf payload.
   Future<int> requestMtu(String deviceId) async {
-    final mtu = await _ble.requestMtu(
-      deviceId: deviceId,
-      mtu: BleProtocol.desiredMtu,
-    );
-    AppLogger.info('Negotiated MTU: $mtu for $deviceId', name: _log);
-    return mtu;
+    try {
+      final mtu = await _ble.requestMtu(
+        deviceId: deviceId,
+        mtu: _desiredMtu,
+      );
+      AppLogger.info('Negotiated MTU: $mtu for $deviceId', name: _log);
+      return mtu;
+    } on Object catch (e) {
+      AppLogger.warn('MTU negotiation failed (continuing): $e', name: _log);
+      return 23;
+    }
   }
 
   // --- Characteristics ---
 
-  QualifiedCharacteristic _char(String deviceId, Uuid charUuid) =>
-      QualifiedCharacteristic(
-        serviceId: BleProtocol.serviceUuid,
-        characteristicId: charUuid,
-        deviceId: deviceId,
-      );
-
-  /// Subscribe to data notifications from the sensor.
-  Stream<List<int>> subscribeToData(String deviceId) {
-    return _ble.subscribeToCharacteristic(
-      _char(deviceId, BleProtocol.dataCharUuid),
+  /// Subscribe to the legacy Battery-Level characteristic. The firmware
+  /// pushes one [BuzzHiveMessage] protobuf payload on subscription.
+  Stream<List<int>> subscribeToLegacyPayload(String deviceId) {
+    final qc = QualifiedCharacteristic(
+      serviceId: legacyServiceUuid,
+      characteristicId: legacyCharacteristicUuid,
+      deviceId: deviceId,
     );
+    return _ble.subscribeToCharacteristic(qc);
   }
-
-  /// Subscribe to status notifications from the sensor.
-  Stream<List<int>> subscribeToStatus(String deviceId) {
-    return _ble.subscribeToCharacteristic(
-      _char(deviceId, BleProtocol.statusCharUuid),
-    );
-  }
-
-  /// Read the current status characteristic value.
-  Future<List<int>> readStatus(String deviceId) {
-    return _ble.readCharacteristic(
-      _char(deviceId, BleProtocol.statusCharUuid),
-    );
-  }
-
-  /// Write a command to the control characteristic.
-  Future<void> writeCommand(String deviceId, Uint8List command) async {
-    await _ble.writeCharacteristicWithResponse(
-      _char(deviceId, BleProtocol.controlCharUuid),
-      value: command,
-    );
-  }
-
-  // --- Convenience command builders ---
-
-  Future<void> sendStartTransfer(String deviceId) =>
-      writeCommand(deviceId, Uint8List.fromList([BleProtocol.cmdStartTransfer]));
-
-  Future<void> sendAckBatch(String deviceId, int lastSeq) =>
-      writeCommand(deviceId, Uint8List.fromList([
-        BleProtocol.cmdAckBatch,
-        (lastSeq >> 8) & 0xFF,
-        lastSeq & 0xFF,
-      ]));
-
-  Future<void> sendResume(String deviceId, int fromSeq) =>
-      writeCommand(deviceId, Uint8List.fromList([
-        BleProtocol.cmdResume,
-        (fromSeq >> 8) & 0xFF,
-        fromSeq & 0xFF,
-      ]));
-
-  Future<void> sendAbort(String deviceId) =>
-      writeCommand(deviceId, Uint8List.fromList([BleProtocol.cmdAbort]));
-
-  Future<void> sendDeleteConfirmed(String deviceId) =>
-      writeCommand(deviceId, Uint8List.fromList([BleProtocol.cmdDeleteConfirmed]));
 }

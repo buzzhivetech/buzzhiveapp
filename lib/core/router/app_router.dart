@@ -17,6 +17,16 @@ import '../config/env.dart';
 import 'main_shell.dart';
 import 'routes.dart';
 
+/// Typed payload for the BLE download route. Using a record (vs a
+/// `Map<String, String>`) keeps navigation callers honest and makes
+/// refactors compile-time safe.
+typedef BleDownloadArgs = ({
+  String sensorId,
+  String firebaseSensorId,
+  String sensorName,
+  String advertisedName,
+});
+
 /// Creates the app's router ONCE for the lifetime of the app.
 ///
 /// Auth state is passed via [isAuthenticated], a [ValueListenable] so that:
@@ -108,12 +118,8 @@ GoRouter createAppRouter({
       GoRoute(
         path: Routes.bleDownload,
         builder: (_, GoRouterState state) {
-          final extra = state.extra as Map<String, String>? ?? {};
-          return BleDownloadScreen(
-            sensorId: extra['sensorId'] ?? '',
-            firebaseSensorId: extra['firebaseSensorId'] ?? '',
-            sensorName: extra['sensorName'] ?? 'Sensor',
-          );
+          final args = state.extra as BleDownloadArgs?;
+          return BleDownloadScreen(args: args);
         },
       ),
       GoRoute(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/router/app_router.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/error_display.dart';
@@ -153,7 +154,7 @@ class _SensorSection extends StatelessWidget {
         'Sensor ${link.sensor.firebaseSensorId}';
 
     if (reading == null) {
-      return _WaitingForFirstReadingCard(label: label);
+      return _WaitingForFirstReadingCard(link: link, label: label);
     }
 
     return SensorReadingCard(sensorLabel: label, reading: reading!);
@@ -164,8 +165,9 @@ class _SensorSection extends StatelessWidget {
 /// to Firebase. Tapping it jumps the user straight into the BLE download
 /// flow so they can force-sync any offline readings stored on the device.
 class _WaitingForFirstReadingCard extends StatelessWidget {
-  const _WaitingForFirstReadingCard({required this.label});
+  const _WaitingForFirstReadingCard({required this.link, required this.label});
 
+  final UserSensorLink link;
   final String label;
 
   @override
@@ -174,7 +176,16 @@ class _WaitingForFirstReadingCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
-        onTap: () => context.push(Routes.bleDownload),
+        onTap: () {
+          final BleDownloadArgs args = (
+            sensorId: link.sensor.id,
+            firebaseSensorId: link.sensor.firebaseSensorId,
+            sensorName: label,
+            advertisedName:
+                'BuzzHive-${link.sensor.firebaseSensorId}',
+          );
+          context.push(Routes.bleDownload, extra: args);
+        },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(20),
