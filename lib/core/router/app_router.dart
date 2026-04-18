@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,18 +17,31 @@ import '../config/env.dart';
 import 'main_shell.dart';
 import 'routes.dart';
 
+/// Creates the app's router ONCE for the lifetime of the app.
+///
+/// Auth state is passed via [isAuthenticated], a [ValueListenable] so that:
+///  1. The redirect reads the latest value every time it runs.
+///  2. The router re-evaluates redirects when the value changes
+///     (via [GoRouter.refreshListenable]).
+///
+/// Creating the router on every widget rebuild is unsafe — go_router's
+/// internal shell state uses `GlobalObjectKey`s keyed by int indices,
+/// which collide by value across router instances and cause
+/// "Multiple widgets used the same GlobalKey" during reconciliation.
 GoRouter createAppRouter({
   required String initialLocation,
-  required bool isAuthenticated,
+  required ValueListenable<bool> isAuthenticated,
 }) {
   return GoRouter(
     initialLocation: initialLocation,
+    refreshListenable: isAuthenticated,
     redirect: (BuildContext context, GoRouterState state) {
       final onAuthRoute = state.matchedLocation == Routes.login ||
           state.matchedLocation == Routes.register;
       if (!Env.hasSupabaseConfig) return null;
-      if (isAuthenticated && onAuthRoute) return Routes.dashboard;
-      if (!isAuthenticated && !onAuthRoute) return Routes.login;
+      final authed = isAuthenticated.value;
+      if (authed && onAuthRoute) return Routes.dashboard;
+      if (!authed && !onAuthRoute) return Routes.login;
       return null;
     },
     routes: <RouteBase>[

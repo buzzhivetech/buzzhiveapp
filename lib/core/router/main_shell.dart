@@ -49,7 +49,10 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
     super.didUpdateWidget(oldWidget);
     final oldIndex = MainShell.indexFromLocation(oldWidget.location);
     final newIndex = MainShell.indexFromLocation(widget.location);
-    if (oldIndex != newIndex) {
+    // Only animate when the tab actually changes AND the child widget
+    // instance is different. go_router can re-deliver the same subtree,
+    // which would otherwise cause GlobalKey collisions in the tree.
+    if (oldIndex != newIndex && !identical(oldWidget.child, widget.child)) {
       _goingForward = newIndex > oldIndex;
       _outgoingChild = oldWidget.child;
       _controller.forward(from: 0.0);
@@ -79,14 +82,22 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
               children: [
                 if (_outgoingChild != null)
                   SlideTransition(
+                    key: const ValueKey('outgoing'),
                     position: Tween(begin: Offset.zero, end: outOffset).animate(curved),
-                    child: _outgoingChild!,
+                    child: KeyedSubtree(
+                      key: const ValueKey('outgoing-subtree'),
+                      child: _outgoingChild!,
+                    ),
                   ),
                 SlideTransition(
+                  key: const ValueKey('incoming'),
                   position: _outgoingChild != null
                       ? Tween(begin: inOffset, end: Offset.zero).animate(curved)
                       : const AlwaysStoppedAnimation(Offset.zero),
-                  child: widget.child,
+                  child: KeyedSubtree(
+                    key: ValueKey('incoming-${widget.location}'),
+                    child: widget.child,
+                  ),
                 ),
               ],
             ),
