@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/ble_protocol.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../providers/ble_providers.dart';
 
@@ -88,14 +89,20 @@ class _BleDownloadScreenState extends ConsumerState<BleDownloadScreen> {
       _error = null;
     });
 
-    _downloadSub = ref
-        .read(bleTransferRepositoryProvider)
-        .downloadSession(
-          deviceId: device.id,
-          sensorId: widget.sensorId,
-          firebaseSensorId: widget.firebaseSensorId,
-        )
-        .listen(
+    final repo = ref.read(bleTransferRepositoryProvider);
+    final session = BleProtocol.isV0Device(device)
+        ? repo.v0ReceiveSession(
+            deviceId: device.id,
+            sensorId: widget.sensorId,
+            firebaseSensorId: widget.firebaseSensorId,
+          )
+        : repo.downloadSession(
+            deviceId: device.id,
+            sensorId: widget.sensorId,
+            firebaseSensorId: widget.firebaseSensorId,
+          );
+
+    _downloadSub = session.listen(
       (count) {
         if (mounted) setState(() => _receivedCount = count);
       },

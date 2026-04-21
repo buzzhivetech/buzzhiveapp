@@ -5,6 +5,7 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/ble_protocol.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../models/remembered_sensor.dart';
 import '../../../providers/auth_provider.dart';
@@ -111,7 +112,11 @@ class _BleSensorDiscoveryScreenState
     final ble = ref.read(bleSensorTransferServiceProvider);
     final connCompleter = Completer<void>();
 
-    _connSub = ble.connectToDevice(device.id).listen((update) {
+    final connStream = BleProtocol.isV0Device(device)
+        ? ble.connectToV0Device(device.id)
+        : ble.connectToDevice(device.id);
+
+    _connSub = connStream.listen((update) {
       if (update.connectionState == DeviceConnectionState.connected &&
           !connCompleter.isCompleted) {
         connCompleter.complete();
@@ -188,12 +193,15 @@ class _BleSensorDiscoveryScreenState
         lastSeenAt: now,
       ));
 
-      // Send START_TRANSFER to kick off data reception
-      final ble = ref.read(bleSensorTransferServiceProvider);
-      try {
-        await ble.sendStartTransfer(_selectedDevice!.id);
-      } on Object catch (_) {
-        // Non-fatal: the sensor will still be remembered
+      // V0 sensors auto-transmit on connect; only send START_TRANSFER
+      // for newer firmware that uses the framed protocol.
+      if (!BleProtocol.isV0Device(_selectedDevice!)) {
+        final ble = ref.read(bleSensorTransferServiceProvider);
+        try {
+          await ble.sendStartTransfer(_selectedDevice!.id);
+        } on Object catch (_) {
+          // Non-fatal: the sensor will still be remembered
+        }
       }
 
       ref.invalidate(linkedSensorsProvider);

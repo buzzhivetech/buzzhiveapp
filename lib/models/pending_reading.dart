@@ -20,6 +20,8 @@ class PendingReading extends Equatable {
     required this.fx,
     required this.fy,
     required this.fz,
+    required this.vbat,
+    required this.weightKg,
     required this.sensorTimestampMs,
     required this.receivedAt,
     required this.synced,
@@ -40,6 +42,8 @@ class PendingReading extends Equatable {
   final double fx;
   final double fy;
   final double fz;
+  final double vbat;
+  final double weightKg;
   final int sensorTimestampMs;
   final DateTime receivedAt;
   final bool synced;
@@ -60,6 +64,8 @@ class PendingReading extends Equatable {
         'fx': fx,
         'fy': fy,
         'fz': fz,
+        if (vbat != 0) 'vbat': vbat,
+        if (weightKg != 0) 'weight_kg': weightKg,
         'id': firebaseKey,
         'timestamp': sensorTimestampMs,
       };
@@ -89,6 +95,8 @@ class PendingReading extends Equatable {
             'y': fy,
             'z': fz,
           },
+          if (vbat != 0) 'battery_volts': vbat,
+          if (weightKg != 0) 'weight_kg': weightKg,
         },
       };
 
@@ -96,6 +104,7 @@ class PendingReading extends Equatable {
   List<Object?> get props => [
         id, sessionId, firebaseSensorId, sequence,
         temp, hum, gas, mic, db, ax, ay, az, fx, fy, fz,
+        vbat, weightKg,
         sensorTimestampMs, receivedAt, synced,
       ];
 }

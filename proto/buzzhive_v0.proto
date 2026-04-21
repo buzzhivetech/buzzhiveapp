@@ -1,0 +1,45 @@
+// V0 hardware protobuf schema — kept in the app repo as a reference.
+// This MUST stay in sync with Buzzhive-V0/buzzhive.proto and the
+// nanopb-generated buzzhive.pb.h that the firmware compiles against.
+//
+// To regenerate the Dart code:
+//   protoc --dart_out=lib/proto proto/buzzhive_v0.proto
+// (The checked-in Dart file was hand-written to match; either approach works.)
+
+syntax = "proto3";
+
+enum DataType {
+    UNKNOWN = 0;
+    SENSOR_NODE = 1;
+    SCALE_NODE = 2;
+}
+
+message SensorData {
+    int32 node_id = 1;
+    float mic_freq = 2;
+    float mic_db = 3;
+    float freq_x = 4;
+    float freq_y = 5;
+    float freq_z = 6;
+    float max_x = 7;
+    float max_y = 8;
+    float max_z = 9;
+    float temp = 10;
+    float humid = 11;
+    float gas = 12;
+    float vbat = 13;
+}
+
+message ScaleData {
+    int32 node_id = 1;
+    float weight_kg = 2;
+    float battery = 3;
+}
+
+message BuzzHiveMessage {
+    DataType type = 1;
+    oneof payload {
+        SensorData sensor_data = 2;
+        ScaleData scale_data = 3;
+    }
+}

@@ -9,6 +9,7 @@ import '../core/utils/app_logger.dart';
 import '../core/utils/crc16.dart';
 import '../models/ble_transfer_session.dart';
 import '../proto/buzzhive_telemetry.pb.dart';
+import '../proto/buzzhive_v0.pb.dart';
 import '../services/bluetooth/ble_sensor_transfer_service.dart';
 import '../services/local/local_packet_store.dart';
 
@@ -112,6 +113,8 @@ class BleTransferRepository {
                 fx: reading['fx']!,
                 fy: reading['fy']!,
                 fz: reading['fz']!,
+                vbat: reading['vbat'] ?? 0,
+                weightKg: reading['weight_kg'] ?? 0,
                 sensorTimestampMs: reading['ts']!.toInt(),
               );
               receivedCount++;
@@ -156,6 +159,140 @@ class BleTransferRepository {
       rethrow;
     } on Object catch (e, st) {
       AppLogger.error('Download session failed', name: _log, error: e, stackTrace: st);
+      if (sessionId != null) {
+        await _store.completeSession(sessionId, TransferSessionStatus.failed);
+      }
+      throw BleTransferException(e.toString());
+    } finally {
+      await dataSub?.cancel();
+      await connSub?.cancel();
+    }
+  }
+
+  /// Receive live readings from a V0 sensor (raw protobuf on BLE notify).
+  ///
+  /// V0 sensors transmit the latest reading automatically on connect, then
+  /// keep sending fresh data every ~10 s while the phone stays connected.
+  /// Yields the running count of received readings.  The stream completes
+  /// after [timeout] of silence (no new notifications).
+  Stream<int> v0ReceiveSession({
+    required String deviceId,
+    required String sensorId,
+    required String firebaseSensorId,
+    Duration timeout = const Duration(seconds: 30),
+  }) async* {
+    StreamSubscription<ConnectionStateUpdate>? connSub;
+    StreamSubscription<List<int>>? dataSub;
+    int? sessionId;
+
+    try {
+      // 1. Connect via V0 (Battery Service 180F)
+      final connCompleter = Completer<void>();
+      connSub = _ble.connectToV0Device(deviceId).listen((update) {
+        if (update.connectionState == DeviceConnectionState.connected &&
+            !connCompleter.isCompleted) {
+          connCompleter.complete();
+        }
+        if (update.connectionState == DeviceConnectionState.disconnected &&
+            !connCompleter.isCompleted) {
+          connCompleter.completeError(
+            const BleTransferException('V0 device disconnected during setup'),
+          );
+        }
+      }, onError: (Object e) {
+        if (!connCompleter.isCompleted) connCompleter.completeError(e);
+      });
+
+      await connCompleter.future;
+      AppLogger.info('Connected to V0 device $deviceId', name: _log);
+
+      await _ble.requestMtu(deviceId);
+
+      // 2. Create local session
+      sessionId = await _store.createSession(
+        sensorId: sensorId,
+        firebaseSensorId: firebaseSensorId,
+      );
+
+      // 3. Subscribe to raw protobuf notifications on 2A19
+      var receivedCount = 0;
+      var sequence = 0;
+      final done = Completer<void>();
+      Timer? silenceTimer;
+
+      void resetSilenceTimer() {
+        silenceTimer?.cancel();
+        silenceTimer = Timer(timeout, () {
+          if (!done.isCompleted) {
+            AppLogger.info(
+              'V0 silence timeout — closing session ($receivedCount readings)',
+              name: _log,
+            );
+            done.complete();
+          }
+        });
+      }
+
+      resetSilenceTimer();
+
+      dataSub = _ble.subscribeToV0Data(deviceId).listen((raw) async {
+        final payload = Uint8List.fromList(raw);
+        final reading = _parseProtobufPayload(payload);
+        if (reading != null) {
+          await _store.insertReading(
+            sessionId: sessionId!,
+            firebaseSensorId: firebaseSensorId,
+            sequence: sequence,
+            temp: reading['temp']!,
+            hum: reading['hum']!,
+            gas: reading['gas']!,
+            mic: reading['mic']!,
+            db: reading['db']!,
+            ax: reading['ax']!,
+            ay: reading['ay']!,
+            az: reading['az']!,
+            fx: reading['fx']!,
+            fy: reading['fy']!,
+            fz: reading['fz']!,
+            vbat: reading['vbat'] ?? 0,
+            weightKg: reading['weight_kg'] ?? 0,
+            sensorTimestampMs: reading['ts']!.toInt(),
+          );
+          receivedCount++;
+          sequence++;
+          resetSilenceTimer();
+          await _store.updateSessionProgress(
+            sessionId,
+            receivedCount: receivedCount,
+            lastSeq: sequence,
+          );
+        }
+      }, onError: (Object e) {
+        if (!done.isCompleted) done.completeError(e);
+      });
+
+      // 4. Yield progress while waiting
+      while (!done.isCompleted) {
+        await Future.delayed(const Duration(milliseconds: 250));
+        yield receivedCount;
+        if (done.isCompleted) break;
+      }
+      await done.future;
+      yield receivedCount;
+
+      silenceTimer?.cancel();
+      await _store.completeSession(sessionId, TransferSessionStatus.complete);
+      AppLogger.info(
+        'V0 session $sessionId complete: $receivedCount readings',
+        name: _log,
+      );
+    } on BleTransferException {
+      if (sessionId != null) {
+        await _store.completeSession(sessionId, TransferSessionStatus.failed);
+      }
+      rethrow;
+    } on Object catch (e, st) {
+      AppLogger.error('V0 session failed', name: _log, error: e, stackTrace: st);
       if (sessionId != null) {
         await _store.completeSession(sessionId, TransferSessionStatus.failed);
       }
@@ -215,9 +352,79 @@ class BleTransferRepository {
     };
   }
 
-  /// Decode a protobuf-encoded HiveSensorTelemetry payload.
-  /// Returns null if the bytes are not valid protobuf.
+  /// Decode a protobuf payload.
+  ///
+  /// Tries the V0 hardware format (BuzzHiveMessage wrapping SensorData or
+  /// ScaleData) first, then falls back to the app-native HiveSensorTelemetry
+  /// schema for forward-compatibility with future firmware.
   Map<String, double>? _parseProtobufPayload(Uint8List payload) {
+    final v0 = _parseV0BuzzHiveMessage(payload);
+    if (v0 != null) return v0;
+
+    final app = _parseAppTelemetry(payload);
+    if (app != null) return app;
+
+    AppLogger.warn('Protobuf decode failed for both V0 and app schemas', name: _log);
+    return null;
+  }
+
+  /// Decode a V0 BuzzHiveMessage (nanopb) and route by payload type.
+  Map<String, double>? _parseV0BuzzHiveMessage(Uint8List payload) {
+    try {
+      final msg = V0BuzzHiveMessage.fromBuffer(payload);
+
+      switch (msg.whichPayload()) {
+        case V0BuzzHiveMessage_Payload.sensorData:
+          final s = msg.sensorData;
+          AppLogger.info(
+            'Decoded V0 SensorData (node ${s.nodeId})',
+            name: _log,
+          );
+          return {
+            'ts': DateTime.now().millisecondsSinceEpoch.toDouble(),
+            'node_id': s.nodeId.toDouble(),
+            'temp': s.temp.toDouble(),
+            'hum': s.humid.toDouble(),
+            'gas': s.gas.toDouble(),
+            'mic': s.micFreq.toDouble(),
+            'db': s.micDb.toDouble(),
+            'ax': s.freqX.toDouble(),
+            'ay': s.freqY.toDouble(),
+            'az': s.freqZ.toDouble(),
+            'fx': s.maxX.toDouble(),
+            'fy': s.maxY.toDouble(),
+            'fz': s.maxZ.toDouble(),
+            'vbat': s.vbat.toDouble(),
+          };
+
+        case V0BuzzHiveMessage_Payload.scaleData:
+          final sc = msg.scaleData;
+          AppLogger.info(
+            'Decoded V0 ScaleData (node ${sc.nodeId})',
+            name: _log,
+          );
+          return {
+            'ts': DateTime.now().millisecondsSinceEpoch.toDouble(),
+            'node_id': sc.nodeId.toDouble(),
+            'weight_kg': sc.weightKg.toDouble(),
+            'vbat': sc.battery.toDouble(),
+            'temp': 0, 'hum': 0, 'gas': 0,
+            'mic': 0, 'db': 0,
+            'ax': 0, 'ay': 0, 'az': 0,
+            'fx': 0, 'fy': 0, 'fz': 0,
+          };
+
+        case V0BuzzHiveMessage_Payload.notSet:
+          AppLogger.warn('V0 BuzzHiveMessage has no payload set', name: _log);
+          return null;
+      }
+    } on Object {
+      return null;
+    }
+  }
+
+  /// Decode the app-native HiveSensorTelemetry (for future firmware).
+  Map<String, double>? _parseAppTelemetry(Uint8List payload) {
     try {
       final msg = HiveSensorTelemetry.fromBuffer(payload);
       final accel = msg.hasAccel() ? msg.accel : null;
@@ -237,8 +444,7 @@ class BleTransferRepository {
         'fy': force?.y.toDouble() ?? 0,
         'fz': force?.z.toDouble() ?? 0,
       };
-    } on Object catch (e) {
-      AppLogger.warn('Protobuf decode failed: $e', name: _log);
+    } on Object {
       return null;
     }
   }
