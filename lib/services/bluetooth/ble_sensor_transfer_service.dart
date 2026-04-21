@@ -22,20 +22,39 @@ class BleSensorTransferService {
 
   // --- Scanning ---
 
-  /// Scan for BuzzHive sensors advertising our service UUID.
+  /// Scan for BuzzHive sensors.
+  ///
+  /// Matches both V0 hardware (Battery Service 180F, name "BuzzHive_Sensor")
+  /// and future firmware using the custom BEE5 service UUID.  V0 advertises
+  /// the standard Battery Service which many devices use, so results are
+  /// filtered by name prefix to avoid noise.
   Stream<DiscoveredDevice> scanForSensors() {
     AppLogger.info('Starting BLE scan for BuzzHive sensors', name: _log);
     return _ble.scanForDevices(
-      withServices: [BleProtocol.serviceUuid],
+      withServices: [BleProtocol.serviceUuid, BleProtocol.v0ServiceUuid],
       scanMode: ScanMode.lowLatency,
-    );
+    ).where((d) =>
+        d.name.startsWith('BuzzHive') ||
+        d.serviceUuids.contains(BleProtocol.serviceUuid));
   }
 
   // --- Connection ---
 
-  /// Connect to a device and negotiate MTU.  Returns a stream of connection
-  /// state updates; the caller should wait for [DeviceConnectionState.connected]
-  /// before issuing commands.
+  /// Connect to a V0 sensor (Battery Service 180F).
+  Stream<ConnectionStateUpdate> connectToV0Device(String deviceId) {
+    AppLogger.info('Connecting to V0 BLE device $deviceId', name: _log);
+    return _ble.connectToAdvertisingDevice(
+      id: deviceId,
+      withServices: [BleProtocol.v0ServiceUuid],
+      prescanDuration: BleProtocol.prescanDuration,
+      connectionTimeout: BleProtocol.connectionTimeout,
+      servicesWithCharacteristicsToDiscover: {
+        BleProtocol.v0ServiceUuid: [BleProtocol.v0DataCharUuid],
+      },
+    );
+  }
+
+  /// Connect to a device running the future framed protocol (BEE5 service).
   Stream<ConnectionStateUpdate> connectToDevice(String deviceId) {
     AppLogger.info('Connecting to BLE device $deviceId', name: _log);
     return _ble.connectToAdvertisingDevice(
@@ -72,7 +91,18 @@ class BleSensorTransferService {
         deviceId: deviceId,
       );
 
-  /// Subscribe to data notifications from the sensor.
+  /// Subscribe to raw protobuf notifications from a V0 sensor (2A19 char).
+  Stream<List<int>> subscribeToV0Data(String deviceId) {
+    return _ble.subscribeToCharacteristic(
+      QualifiedCharacteristic(
+        serviceId: BleProtocol.v0ServiceUuid,
+        characteristicId: BleProtocol.v0DataCharUuid,
+        deviceId: deviceId,
+      ),
+    );
+  }
+
+  /// Subscribe to data notifications from the sensor (framed protocol).
   Stream<List<int>> subscribeToData(String deviceId) {
     return _ble.subscribeToCharacteristic(
       _char(deviceId, BleProtocol.dataCharUuid),

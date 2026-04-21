@@ -52,3 +52,33 @@ then the app will **not** find `sensor_data/10001`, so:
 **Option B – Keep flat structure and change the app**
 
 - The app would need to stop using `sensor_data/{node_id}` and instead query/filter by `node_id` (e.g. `orderByChild('id').equalTo('10001')` under `sensor_data`). This requires a different Firebase layout and more app changes; Option A is simpler if you control the writer.
+
+## Additive backend paths
+
+The ML analysis rollout keeps the legacy path above, then adds backend-owned paths:
+
+```
+raw_ingest/{hiveId}/{readingId}
+analyzed_data/{hiveId}/{readingId}
+latest_hive_state/{hiveId}
+device_status/{deviceId}
+device_registry/{deviceId}
+hive_registry/{hiveId}
+receiver_registry/{receiverId}
+```
+
+- `sensor_data` remains the backward-compatible ingest path for app and receiver uploads.
+- `raw_ingest` stores normalized telemetry after validation.
+- `analyzed_data` stores placeholder or future ML outputs.
+- `latest_hive_state` is the preferred UI read path for current hive health.
+- `device_status` exposes battery, firmware, and ingest connectivity.
+
+## Shared envelope contract
+
+The cross-device typed contract now lives in the dashboard/backend repo at:
+
+```
+proto/buzzhive_telemetry.proto
+```
+
+The app can continue uploading legacy JSON for now, but `PendingReading.toTelemetryEnvelopeMap()` mirrors the future envelope fields so direct typed writers can be added later without changing the downstream analysis schema.

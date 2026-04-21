@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/sensor_reading.dart';
@@ -16,3 +17,26 @@ final latestReadingsProvider = StreamProvider<Map<String, SensorReading?>>((ref)
   if (ids.isEmpty) return Stream.value({});
   return ref.watch(sensorDataRepositoryProvider).streamLatestReadings(ids);
 });
+
+/// Parameter tuple for [readingsInRangeProvider].
+class ReadingsRangeParams extends Equatable {
+  const ReadingsRangeParams(this.sensorId, this.startMs, this.endMs);
+
+  final String sensorId;
+  final int startMs;
+  final int endMs;
+
+  @override
+  List<Object?> get props => [sensorId, startMs, endMs];
+}
+
+/// Fetches historical readings for a sensor within a time window.
+/// Used by the analytics screen for chart data.
+final readingsInRangeProvider =
+    FutureProvider.family<List<SensorReading>, ReadingsRangeParams>(
+  (ref, params) {
+    return ref
+        .watch(sensorDataRepositoryProvider)
+        .getReadingsInRange(params.sensorId, params.startMs, params.endMs);
+  },
+);
