@@ -6,6 +6,29 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 class BleProtocol {
   BleProtocol._();
 
+  // =====================================================================
+  // V0 hardware (ALL_FUNC.ino) — Battery Service + raw protobuf notify
+  // =====================================================================
+
+  /// Standard 16-bit Battery Service UUID advertised by V0 sensors.
+  static final v0ServiceUuid =
+      Uuid.parse('0000180F-0000-1000-8000-00805F9B34FB');
+
+  /// Standard Battery Level characteristic used by V0 to carry protobuf.
+  static final v0DataCharUuid =
+      Uuid.parse('00002A19-0000-1000-8000-00805F9B34FB');
+
+  /// V0 sensors advertise with this device name.
+  static const String v0DeviceNamePrefix = 'BuzzHive_Sensor';
+
+  /// Returns true when [device] is a V0 sensor (name-based detection).
+  static bool isV0Device(DiscoveredDevice device) =>
+      device.name.startsWith(v0DeviceNamePrefix);
+
+  // =====================================================================
+  // Future framed protocol — custom service + control/data/status chars
+  // =====================================================================
+
   /// Custom service UUID advertised by BuzzHive sensors.
   static final serviceUuid =
       Uuid.parse('BEE50001-CAFE-BABE-DEAD-BEEFCAFE0001');
@@ -63,4 +86,36 @@ class BleProtocol {
 
   /// Prescan duration before connecting.
   static const Duration prescanDuration = Duration(seconds: 5);
+
+  // =====================================================================
+  // Receiver WiFi provisioning (RECIEVER_CODE.ino)
+  // =====================================================================
+
+  /// Service UUID advertised by the BuzzHive receiver in setup mode.
+  static final receiverServiceUuid =
+      Uuid.parse('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+
+  /// Write-only characteristic: app sends WiFi credentials here.
+  /// Payload format: "SSID\nPASS\nID1,ID2,ID3"
+  static final receiverCredCharUuid =
+      Uuid.parse('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+
+  /// Notify/read characteristic: receiver reports provisioning status.
+  static final receiverStatusCharUuid =
+      Uuid.parse('beb5483e-36e1-4688-b7f5-ea07361b26a9');
+
+  /// GAP device name the receiver advertises in setup mode.
+  static const String receiverDeviceName = 'BuzzHive-Receiver';
+
+  /// Returns true when [device] is a receiver in setup mode.
+  static bool isReceiverDevice(DiscoveredDevice device) =>
+      device.name == receiverDeviceName;
+
+  // --- Receiver status strings (UTF-8 notifications) ---
+
+  static const String statusReady = 'READY';
+  static const String statusWifiOk = 'WIFI_OK';
+  static const String statusWifiFail = 'WIFI_FAIL';
+  static const String statusFirebaseOk = 'FIREBASE_OK';
+  static const String statusFirebaseFail = 'FIREBASE_FAIL';
 }

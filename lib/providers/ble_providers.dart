@@ -1,10 +1,12 @@
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/remembered_sensor.dart';
 import '../repositories/ble_transfer_repository.dart';
 import '../repositories/sync_repository.dart';
 import '../services/bluetooth/ble_sensor_transfer_service.dart';
 import '../services/local/local_packet_store.dart';
+import '../services/local/remembered_sensor_store.dart';
 import '../services/sync/firebase_upload_sync_service.dart';
 
 // ---- Services ----
@@ -15,6 +17,10 @@ final bleSensorTransferServiceProvider = Provider<BleSensorTransferService>((ref
 
 final localPacketStoreProvider = Provider<LocalPacketStore>((ref) {
   return LocalPacketStore();
+});
+
+final rememberedSensorStoreProvider = Provider<RememberedSensorStore>((ref) {
+  return RememberedSensorStore();
 });
 
 final firebaseUploadSyncServiceProvider = Provider<FirebaseUploadSyncService>((ref) {
@@ -47,4 +53,9 @@ final bleAdapterStatusProvider = StreamProvider<BleStatus>((ref) {
 /// Number of readings waiting to be uploaded.
 final pendingSyncCountProvider = FutureProvider<int>((ref) {
   return ref.watch(syncRepositoryProvider).pendingCount;
+});
+
+/// All remembered BLE sensor identities.
+final rememberedSensorsProvider = FutureProvider<List<RememberedSensor>>((ref) {
+  return ref.watch(rememberedSensorStoreProvider).getAll();
 });

@@ -10,7 +10,7 @@ import '../../models/pending_reading.dart';
 /// Provides the offline queue between BLE download and Firebase upload.
 class LocalPacketStore {
   static const _dbName = 'buzzhive_packets.db';
-  static const _dbVersion = 1;
+  static const _dbVersion = 2;
   static const _log = 'LocalStore';
 
   Database? _db;
@@ -29,6 +29,7 @@ class LocalPacketStore {
       path,
       version: _dbVersion,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -63,6 +64,8 @@ class LocalPacketStore {
         fx REAL NOT NULL DEFAULT 0,
         fy REAL NOT NULL DEFAULT 0,
         fz REAL NOT NULL DEFAULT 0,
+        vbat REAL NOT NULL DEFAULT 0,
+        weight_kg REAL NOT NULL DEFAULT 0,
         sensor_timestamp_ms INTEGER NOT NULL,
         received_at TEXT NOT NULL,
         synced INTEGER NOT NULL DEFAULT 0,
@@ -77,6 +80,18 @@ class LocalPacketStore {
       CREATE INDEX idx_pending_unsynced
         ON pending_readings(synced) WHERE synced = 0
     ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        'ALTER TABLE pending_readings ADD COLUMN vbat REAL NOT NULL DEFAULT 0',
+      );
+      await db.execute(
+        'ALTER TABLE pending_readings ADD COLUMN weight_kg REAL NOT NULL DEFAULT 0',
+      );
+      AppLogger.info('Migrated DB from v$oldVersion → v$newVersion', name: _log);
+    }
   }
 
   // ---- Sessions ----
@@ -153,6 +168,8 @@ class LocalPacketStore {
     required double fy,
     required double fz,
     required int sensorTimestampMs,
+    double vbat = 0,
+    double weightKg = 0,
   }) async {
     final dbInstance = await database;
     await dbInstance.insert(
@@ -172,6 +189,8 @@ class LocalPacketStore {
         'fx': fx,
         'fy': fy,
         'fz': fz,
+        'vbat': vbat,
+        'weight_kg': weightKg,
         'sensor_timestamp_ms': sensorTimestampMs,
         'received_at': DateTime.now().toUtc().toIso8601String(),
         'synced': 0,
@@ -261,6 +280,8 @@ class LocalPacketStore {
       fx: (row['fx'] as num).toDouble(),
       fy: (row['fy'] as num).toDouble(),
       fz: (row['fz'] as num).toDouble(),
+      vbat: (row['vbat'] as num?)?.toDouble() ?? 0,
+      weightKg: (row['weight_kg'] as num?)?.toDouble() ?? 0,
       sensorTimestampMs: row['sensor_timestamp_ms'] as int,
       receivedAt: DateTime.parse(row['received_at'] as String),
       synced: (row['synced'] as int) == 1,

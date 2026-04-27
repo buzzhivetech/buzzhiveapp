@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/errors/app_exception.dart';
+import '../../../core/router/routes.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/linked_sensors_provider.dart';
 import '../../../providers/sensor_readings_provider.dart';
@@ -116,11 +117,40 @@ class _AddSensorScreenState extends ConsumerState<AddSensorScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'Link a sensor by its ID. The sensor must exist in the system (Firebase).',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                FilledButton.icon(
+                  onPressed: () => context.push(Routes.bleSensorDiscovery),
+                  icon: const Icon(Icons.bluetooth_searching),
+                  label: const Text('Scan for Sensors'),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(48),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => context.push(Routes.receiverSetup),
+                  icon: const Icon(Icons.router),
+                  label: const Text('Set Up Receiver'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(48),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'or enter ID manually',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
                       ),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
                 ),
                 const SizedBox(height: 24),
                 TextFormField(

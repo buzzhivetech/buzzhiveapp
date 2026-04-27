@@ -14,6 +14,15 @@ class AppConstants {
 
   /// Firebase Realtime Database path for sensor data.
   static const String firebaseSensorDataPath = 'sensor_data';
+  static const String firebaseRawIngestPath = 'raw_ingest';
+  static const String firebaseAnalyzedDataPath = 'analyzed_data';
+  static const String firebaseLatestHiveStatePath = 'latest_hive_state';
+  static const String firebaseDeviceStatusPath = 'device_status';
+
+  /// Typed telemetry identifiers shared with the backend envelope.
+  static const String schemaVersion = '1.0.0';
+  static const String messageTypeTelemetry = 'telemetry';
+  static const String deviceTypeHiveSensor = 'hive_sensor';
 
   /// Consider "disconnected" if no data for this many milliseconds.
   static const int connectionStaleMs = 30000;
