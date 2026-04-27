@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/ble_protocol.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../core/utils/ble_permissions.dart';
 import '../../../models/remembered_sensor.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/ble_providers.dart';
@@ -74,12 +75,25 @@ class _BleSensorDiscoveryScreenState
 
   // ---- Phase 1: Scan ----
 
-  void _startScan() {
+  Future<void> _startScan() async {
     setState(() {
       _phase = _Phase.scanning;
       _error = null;
       _discovered.clear();
     });
+
+    final granted = await ensureBlePermissions();
+    if (!granted) {
+      if (mounted) {
+        setState(() {
+          _error = 'Bluetooth and location permissions are required to scan '
+              'for sensors. Please grant them in Settings.';
+          _phase = _Phase.error;
+        });
+      }
+      return;
+    }
+
     _scanSub?.cancel();
     _scanSub = ref
         .read(bleTransferRepositoryProvider)

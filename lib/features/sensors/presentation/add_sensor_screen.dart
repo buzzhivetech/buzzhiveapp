@@ -125,6 +125,15 @@ class _AddSensorScreenState extends ConsumerState<AddSensorScreen> {
                     minimumSize: const Size.fromHeight(48),
                   ),
                 ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => context.push(Routes.receiverSetup),
+                  icon: const Icon(Icons.router),
+                  label: const Text('Set Up Receiver'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(48),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Row(
                   children: [

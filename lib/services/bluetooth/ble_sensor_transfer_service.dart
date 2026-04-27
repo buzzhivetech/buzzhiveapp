@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
@@ -155,4 +156,79 @@ class BleSensorTransferService {
 
   Future<void> sendDeleteConfirmed(String deviceId) =>
       writeCommand(deviceId, Uint8List.fromList([BleProtocol.cmdDeleteConfirmed]));
+
+  // =====================================================================
+  // Receiver WiFi provisioning
+  // =====================================================================
+
+  /// Scan for BuzzHive receivers in setup mode.
+  Stream<DiscoveredDevice> scanForReceivers() {
+    AppLogger.info('Starting BLE scan for BuzzHive receivers', name: _log);
+    return _ble.scanForDevices(
+      withServices: [BleProtocol.receiverServiceUuid],
+      scanMode: ScanMode.lowLatency,
+    ).where((d) => BleProtocol.isReceiverDevice(d));
+  }
+
+  /// Connect to a receiver in setup mode.
+  Stream<ConnectionStateUpdate> connectToReceiver(String deviceId) {
+    AppLogger.info('Connecting to receiver $deviceId', name: _log);
+    return _ble.connectToAdvertisingDevice(
+      id: deviceId,
+      withServices: [BleProtocol.receiverServiceUuid],
+      prescanDuration: BleProtocol.prescanDuration,
+      connectionTimeout: BleProtocol.connectionTimeout,
+      servicesWithCharacteristicsToDiscover: {
+        BleProtocol.receiverServiceUuid: [
+          BleProtocol.receiverCredCharUuid,
+          BleProtocol.receiverStatusCharUuid,
+        ],
+      },
+    );
+  }
+
+  QualifiedCharacteristic _receiverChar(String deviceId, Uuid charUuid) =>
+      QualifiedCharacteristic(
+        serviceId: BleProtocol.receiverServiceUuid,
+        characteristicId: charUuid,
+        deviceId: deviceId,
+      );
+
+  /// Subscribe to provisioning status notifications from the receiver.
+  /// Values are UTF-8 strings: READY, WIFI_OK, WIFI_FAIL, etc.
+  Stream<String> subscribeToReceiverStatus(String deviceId) {
+    return _ble
+        .subscribeToCharacteristic(
+          _receiverChar(deviceId, BleProtocol.receiverStatusCharUuid),
+        )
+        .map((bytes) => utf8.decode(bytes));
+  }
+
+  /// Write WiFi credentials (and optional sensor IDs) to the receiver.
+  /// Payload format: "SSID\nPASS\nID1,ID2,ID3"
+  Future<void> writeWifiCredentials(
+    String deviceId, {
+    required String ssid,
+    required String password,
+    List<String> sensorIds = const [],
+  }) async {
+    final payload = StringBuffer()
+      ..write(ssid)
+      ..write('\n')
+      ..write(password);
+    if (sensorIds.isNotEmpty) {
+      payload
+        ..write('\n')
+        ..write(sensorIds.join(','));
+    }
+    final bytes = utf8.encode(payload.toString());
+    AppLogger.info(
+      'Writing WiFi credentials to receiver (${bytes.length} bytes)',
+      name: _log,
+    );
+    await _ble.writeCharacteristicWithResponse(
+      _receiverChar(deviceId, BleProtocol.receiverCredCharUuid),
+      value: bytes,
+    );
+  }
 }

@@ -6,6 +6,7 @@ import '../../features/alerts/presentation/alerts_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/bluetooth/presentation/ble_download_screen.dart';
+import '../../features/bluetooth/presentation/receiver_setup_screen.dart';
 import '../../features/bluetooth/presentation/sync_status_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/map/presentation/hive_map_screen.dart';
@@ -110,6 +111,10 @@ GoRouter createAppRouter({
       GoRoute(
         path: Routes.syncStatus,
         builder: (_, __) => const SyncStatusScreen(),
+      ),
+      GoRoute(
+        path: Routes.receiverSetup,
+        builder: (_, __) => const ReceiverSetupScreen(),
       ),
     ],
   );

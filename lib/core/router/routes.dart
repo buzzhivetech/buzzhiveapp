@@ -17,4 +17,5 @@ class Routes {
   static const String bleSensorDiscovery = '/sensors/discover';
   static const String bleDownload = '/ble/download';
   static const String syncStatus = '/ble/sync';
+  static const String receiverSetup = '/receiver/setup';
 }
