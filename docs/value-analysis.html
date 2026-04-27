@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Value analysis · Working backward from what actually created value</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f7f6f2;
+        --bg-tint: #eeece4;
+        --ink: #141414;
+        --ink-2: #464541;
+        --ink-3: #87857e;
+        --rule: #c9c6b9;
+        --navy: #1a3c5c;
+        --navy-soft: #36617e;
+        --red: #b03030;
+        --red-soft: #d28a8a;
+        --green: #3e6b3a;
+        --green-soft: #8cb186;
+        --amber: #b57f1f;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .serif { font-family: "Cormorant Garamond", Georgia, serif; }
+      .mono { font-family: "JetBrains Mono", monospace; }
+
+      /* Hero */
+      .hero {
+        padding: 48px 5vw 40px;
+        border-bottom: 1px solid var(--rule);
+        background: var(--bg-tint);
+      }
+      .hero .meta {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .hero .meta .left span { color: var(--navy); }
+      .hero h1 {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 500;
+        font-size: clamp(44px, 6.5vw, 96px);
+        line-height: 0.98;
+        letter-spacing: -0.025em;
+        margin: 36px 0 18px;
+        max-width: 1200px;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--navy);
+        font-weight: 400;
+      }
+      .hero .deck {
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 300;
+        font-size: clamp(17px, 1.6vw, 22px);
+        line-height: 1.5;
+        max-width: 820px;
+        color: var(--ink-2);
+      }
+      .hero .deck strong { font-weight: 500; color: var(--ink); }
+
+      /* Section primitives */
+      .wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 5vw;
+      }
+
+      section {
+        padding: 56px 0 40px;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .sec-head {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 48px;
+        margin-bottom: 36px;
+        align-items: start;
+      }
+      .sec-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--navy);
+        padding-top: 10px;
+        line-height: 1.6;
+      }
+      .sec-num .dim { color: var(--ink-3); display: block; margin-top: 4px; }
+      .sec-title {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 500;
+        font-size: clamp(30px, 3.2vw, 44px);
+        line-height: 1.08;
+        letter-spacing: -0.01em;
+        margin: 0 0 12px;
+      }
+      .sec-title em { font-style: italic; color: var(--navy); font-weight: 400; }
+      .sec-sub {
+        font-size: 17px;
+        color: var(--ink-2);
+        max-width: 780px;
+        line-height: 1.55;
+      }
+
+      .sec-body {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 48px;
+      }
+      .sec-body .label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        padding-top: 4px;
+      }
+
+      /* Preface */
+      .preface {
+        padding: 40px 0 30px;
+      }
+      .preface p {
+        font-size: 19px;
+        line-height: 1.55;
+        margin: 0 0 16px;
+        max-width: 780px;
+      }
+      .preface p.lead {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 26px;
+        line-height: 1.35;
+        font-style: italic;
+        color: var(--ink);
+      }
+      .preface p strong { font-weight: 600; color: var(--navy); }
+
+      /* Reference-model cards */
+      .models {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2px;
+        background: var(--rule);
+        border: 1px solid var(--rule);
+      }
+      .model {
+        background: var(--bg);
+        padding: 28px 24px;
+      }
+      .model .shape {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--navy);
+        margin-bottom: 8px;
+      }
+      .model .name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 30px;
+        font-weight: 500;
+        line-height: 1.1;
+        margin: 0 0 14px;
+      }
+      .model .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+        padding-bottom: 14px;
+        border-bottom: 1px dashed var(--rule);
+      }
+      .model .metrics .m .lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .model .metrics .m .val {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 22px;
+        line-height: 1.2;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .model .story {
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--ink-2);
+        margin-bottom: 12px;
+      }
+      .model .reads {
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 12px;
+        background: var(--bg-tint);
+        border-left: 3px solid var(--navy);
+      }
+      .model .reads strong { color: var(--navy); }
+      .model.fit-kill { border-top: 3px solid var(--red); }
+      .model.fit-maybe { border-top: 3px solid var(--amber); }
+      .model.fit-match { border-top: 3px solid var(--green); }
+      .model .fit {
+        display: inline-block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        margin-bottom: 10px;
+      }
+      .fit-kill .fit { background: var(--red); color: var(--bg); }
+      .fit-maybe .fit { background: var(--amber); color: var(--bg); }
+      .fit-match .fit { background: var(--green); color: var(--bg); }
+
+      /* Math block */
+      .math {
+        background: var(--bg-tint);
+        padding: 28px;
+        border-left: 3px solid var(--navy);
+        margin-bottom: 24px;
+      }
+      .math .title {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--navy);
+        margin-bottom: 14px;
+      }
+      .math table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+      }
+      .math table td {
+        padding: 8px 12px 8px 0;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+      }
+      .math table td:first-child { color: var(--ink-2); width: 40%; }
+      .math table td:last-child { color: var(--ink); font-weight: 500; text-align: right; }
+      .math table tr.final td {
+        border-bottom: none;
+        padding-top: 14px;
+        font-size: 15px;
+        color: var(--navy);
+        font-weight: 600;
+      }
+      .math p {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 15px;
+        line-height: 1.6;
+        color: var(--ink-2);
+        margin: 16px 0 0;
+      }
+
+      /* Catalyst grid */
+      .catalysts {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      .catalyst {
+        border-top: 2px solid var(--ink);
+        padding-top: 16px;
+      }
+      .catalyst .when {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--navy);
+        margin-bottom: 8px;
+      }
+      .catalyst .event {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 1.25;
+        margin: 0 0 8px;
+      }
+      .catalyst .prob {
+        display: inline-block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        margin-bottom: 10px;
+        background: var(--bg-tint);
+      }
+      .catalyst .prob.p-high { background: var(--green-soft); color: var(--ink); }
+      .catalyst .prob.p-med { background: var(--amber); color: var(--bg); }
+      .catalyst .prob.p-low { background: var(--red-soft); color: var(--ink); }
+      .catalyst .what {
+        font-size: 13px;
+        line-height: 1.55;
+        color: var(--ink-2);
+      }
+
+      /* Sequence */
+      .sequence {
+        border: 1px solid var(--rule);
+        background: var(--bg);
+      }
+      .phase {
+        display: grid;
+        grid-template-columns: 140px 1fr 200px;
+        gap: 24px;
+        padding: 28px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .phase:last-child { border-bottom: none; }
+      .phase.active { background: var(--bg-tint); }
+      .phase .marker {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--navy);
+      }
+      .phase .marker .big {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 36px;
+        display: block;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+      .phase .body h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 24px;
+        font-weight: 500;
+        margin: 0 0 8px;
+        line-height: 1.2;
+      }
+      .phase .body p {
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--ink-2);
+        margin: 0 0 8px;
+      }
+      .phase .body ul {
+        margin: 4px 0 0;
+        padding-left: 16px;
+        font-size: 13px;
+        color: var(--ink-2);
+      }
+      .phase .body ul li { margin-bottom: 3px; }
+      .phase .signal {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        line-height: 1.6;
+        color: var(--ink-2);
+        background: var(--bg);
+        border-left: 3px solid var(--navy);
+        padding: 10px 12px;
+      }
+      .phase.active .signal { background: var(--bg); }
+      .phase .signal .sig-title {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        color: var(--navy);
+        margin-bottom: 4px;
+      }
+
+      /* Breaks */
+      .breaks {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      .break {
+        border-top: 2px solid var(--red);
+        padding: 14px 0 0;
+      }
+      .break .lbl {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--red);
+        margin-bottom: 6px;
+      }
+      .break .stmt {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 1.3;
+        margin-bottom: 8px;
+      }
+      .break .check {
+        font-size: 13px;
+        color: var(--ink-2);
+        line-height: 1.5;
+      }
+      .break .check strong { color: var(--ink); font-weight: 600; }
+
+      /* Pull quote */
+      .pull {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 48px;
+        margin: 36px 0;
+      }
+      .pull .q {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 30px;
+        line-height: 1.3;
+        font-style: italic;
+        color: var(--ink);
+        border-left: 3px solid var(--navy);
+        padding: 4px 0 4px 28px;
+        max-width: 860px;
+      }
+      .pull .q strong { font-style: normal; color: var(--navy); font-weight: 600; }
+
+      /* Closing */
+      .closing {
+        padding: 72px 5vw 96px;
+        background: var(--bg-tint);
+        border-top: 1px solid var(--ink);
+      }
+      .closing .wrap { padding: 0; max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 220px 1fr; gap: 48px; }
+      .closing h2 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(34px, 4vw, 56px);
+        font-weight: 500;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        margin: 0 0 20px;
+      }
+      .closing h2 em { font-style: italic; color: var(--navy); }
+      .closing p {
+        font-size: 18px;
+        line-height: 1.6;
+        max-width: 800px;
+        margin: 0 0 14px;
+      }
+      .closing .sig {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        color: var(--ink-2);
+        border-top: 1px solid var(--rule);
+        padding-top: 16px;
+        margin-top: 32px;
+        max-width: 800px;
+      }
+
+      @media (max-width: 900px) {
+        .sec-head, .sec-body, .pull, .closing .wrap { grid-template-columns: 1fr; gap: 20px; }
+        .models, .catalysts, .breaks { grid-template-columns: 1fr; }
+        .phase { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="meta">
+        <div class="left"><span>Backward-induction analysis</span> · follow-up to final-synthesis.html</div>
+        <div>17 April 2026 · research memo</div>
+      </div>
+      <h1>Working <em>backward</em><br/>from what has<br/><em>actually</em> created value.</h1>
+      <div class="deck">
+        The question: given the evidence in the synthesis doc, what should we build to create the most value? The method: don't start from our codebase or our instincts. Start from <strong>what has been proven to produce $100M+ outcomes in analog markets</strong>, check which analogs map to the beekeeper universe, then work backward to the specific first moves. If the evidence doesn't support a venture path, the analysis says so — without rescuing the thesis from its own data.
+      </div>
+    </header>
+
+    <div class="wrap">
+      <section class="preface">
+        <div class="sec-body">
+          <div class="label">Preface</div>
+          <div>
+            <p class="lead">
+              You proposed that "build users now" and "bet on a future catalyst" might be the same move, not two moves. I didn't want to assume that was right just because it was yours. The research below was designed to break the idea before it got written up.
+            </p>
+            <p>
+              The short version of what came back: <strong>the combined approach does hold up — but not as a Waze-style consumer network.</strong> The evidence points at a specific, narrower shape: a <em>professional-grade data vendor play</em> modeled on Floodbase, where a beekeeper tool is the data-acquisition layer and parametric insurers / reinsurers are the economic buyer. This is different from what I said in the synthesis and I want to explain exactly what changed my mind and what could still kill it.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-num">
+            Chapter 01
+            <span class="dim">Start from the end</span>
+          </div>
+          <div>
+            <div class="sec-title">Four analogs that <em>created</em> the value we want to create.</div>
+            <div class="sec-sub">
+              Each of these companies built a user-contributed or sensor-contributed data network in an adjacent domain, and each of them produced an outcome between $250M and $1.1B. The question isn't whether the model works — it obviously does — it's which analog our situation maps to, and which it doesn't.
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-body">
+          <div class="label">Reference models</div>
+          <div class="models">
+
+            <div class="model fit-kill">
+              <span class="fit">Doesn't map</span>
+              <div class="shape">Consumer data network · massive scale</div>
+              <h3 class="name">Waze</h3>
+              <div class="metrics">
+                <div class="m"><div class="lbl">Users at exit</div><div class="val">50M</div></div>
+                <div class="m"><div class="lbl">Time to exit</div><div class="val">5 yrs</div></div>
+                <div class="m"><div class="lbl">Outcome</div><div class="val">$1.1B</div></div>
+              </div>
+              <div class="story">
+                Crowdsourced traffic data from phones of drivers. Passive GPS + active hazard reporting. Google bought them primarily to keep the data out of Apple's and Facebook's hands.
+              </div>
+              <div class="reads">
+                <strong>Why it doesn't fit us:</strong> Waze needed tens of millions of daily users to make traffic data valuable. The entire US beekeeper population is ~150,000. Global, ~600,000. Even 100% penetration of that universe is ~1% of Waze scale. <em>Consumer-network math breaks on the beekeeper denominator.</em>
+              </div>
+            </div>
+
+            <div class="model fit-maybe">
+              <span class="fit">Partial fit</span>
+              <div class="shape">User data + enterprise API monetization</div>
+              <h3 class="name">Strava Metro</h3>
+              <div class="metrics">
+                <div class="m"><div class="lbl">Active users</div><div class="val">100M</div></div>
+                <div class="m"><div class="lbl">Enterprise ARR</div><div class="val">$120M</div></div>
+                <div class="m"><div class="lbl">B2B buyers</div><div class="val">1,500+</div></div>
+              </div>
+              <div class="story">
+                Free app for athletes, aggregated anonymized movement data sold to municipalities and insurance wellness programs. Metro data is free to city governments; enterprise API access and insurance incentive contracts drive ~$120M ARR.
+              </div>
+              <div class="reads">
+                <strong>What carries over:</strong> the <em>structure</em> — free user product, institutional data buyer — not the user scale. A professional-data version of this structure doesn't need 100M users; Floodbase (below) proves you can run it on a few thousand sensors.
+              </div>
+            </div>
+
+            <div class="model fit-match">
+              <span class="fit">Direct match</span>
+              <div class="shape">Scientific data vendor · insurance buyer</div>
+              <h3 class="name">Floodbase</h3>
+              <div class="metrics">
+                <div class="m"><div class="lbl">Total raised</div><div class="val">$17M</div></div>
+                <div class="m"><div class="lbl">Years to Swiss Re</div><div class="val">~9</div></div>
+                <div class="m"><div class="lbl">Policies facilitated</div><div class="val">9,000</div></div>
+              </div>
+              <div class="story">
+                Founded 2015 by two Yale Master's students with climate-science backgrounds — not insurance. Built proprietary flood mapping from Google Earth Engine. Now preferred data vendor to Swiss Re Corporate Solutions, AXA Climate, Liberty Mutual Re, with a €180M Italian portfolio policy.
+              </div>
+              <div class="reads">
+                <strong>Why this one matters:</strong> proves that climate/environmental-science software teams can enter parametric insurance from outside the industry. The team we have — mobile + IoT + firmware — is not more distant from parametric insurance than Yale master's students in climate science were. <em>This was the biggest update to my prior analysis.</em>
+              </div>
+            </div>
+
+            <div class="model fit-maybe">
+              <span class="fit">Possible but slow</span>
+              <div class="shape">Long-horizon proprietary data moat</div>
+              <h3 class="name">Climate Corp → Bayer</h3>
+              <div class="metrics">
+                <div class="m"><div class="lbl">Years of data</div><div class="val">13</div></div>
+                <div class="m"><div class="lbl">Data points</div><div class="val">117B</div></div>
+                <div class="m"><div class="lbl">Exit</div><div class="val">$930M</div></div>
+              </div>
+              <div class="story">
+                Monsanto acquired The Climate Corporation for $930M in 2013. The moat was 13 years of accumulated field-level data. Bayer still runs AI on that 2013-era data today — it's the foundation of their breeding program acceleration.
+              </div>
+              <div class="reads">
+                <strong>Structural lesson:</strong> proprietary longitudinal data is the most durable moat in agtech. Even tiny user bases, if they produce <em>rigorous</em> data for long enough, can become acquisition targets for chemical, seed, or insurance majors. Too slow for our current runway without funding.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-num">
+            Chapter 02
+            <span class="dim">Apply to our universe</span>
+          </div>
+          <div>
+            <div class="sec-title">Only the <em>Floodbase</em> shape survives the math.</div>
+            <div class="sec-sub">
+              The beekeeper population is small — which kills consumer-network outcomes but doesn't kill professional-data-vendor outcomes. Here is the actual math for why.
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-body">
+          <div class="label">Denominator math</div>
+          <div>
+            <div class="math">
+              <div class="title">User network scale — test against analogs</div>
+              <table>
+                <tr><td>US beekeeper population</td><td>~150,000</td></tr>
+                <tr><td>Global beekeeper population</td><td>~600,000</td></tr>
+                <tr><td>US managed colonies (2024 survey)</td><td>~2,600,000</td></tr>
+                <tr><td>BeeHero-covered commercial hives</td><td>~300,000+ (12% of total)</td></tr>
+                <tr><td>Non-BeeHero hives (our addressable)</td><td>~2,300,000</td></tr>
+                <tr><td>Small-scale operators (&le;50 colonies)</td><td>the vast majority of operators</td></tr>
+                <tr class="final"><td>Max plausible active-user base</td><td>30,000–60,000 globally</td></tr>
+              </table>
+              <p>Even optimistic 10% global penetration yields ~60K active users. <strong>That kills Waze and weakens Strava as analogs.</strong> It does not kill Floodbase, which built to Swiss Re scale on ~9,000 policies and a proprietary mapping asset — not on millions of contributors.</p>
+            </div>
+
+            <div class="math">
+              <div class="title">Economic-buyer scale — who could actually pay</div>
+              <table>
+                <tr><td>Parametric insurance market (2024)</td><td>$16B</td></tr>
+                <tr><td>Parametric claims platforms market (2024)</td><td>$1.27B</td></tr>
+                <tr><td>Projected market by 2032</td><td>$34B / $4.52B</td></tr>
+                <tr><td>Sensor-triggered parametric ag products live</td><td>Arbol-Pollen, REVO Honey, USDA API</td></tr>
+                <tr><td>Products using hive sensor triggers</td><td>Zero</td></tr>
+                <tr><td>Parametric pollination peril addressable</td><td>$100–400M TAM (bottom-up almond + berry + cucurbit)</td></tr>
+                <tr class="final"><td>Floodbase-shaped revenue at $17M total capital</td><td>Credible within 5–8 years</td></tr>
+              </table>
+              <p>The numerator that matters is not beekeeper count — it's insurance-grade data coverage of crops where pollination peril is real. <strong>~2,300,000 non-BeeHero hives distributed across 5M+ pollinated US acres is a rich enough dataset</strong> to produce the statistical basis required for parametric triggers, if harvested rigorously.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pull">
+          <div class="label mono" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); padding-top: 4px;">Finding 01</div>
+          <div class="q">
+            The value isn't in the <strong>number of users</strong>. It's in the <strong>coverage of pollination events</strong>. Our universe produces enough pollination events to be insurance-relevant — the bottleneck is rigor, not scale.
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-num">
+            Chapter 03
+            <span class="dim">Catalyst map</span>
+          </div>
+          <div>
+            <div class="sec-title">The catalysts that could <em>inflect</em> the category.</div>
+            <div class="sec-sub">
+              A Floodbase-shaped data vendor is a slow build. It only pays if a catalyst creates mandatory demand for pollination-peril data. Here are the catalysts actually on the board, with honest probability estimates anchored to specific evidence.
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-body">
+          <div class="label">Catalyst board</div>
+          <div class="catalysts">
+
+            <div class="catalyst">
+              <div class="when">2026–2027 · high likelihood</div>
+              <div class="event">Arbol or Descartes launches a pollination-peril parametric product.</div>
+              <span class="prob p-high">Probability · 55%</span>
+              <div class="what">
+                Arbol-Pollen Systems partnership launched Feb 2026 already uses satellite + GIS triggers. Bee-sensor triggers are the obvious next step. Either uses BeeHero data exclusively (kills this play), or an open data layer (validates it). Watching which way this goes is the cheapest signal we can buy.
+              </div>
+            </div>
+
+            <div class="catalyst">
+              <div class="when">2027–2028 · moderate likelihood</div>
+              <div class="event">Second 30–40%+ commercial colony loss event.</div>
+              <span class="prob p-med">Probability · 35–40%</span>
+              <div class="what">
+                2024–2025 losses were 62% commercial. Varroa amitraz-resistance, DWV-A/B, acute paralysis virus all remain structurally present. A second bad year forces USDA RMA to either expand API or green-light private parametric partners, and forces CPG buyers to require verification.
+              </div>
+            </div>
+
+            <div class="catalyst">
+              <div class="when">2027–2029 · uncertain</div>
+              <div class="event">TNFD v2 sector guidance names pollinator metrics.</div>
+              <span class="prob p-low">Probability · 20–25%</span>
+              <div class="what">
+                TNFD transition-plan guidance released Nov 2025, ISSB building a nature standard on TNFD architecture. EU Pollinator Monitoring Scheme methodology completed Oct 2024. Pollinator-specific metric adoption is plausible but not scheduled. Would bring enterprise MRV budget into the category.
+              </div>
+            </div>
+
+            <div class="catalyst">
+              <div class="when">2026–2028 · unclear</div>
+              <div class="event">Federal parametric crop insurance passes Congress.</div>
+              <span class="prob p-low">Probability · 15–25%</span>
+              <div class="what">
+                US Senators introduced a bill to add parametric products to the Federal Crop Insurance Program. If passed, opens federal subsidy for private parametric providers and creates regulatory admission for sensor-triggered products. Time-dependent on Congressional calendar.
+              </div>
+            </div>
+
+            <div class="catalyst">
+              <div class="when">2027+ · baseline</div>
+              <div class="event">State-level parametric expansion follows NY.</div>
+              <span class="prob p-high">Probability · 60%</span>
+              <div class="what">
+                NY enacted parametric-specific insurance law Dec 2024. California, Florida, and North Dakota (top three API enrollment states) are all plausible follow-ups. Lower-bar catalyst — gives private parametric products a clearer state-DOI pathway without federal action.
+              </div>
+            </div>
+
+            <div class="catalyst">
+              <div class="when">Any time · always on</div>
+              <div class="event">Strategic approach from General Mills / Rabobank / BeeHero itself.</div>
+              <span class="prob p-low">Probability · low but non-zero</span>
+              <div class="what">
+                General Mills is a BeeHero investor. Rabobank is a BeeHero investor. MS&amp;AD (Japanese insurer) is a BeeHero investor. If we build a credible non-BeeHero data asset, each has a reason to acquire rather than compete. Not a plan, but a scenario.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="pull">
+          <div class="label mono" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); padding-top: 4px;">Finding 02</div>
+          <div class="q">
+            At least one catalyst in the 2026–2028 window has probability above 50%. Stacking the top three, the probability that <strong>at least one</strong> catalyst materially reshapes the category within 24 months is roughly 75–80%. That's a bettable distribution — not a sure thing, but not wishful thinking either.
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-num">
+            Chapter 04
+            <span class="dim">The specific build</span>
+          </div>
+          <div>
+            <div class="sec-title">What the <em>backward induction</em> actually prescribes.</div>
+            <div class="sec-sub">
+              Starting from Floodbase as the reference and working back three years: here is the sequence that fits our stack, capital, and the catalyst window. Not a roadmap. A hypothesis about the shape.
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-body">
+          <div class="label">Build sequence</div>
+          <div class="sequence">
+
+            <div class="phase active">
+              <div class="marker"><span class="big">00</span>Now–Month 6</div>
+              <div class="body">
+                <h3>Validate, don't build.</h3>
+                <p>Before rebuilding product, test whether the buyer actually exists. Two classes of conversation, no code.</p>
+                <ul>
+                  <li>Three parametric-MGA conversations (Arbol, Floodbase, Descartes) on appetite for bee-sensor triggers and what data rigor they'd require</li>
+                  <li>Two reinsurer conversations (Swiss Re Corp Solutions, MS&amp;AD via BeeHero introduction) on pollination-peril appetite</li>
+                  <li>Three non-BeeHero commercial beekeeper conversations on what data they'd be willing to share and what they'd want in return</li>
+                </ul>
+              </div>
+              <div class="signal">
+                <div class="sig-title">Pass signal</div>
+                At least one MGA says "if you bring X data at Y rigor, we'd co-develop a pilot product." Without this, the rest of the sequence is speculation.
+              </div>
+            </div>
+
+            <div class="phase">
+              <div class="marker"><span class="big">01</span>Month 6–18</div>
+              <div class="body">
+                <h3>Ship the beekeeper tool, but build it as a data-acquisition system.</h3>
+                <p>Existing Flutter + BLE + Firebase/Supabase stack becomes a free-or-cheap app for sideliners and non-BeeHero commercial operators. Premium features ($10–30/month) fund operations. The architecture matters more than the feature set: every user event must be designed to produce insurance-grade data.</p>
+                <ul>
+                  <li>Sensor protocol designed for provenance (cryptographic signatures, timestamp integrity, sensor identity)</li>
+                  <li>Phone-only mode to onboard users without hardware (Strava parallel)</li>
+                  <li>Explicit data-licensing consent flow that beekeepers sign at onboarding</li>
+                  <li>Scientific-advisory partnership with Project Apis m. or BIP for methodology validation</li>
+                </ul>
+              </div>
+              <div class="signal">
+                <div class="sig-title">Pass signal</div>
+                1,000+ active users producing data that passes a third-party statistical rigor check. MGA conversations from Phase 0 converting to LOIs.
+              </div>
+            </div>
+
+            <div class="phase">
+              <div class="marker"><span class="big">02</span>Month 18–36</div>
+              <div class="body">
+                <h3>Co-develop the first parametric pilot product.</h3>
+                <p>Partner with one MGA (Arbol or Floodbase itself) to launch a small-scale pilot — one crop, one region, bounded limits. Not a national product. A single blueberry co-op in Washington, or a single almond sub-region. The objective is the first bound policy using our data as the trigger, not revenue.</p>
+                <ul>
+                  <li>$3–5M seed round from climate/insurtech VCs (Lowercarbon, EIF, Collaborative Fund — Floodbase's backers)</li>
+                  <li>Reinsurer pre-commitment on the pilot structure</li>
+                  <li>Scientific paper published on pollination-performance-to-yield correlation using our data</li>
+                </ul>
+              </div>
+              <div class="signal">
+                <div class="sig-title">Pass signal</div>
+                First bound policy triggered by our data feed. Doesn't have to be big. Has to exist and pay out correctly.
+              </div>
+            </div>
+
+            <div class="phase">
+              <div class="marker"><span class="big">03</span>Month 36+</div>
+              <div class="body">
+                <h3>Scale if a catalyst hits. Hold if not.</h3>
+                <p>By month 36 we know whether the catalyst materialized (second colony crisis, TNFD v2, federal parametric approval). If yes, scale the data feed into adjacent crops and geographies. If no, we still have a real business — a parametric data vendor with a niche product and a defensible data moat — just at a slower trajectory.</p>
+                <ul>
+                  <li>Scale case: expand MGA partnerships, hire actuarial + insurance compliance, $15–20M Series A</li>
+                  <li>Hold case: optimize for profitability at $5–10M ARR, long-accumulate data, become attractive acquisition target for strategic (Bayer, Syngenta, Rabobank) over 5–10 years</li>
+                </ul>
+              </div>
+              <div class="signal">
+                <div class="sig-title">Exit condition</div>
+                The Climate Corp pattern: 5–10 years of rigorous data makes the asset valuable to a buyer with distribution. Not our ceiling — our floor if the venture outcome doesn't hit.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-num">
+            Chapter 05
+            <span class="dim">Kill conditions</span>
+          </div>
+          <div>
+            <div class="sec-title">What would <em>break</em> this specific thesis.</div>
+            <div class="sec-sub">
+              Each of these is a named failure mode, not a hypothetical. If any one lands, the build-sequence above is wrong and we should stop spending cycles on it.
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-body">
+          <div class="label">Stress tests</div>
+          <div class="breaks">
+
+            <div class="break">
+              <div class="lbl">Break 01</div>
+              <div class="stmt">Phase 0 MGA conversations return flat "satellite + weather is enough."</div>
+              <div class="check">
+                <strong>Check by:</strong> Month 6. If Arbol, Floodbase, and Descartes all say hive-sensor triggers add marginal accuracy but not enough to justify onboarding new data rigor, the underlying buyer doesn't exist yet and the Floodbase analogy doesn't transfer.
+              </div>
+            </div>
+
+            <div class="break">
+              <div class="lbl">Break 02</div>
+              <div class="stmt">BeeHero announces an insurance product with Arbol / MS&amp;AD / reinsurer partner.</div>
+              <div class="check">
+                <strong>Check by:</strong> Any time. If BeeHero directly occupies the parametric-data-vendor seat with exclusive data, the non-BeeHero niche we're betting on shrinks to near-zero. Their MS&amp;AD investor signals this is already in motion.
+              </div>
+            </div>
+
+            <div class="break">
+              <div class="lbl">Break 03</div>
+              <div class="stmt">Non-BeeHero commercial beekeepers won't share data.</div>
+              <div class="check">
+                <strong>Check by:</strong> Month 12. The ApisProtect pattern — beekeepers resist paying for and contributing to sensor data platforms — could simply repeat. If we can't get 500+ real active users in year one, the data asset never accumulates.
+              </div>
+            </div>
+
+            <div class="break">
+              <div class="lbl">Break 04</div>
+              <div class="stmt">None of the catalysts materialize in 36 months.</div>
+              <div class="check">
+                <strong>Check by:</strong> Month 36. If no second colony crisis, no TNFD v2 pollinator metrics, no federal parametric bill, no state-level expansion, the business remains a niche data vendor with low growth. Not zero, but not a venture outcome.
+              </div>
+            </div>
+
+            <div class="break">
+              <div class="lbl">Break 05</div>
+              <div class="stmt">Climate/insurtech funding winter deepens.</div>
+              <div class="check">
+                <strong>Check by:</strong> Late 2026 VC deployment data. Floodbase raised $5M in Feb 2025; Arbol raised $60M in April 2024. If 2026–2027 sees insurtech funding contract further, the $3–5M seed required for Phase 2 may not clear.
+              </div>
+            </div>
+
+            <div class="break">
+              <div class="lbl">Break 06</div>
+              <div class="stmt">Data rigor falls short of insurance-grade.</div>
+              <div class="check">
+                <strong>Check by:</strong> Month 18. Sensor data from consumer-grade hardware has well-known noise floors. If peer-reviewed validation of our data against ground-truth pollination outcomes fails to hit statistical significance, no MGA will bind a policy on it.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-num">
+            Chapter 06
+            <span class="dim">What changed from the synthesis</span>
+          </div>
+          <div>
+            <div class="sec-title">Two claims I made last doc that this research <em>updates</em>.</div>
+            <div class="sec-sub">
+              For transparency. Not hedging — actual corrections based on the new data.
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-body">
+          <div class="label">Corrections</div>
+          <div>
+            <p style="font-size: 17px; line-height: 1.6; max-width: 780px;">
+              <strong style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--navy);">Update 01 ·</strong>
+              I said a data-oracle path required insurance DNA we don't have. <strong>Floodbase disproves that.</strong> Two Yale master's students with climate science backgrounds, starting from a Google Earth Engine school project, now have Swiss Re as a preferred partner. The path is long but it exists for non-insurance teams. This moves "neutral oracle" from Option C (high-variance long shot) to a specific shape with a proven playbook.
+            </p>
+            <p style="font-size: 17px; line-height: 1.6; max-width: 780px; margin-top: 18px;">
+              <strong style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--navy);">Update 02 ·</strong>
+              I underweighted your combined-approach insight. I was thinking of the user-acquisition play and the catalyst bet as separate options. <strong>They're actually the same play expressed across two time horizons:</strong> the user layer is the data-acquisition mechanism, the insurer layer is the economic buyer, and the catalyst is what makes the buyer show up in size. Strava Metro and Floodbase are two variants of that same structure. I should have seen that earlier.
+            </p>
+            <p style="font-size: 17px; line-height: 1.6; max-width: 780px; margin-top: 18px;">
+              What <em>didn't</em> change: the verdict against a Waze-scale consumer network (beekeeper denominator too small), the verdict that Beewise / BeeHero / Alvéole own their respective seats, and the lifestyle-ceiling finding for sideliner SaaS as a standalone play.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <section class="closing">
+      <div class="wrap">
+        <div class="sec-num" style="color: var(--navy);">
+          Closing
+          <span style="display: block; color: var(--ink-3); margin-top: 4px; font-weight: 400;">Recommendation, honest shape</span>
+        </div>
+        <div>
+          <h2>The strongest answer the evidence <em>supports</em>.</h2>
+          <p>
+            Given everything in this analysis and the synthesis before it, here is the shape that has the most evidence behind it:
+          </p>
+          <p>
+            <strong>Build a beekeeper app that is also, in its architecture, a parametric-insurance-grade pollination data vendor.</strong> The users get a real tool. The data gets harvested to insurance standards from day one. The buyer is a parametric MGA or reinsurer, not the beekeeper. The catalyst you're betting on — and the evidence says at least one catalyst in 24 months is 75–80% likely — creates the moment when the data becomes acquisition-relevant or category-defining.
+          </p>
+          <p>
+            This is not a recommendation to start building tomorrow. It is a recommendation to spend the next six months running <em>Phase 0</em>: three MGA conversations, two reinsurer conversations, three non-BeeHero commercial beekeeper conversations. Each of those conversations is cheaper than a week of engineering. If Phase 0 returns a yes from even one MGA, the shape is validated and the build is justified. If it returns no from all of them, the thesis is wrong and we know without burning code.
+          </p>
+          <p>
+            That's the most honest "what to build for the most value" the evidence supports. It respects what you pointed out — that users now and catalyst later are the same bet — while grounding it in a specific analog (Floodbase) rather than in conviction.
+          </p>
+          <div class="sig">
+            — Research memo. Supersedes the Chapter 5 option ranking in final-synthesis.html where Option A (pivot) was treated as highest skill-fit. The evidence updates that ranking: this specific Floodbase-shaped build is the highest <em>evidenced</em> value path that fits our stack, because the analog exists and the catalyst window is near. 17 April 2026.
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

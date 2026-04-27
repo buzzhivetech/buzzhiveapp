@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Intern guide · Industry research outreach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #141310;
+        --ink-soft: #3d3a33;
+        --ink-dim: #6a6558;
+        --paper: #f6f3ec;
+        --paper-warm: #efeadf;
+        --paper-deep: #e8e2d1;
+        --rule: #d6cfbd;
+        --rule-soft: #e2dcc9;
+        --accent: #a84d2e;
+        --green: #4a6741;
+        --gold: #b68a2c;
+        --red: #9a3324;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .serif { font-family: "Newsreader", Georgia, serif; }
+      .mono { font-family: "IBM Plex Mono", monospace; }
+
+      /* COVER */
+      .cover {
+        padding: 40px 5vw 36px;
+        background: var(--paper-warm);
+        border-bottom: 2px solid var(--ink);
+      }
+      .cover .strip {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .cover h1 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(36px, 4.8vw, 56px);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin: 22px 0 14px;
+        max-width: 900px;
+      }
+      .cover h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+      .cover .deck {
+        font-size: clamp(16px, 1.2vw, 18px);
+        line-height: 1.5;
+        max-width: 720px;
+        color: var(--ink-soft);
+      }
+
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 0 5vw; }
+
+      /* SECTIONS */
+      section {
+        padding: 40px 0 28px;
+        border-bottom: 1px solid var(--rule);
+      }
+      section:last-of-type { border-bottom: none; }
+
+      h2 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(24px, 2.8vw, 32px);
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        margin: 0 0 6px;
+      }
+      h2 em { font-style: italic; color: var(--accent); font-weight: 400; }
+      .sec-tag {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .sec-lead {
+        font-size: 15px;
+        color: var(--ink-soft);
+        margin: 0 0 22px;
+        max-width: 720px;
+      }
+
+      /* STEPS */
+      .steps {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        counter-reset: step;
+      }
+      .steps li {
+        counter-increment: step;
+        display: grid;
+        grid-template-columns: 52px 1fr;
+        gap: 20px;
+        padding: 14px 0;
+        border-bottom: 1px dashed var(--rule-soft);
+      }
+      .steps li::before {
+        content: counter(step, decimal-leading-zero);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 22px;
+        color: var(--accent);
+        font-weight: 500;
+      }
+      .steps li .h {
+        font-family: "Newsreader", serif;
+        font-size: 19px;
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+      .steps li .t {
+        font-size: 14px;
+        color: var(--ink-soft);
+        line-height: 1.5;
+      }
+
+      /* CONTACT TABLE */
+      .contact-group {
+        margin-bottom: 28px;
+      }
+      .cg-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 10px;
+      }
+      .cg-title {
+        font-family: "Newsreader", serif;
+        font-size: 20px;
+        font-weight: 500;
+      }
+      .cg-count {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-dim);
+        letter-spacing: 0.14em;
+      }
+      .c-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .c-table th {
+        text-align: left;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 600;
+        padding: 8px 12px;
+        border-bottom: 2px solid var(--ink);
+      }
+      .c-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--rule-soft);
+        vertical-align: top;
+      }
+      .c-table td.org { font-weight: 600; width: 200px; }
+      .c-table td.who { color: var(--ink-soft); width: 200px; }
+      .c-table td.how { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-dim); width: 160px; }
+      .c-table td.lead { width: 90px; }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        border-radius: 3px;
+        font-weight: 600;
+      }
+      .badge.you { background: var(--green); color: var(--paper); }
+      .badge.founder { background: var(--accent); color: var(--paper); }
+
+      /* TEMPLATE BLOCK */
+      .tmpl {
+        margin: 16px 0 22px;
+        border: 1px solid var(--rule);
+        background: var(--paper-warm);
+      }
+      .tmpl .head {
+        padding: 8px 14px;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+      }
+      .tmpl .head .kind { color: #c97a5b; font-weight: 600; }
+      .tmpl pre {
+        margin: 0;
+        padding: 16px 18px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: var(--paper-warm);
+      }
+      .tmpl pre .slot { background: #f3e4c9; padding: 1px 4px; border-radius: 2px; color: var(--accent); font-weight: 600; }
+
+      /* QUESTIONS */
+      .q-card {
+        margin: 16px 0 24px;
+        background: var(--paper-warm);
+        border-left: 4px solid var(--accent);
+        padding: 18px 22px;
+      }
+      .q-card .group-h {
+        font-family: "Newsreader", serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0 0 12px;
+      }
+      .q-card ol {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .q-card ol li {
+        padding: 6px 0;
+        line-height: 1.5;
+        font-size: 15px;
+      }
+      .q-card .tip {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px dashed var(--rule);
+        font-size: 13px;
+        color: var(--ink-dim);
+        font-style: italic;
+      }
+
+      /* FORM (call log) */
+      .form {
+        margin-top: 12px;
+        padding: 20px 22px;
+        background: var(--paper-warm);
+        border: 1px solid var(--rule);
+      }
+      .form dl {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 10px 18px;
+        margin: 0;
+        font-size: 13px;
+      }
+      .form dt {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+      .form dd {
+        margin: 0;
+        border-bottom: 1px dotted var(--rule);
+        padding-bottom: 3px;
+        min-height: 18px;
+      }
+
+      /* TRACKER */
+      .tr-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .tr-table th {
+        text-align: left;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 600;
+        padding: 8px 10px;
+        border-bottom: 2px solid var(--ink);
+        background: var(--paper-warm);
+      }
+      .tr-table td {
+        padding: 10px;
+        border-bottom: 1px solid var(--rule-soft);
+        vertical-align: top;
+      }
+      .tr-table td:first-child { font-weight: 600; }
+      .st {
+        display: inline-block;
+        padding: 2px 8px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        border-radius: 3px;
+        font-weight: 600;
+      }
+      .st.todo { background: var(--paper-deep); color: var(--ink-soft); }
+      .st.sent { background: #e6dec4; color: var(--ink); }
+      .st.sched { background: #cfdbbd; color: var(--green); }
+      .st.done { background: var(--green); color: var(--paper); }
+
+      /* FAQ */
+      .faq-item {
+        padding: 14px 0;
+        border-bottom: 1px dashed var(--rule-soft);
+      }
+      .faq-item:last-child { border-bottom: none; }
+      .faq-q {
+        font-family: "Newsreader", serif;
+        font-style: italic;
+        font-size: 17px;
+        margin-bottom: 4px;
+      }
+      .faq-a {
+        font-size: 14px;
+        color: var(--ink-soft);
+        line-height: 1.55;
+      }
+
+      /* CALLOUT */
+      .callout {
+        margin: 18px 0;
+        padding: 16px 20px;
+        background: #f3e4c9;
+        border-left: 4px solid var(--gold);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .callout .lbl {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--gold);
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      @media (max-width: 800px) {
+        .c-table th, .c-table td { padding: 6px 8px; font-size: 12px; }
+        .c-table td.org, .c-table td.who { width: auto; }
+        .form dl { grid-template-columns: 1fr; }
+        .form dt { margin-top: 6px; }
+        .steps li { grid-template-columns: 36px 1fr; gap: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="cover">
+      <div class="strip">Intern guide · Industry research outreach · updated 17 Apr 2026</div>
+      <h1>
+        BuzzHive outreach guide 
+      </h1>
+      <p class="deck">
+        We're doing a short industry-research project at BuzzHive over the next week. We want to interview about twelve people across four industries (insurance, beekeepers, acoustic-sensor companies, and biodiversity consultants) to understand how they work and what they'd find useful. Your job is to help us schedule those interviews, take notes, and keep everything organized. This guide has everything you need.
+      </p>
+    </header>
+
+    <div class="wrap">
+
+      <!-- YOUR JOB -->
+      <section>
+        <div class="sec-tag">Section 01</div>
+        <h2>Your job, in five steps</h2>
+        <p class="sec-lead">This is the whole sprint in five moves. Come back to this section whenever you're not sure what to do next.</p>
+        <ol class="steps">
+          <li>
+            <div>
+              <div class="h">Send outreach emails from the contact list</div>
+              <div class="t">Use the template in Section 03. Personalize lightly. Aim to send 3–5 emails per week. Keep a tracker (Section 07).</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <div class="h">Follow up after 5 business days if no response</div>
+              <div class="t">One gentle follow-up. No more than that. If still no response after a second 5-day wait, mark as "no response" in the tracker and move on.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <div class="h">Schedule the call and send a calendar invite</div>
+              <div class="t">20-minute slots, Zoom or phone. Send the invite within 24 hours of them saying yes. Include the Zoom link and a one-line agenda ("short informational interview for a research project").</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <div class="h">Join the call and take notes — or lead it, depending</div>
+              <div class="t">Some calls a BuzzHive exec leads and you take notes. Some you lead yourself. The contact list (Section 02) tells you which is which. Either way, fill in the call-log form afterward (Section 06).</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <div class="h">Send a thank-you within 24 hours</div>
+              <div class="t">Short, sincere, one paragraph. Makes the difference if we need to follow up later.</div>
+            </div>
+          </li>
+        </ol>
+
+        <div class="callout">
+          <div class="lbl">Important · this is research, not sales</div>
+          You are not selling anything. You are asking questions. If someone asks what BuzzHive is planning to build, say: <em>"Honestly, we're still figuring that out — these conversations are part of how we decide."</em> That's the right answer. Don't improvise beyond it. If they press, offer to loop in a BuzzHive exec for a follow-up call.
+        </div>
+      </section>
+
+      <!-- CONTACT LIST -->
+      <section>
+        <div class="sec-tag">Section 02</div>
+        <h2>Who we want to talk to</h2>
+        <p class="sec-lead">Twelve conversations, grouped by industry. The <span class="badge you">you lead</span> badge means you run the call yourself. The <span class="badge founder">exec leads</span> badge means you schedule it, take notes, but a BuzzHive exec runs the call.</p>
+
+        <!-- Group 1: Insurance -->
+        <div class="contact-group">
+          <div class="cg-head">
+            <div class="cg-title">Group 1 · Parametric insurance &amp; reinsurers</div>
+            <div class="cg-count">5 calls · start week 1</div>
+          </div>
+          <table class="c-table">
+            <thead>
+              <tr>
+                <th>Organization</th>
+                <th>Target person</th>
+                <th>How to reach</th>
+                <th>Lead</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="org">Arbol</td>
+                <td class="who">Siddhartha Jha (founder/CEO) — or ask for head of agriculture parametrics</td>
+                <td class="how">LinkedIn · then email</td>
+                <td class="lead"><span class="badge founder">exec leads</span></td>
+              </tr>
+              <tr>
+                <td class="org">Floodbase</td>
+                <td class="who">Bessie Schwarz (co-founder) or head of partnerships</td>
+                <td class="how">LinkedIn · then email</td>
+                <td class="lead"><span class="badge founder">exec leads</span></td>
+              </tr>
+              <tr>
+                <td class="org">Descartes Underwriting</td>
+                <td class="who">Head of US parametric agriculture — find on LinkedIn</td>
+                <td class="how">LinkedIn</td>
+                <td class="lead"><span class="badge founder">exec leads</span></td>
+              </tr>
+              <tr>
+                <td class="org">Swiss Re Corp Solutions</td>
+                <td class="who">Head of agriculture, North America — find on LinkedIn</td>
+                <td class="how">Ask execs for warm intro first</td>
+                <td class="lead"><span class="badge founder">exec leads</span></td>
+              </tr>
+              <tr>
+                <td class="org">Munich Re or MS&amp;AD</td>
+                <td class="who">US parametric agriculture lead</td>
+                <td class="how">LinkedIn</td>
+                <td class="lead"><span class="badge founder">exec leads</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Group 2: Beekeepers -->
+        <div class="contact-group">
+          <div class="cg-head">
+            <div class="cg-title">Group 2 · Commercial beekeepers</div>
+            <div class="cg-count">3 calls · start week 2</div>
+          </div>
+          <table class="c-table">
+            <thead>
+              <tr>
+                <th>Organization</th>
+                <th>Target person</th>
+                <th>How to reach</th>
+                <th>Lead</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="org">Adee Honey Farms (SD)</td>
+                <td class="who">Bret Adee</td>
+                <td class="how">Email · phone</td>
+                <td class="lead"><span class="badge you">you lead</span></td>
+              </tr>
+              <tr>
+                <td class="org">Olivarez Honey Bees (HI/CA)</td>
+                <td class="who">Ray Olivarez or operations lead</td>
+                <td class="how">Email · phone</td>
+                <td class="lead"><span class="badge you">you lead</span></td>
+              </tr>
+              <tr>
+                <td class="org">One of: Miller / Browning / Strachan / Harper Apiaries</td>
+                <td class="who">Owner or operations manager</td>
+                <td class="how">Phone call works best</td>
+                <td class="lead"><span class="badge you">you lead</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <div class="lbl">Tip · beekeepers</div>
+            Beekeepers are phone people, not email people. If email goes unanswered for a week, call directly. They're friendlier than you'd expect on the phone for "I'm a student/intern doing research on the industry" — that framing works extremely well here.
+          </div>
+        </div>
+
+        <!-- Group 3: Acoustic + methodology -->
+        <div class="contact-group">
+          <div class="cg-head">
+            <div class="cg-title">Group 3 · Acoustic-sensor companies &amp; nature-credit organizations</div>
+            <div class="cg-count">3 calls · start week 3</div>
+          </div>
+          <table class="c-table">
+            <thead>
+              <tr>
+                <th>Organization</th>
+                <th>Target person</th>
+                <th>How to reach</th>
+                <th>Lead</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="org">AgriSound (UK)</td>
+                <td class="who">Casey Woodward (founder/CEO)</td>
+                <td class="how">LinkedIn · email</td>
+                <td class="lead"><span class="badge you">you lead</span></td>
+              </tr>
+              <tr>
+                <td class="org">Polliknow or Wilder Sensing</td>
+                <td class="who">Founder or head of partnerships</td>
+                <td class="how">LinkedIn · email</td>
+                <td class="lead"><span class="badge you">you lead</span></td>
+              </tr>
+              <tr>
+                <td class="org">Plan Vivo or Verra</td>
+                <td class="who">Methodology lead — agriculture or pollinator programs</td>
+                <td class="how">Email to methodology@ address</td>
+                <td class="lead"><span class="badge you">you lead</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Group 4: Consultancy -->
+        <div class="contact-group">
+          <div class="cg-head">
+            <div class="cg-title">Group 4 · Biodiversity consultants</div>
+            <div class="cg-count">1–2 calls · start week 4</div>
+          </div>
+          <table class="c-table">
+            <thead>
+              <tr>
+                <th>Organization</th>
+                <th>Target person</th>
+                <th>How to reach</th>
+                <th>Lead</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="org">The Biodiversity Lab</td>
+                <td class="who">Noah Wilson-Rich (founder)</td>
+                <td class="how">Website contact form · LinkedIn</td>
+                <td class="lead"><span class="badge founder">exec leads</span></td>
+              </tr>
+              <tr>
+                <td class="org">Second biodiversity consultancy (if one emerges)</td>
+                <td class="who">Founder or head of operations</td>
+                <td class="how">LinkedIn</td>
+                <td class="lead"><span class="badge founder">exec leads</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TEMPLATES -->
+      <section>
+        <div class="sec-tag">Section 03</div>
+        <h2>Outreach templates</h2>
+        <p class="sec-lead">Three templates. Copy one, fill in the highlighted parts, send. Keep a copy of what you sent in the tracker so we can see what's working.</p>
+
+        <div class="tmpl">
+          <div class="head"><span>Template A · Cold email · all groups</span><span class="kind">copyable</span></div>
+<pre>Subject: Short research interview — <span class="slot">[their industry]</span>
+
+Hi <span class="slot">[first name]</span>,
+
+I'm <span class="slot">[your name]</span>, working on a research project at BuzzHive —
+a company building technology for beekeepers and pollination. We're
+trying to understand how <span class="slot">[their industry]</span> works and what
+the gaps look like from the inside.
+
+Would you be open to a 20-minute call in the next couple of weeks?
+I have five short questions — I'm not selling anything, just
+learning from people in the field.
+
+Any time that works for you is fine.
+
+Thank you either way,
+<span class="slot">[your name]</span>
+<span class="slot">[email / phone]</span></pre>
+          <div style="padding: 10px 18px; font-size: 12px; color: var(--ink-dim); border-top: 1px solid var(--rule-soft); font-style: italic;">
+            Fill in: their industry (e.g. "parametric agriculture insurance" or "commercial beekeeping operations"), their first name, your name, your contact.
+          </div>
+        </div>
+
+        <div class="tmpl">
+          <div class="head"><span>Template B · LinkedIn message · shorter</span><span class="kind">copyable</span></div>
+<pre>Hi <span class="slot">[first name]</span> — I'm <span class="slot">[your name]</span> at BuzzHive. We're
+doing a short research project on <span class="slot">[their industry]</span> and I'd
+love 20 minutes to ask you five questions. Not selling anything —
+learning from people inside the industry. Any chance you'd be open?</pre>
+          <div style="padding: 10px 18px; font-size: 12px; color: var(--ink-dim); border-top: 1px solid var(--rule-soft); font-style: italic;">
+            LinkedIn messages under 300 characters get much higher reply rates. Don't elaborate — keep it exactly this short.
+          </div>
+        </div>
+
+        <div class="tmpl">
+          <div class="head"><span>Template C · Follow-up email (5 business days later)</span><span class="kind">copyable</span></div>
+<pre>Subject: Re: Short research interview — <span class="slot">[their industry]</span>
+
+Hi <span class="slot">[first name]</span>,
+
+Just floating my note back to the top in case it got buried — no
+pressure if the timing is off. Still happy to learn from you if a
+20-minute window opens up in the next few weeks.
+
+Thanks,
+<span class="slot">[your name]</span></pre>
+          <div style="padding: 10px 18px; font-size: 12px; color: var(--ink-dim); border-top: 1px solid var(--rule-soft); font-style: italic;">
+            One follow-up, that's it. If they still don't respond, move on.
+          </div>
+        </div>
+
+        <div class="tmpl">
+          <div class="head"><span>Template D · Confirmation email after they say yes</span><span class="kind">copyable</span></div>
+<pre>Subject: Confirmed · <span class="slot">[day, date, time]</span>
+
+Hi <span class="slot">[first name]</span>,
+
+Thank you — really appreciate you making time. I've sent a calendar
+invite for <span class="slot">[day, date, time]</span> with a Zoom link included.
+
+The call will be short (about 20 minutes) and focused on five
+questions. If anything changes on your end, just reply here.
+
+Talk soon,
+<span class="slot">[your name]</span></pre>
+        </div>
+
+        <div class="tmpl">
+          <div class="head"><span>Template E · Thank-you after the call</span><span class="kind">copyable</span></div>
+<pre>Subject: Thanks for the time today
+
+Hi <span class="slot">[first name]</span>,
+
+Thank you for the conversation today — really helpful, and I
+especially appreciated <span class="slot">[one specific thing they said]</span>. I'll
+share what we learn across all our interviews once the project
+wraps up.
+
+If a question or follow-up comes up on your end, my door is open.
+
+Best,
+<span class="slot">[your name]</span></pre>
+          <div style="padding: 10px 18px; font-size: 12px; color: var(--ink-dim); border-top: 1px solid var(--rule-soft); font-style: italic;">
+            The "one specific thing they said" line is what makes this not feel canned. Always include it.
+          </div>
+        </div>
+      </section>
+
+      <!-- QUESTIONS -->
+      <section>
+        <div class="sec-tag">Section 04</div>
+        <h2>What to ask on the call</h2>
+        <p class="sec-lead">Five simple questions per group. Ask them in order, in plain language. If they get off-track, let them — then come back to the list. You don't need to cover every question if time runs short; Q1, Q3, and Q5 are the most important in every group.</p>
+
+        <div class="q-card">
+          <div class="group-h">Group 1 · Parametric insurance &amp; reinsurers</div>
+          <ol>
+            <li>Can you walk me through how your team thinks about agriculture parametric products today — what perils you cover, what data triggers them?</li>
+            <li>Has pollination failure or bee colony loss ever come up as something worth insuring? Why or why not?</li>
+            <li>If a dataset existed that combined hive health data, native pollinator data, and landscape data — would that be something your team would potentially use, partner on, or not be relevant?</li>
+            <li>What does data need to look like to be "insurance-grade" — peer-reviewed methodology, years of history, something else?</li>
+            <li>Honestly, is there any version of bee or pollination data your team might pay for in the next two years? If no, what would have to change for it to become yes?</li>
+          </ol>
+          <div class="tip">The exec will lead these calls. Your job is to take detailed notes — verbatim if you can, otherwise paraphrased with quotes where possible. Focus on the answer to Q5; that's the single most important response.</div>
+        </div>
+
+        <div class="q-card">
+          <div class="group-h">Group 2 · Commercial beekeepers</div>
+          <ol>
+            <li>Can you walk me through your operation — how many hives, what do you focus on (pollination, honey, queens), what's your contract structure with growers?</li>
+            <li>What data, if any, do you currently share with growers? What do they ask for, and what's the friction?</li>
+            <li>What's been your experience with sensor systems in your operation — what's worked, what hasn't, why?</li>
+            <li>If a platform existed that put sensors on your hives at no cost to you and produced continuous hive-performance reports, what would you want in return to participate?</li>
+            <li>Would you ever be willing to share hive data with a grower, a food brand, or an insurance underwriter — through a neutral platform? What would make that yes or no?</li>
+          </ol>
+          <div class="tip">You lead these calls. Beekeepers are patient and candid — let them tell stories. Q5 is the most sensitive question; save it for the second half of the call after rapport is built.</div>
+        </div>
+
+        <div class="q-card">
+          <div class="group-h">Group 3 · Acoustic-sensor companies &amp; nature-credit orgs</div>
+          <ol>
+            <li><strong>Acoustic vendors:</strong> What do you actually sell — raw audio, species classifications, dashboards? And who are your typical customers?</li>
+            <li><strong>Acoustic vendors:</strong> How do you structure data licensing — per-site, per-API, annual license?</li>
+            <li><strong>Acoustic vendors:</strong> Would you be open to licensing your data to a platform that integrates it with other pollination data streams? Why or why not?</li>
+            <li><strong>Nature-credit orgs:</strong> Are any pilot methodologies for pollinator-related credits currently in development at your organization? What data do they require?</li>
+            <li><strong>Nature-credit orgs:</strong> Realistically, when do you expect the first pollinator-outcome credits to actually be issued and transacted — 2027? 2030? Later?</li>
+          </ol>
+          <div class="tip">You lead these calls. These are the most technical — ask them to slow down if they use acronyms you don't know. Write the acronyms down and ask what each means before the end of the call.</div>
+        </div>
+
+        <div class="q-card">
+          <div class="group-h">Group 4 · Biodiversity consultants</div>
+          <ol>
+            <li>Can you walk me through your workflow at a real client site — what do you collect, how, and from which vendors?</li>
+            <li>Where does the time go in a typical project — sampling, integrating data, writing reports, client management?</li>
+            <li>If a platform existed that deployed at your client sites and produced continuous data under your brand, would that be something you'd use?</li>
+            <li>What would you want to pay, and in what structure — per site, per project, annual subscription?</li>
+            <li>Would you be open to piloting something like this at one client site, for free, in exchange for feedback?</li>
+          </ol>
+          <div class="tip">The exec will lead this one. Your job is to take notes and send the calendar invite on time. These are the most valuable calls we'll run — don't let the invite slip.</div>
+        </div>
+      </section>
+
+      <!-- CALL LOG -->
+      <section>
+        <div class="sec-tag">Section 05</div>
+        <h2>After every call · fill this out</h2>
+        <p class="sec-lead">Within two hours of the call ending, fill in the form below (copy it into a new doc per call, filed in the shared folder named <span class="mono">phase-0-calls/</span>). Memory fades fast — do this while it's fresh.</p>
+
+        <div class="form">
+          <dl>
+            <dt>Date &amp; time</dt><dd></dd>
+            <dt>Organization</dt><dd></dd>
+            <dt>Person · title</dt><dd></dd>
+            <dt>Call length</dt><dd></dd>
+            <dt>Who led the call</dt><dd>you / exec (name)</dd>
+            <dt>Q1 summary</dt><dd></dd>
+            <dt>Q2 summary</dt><dd></dd>
+            <dt>Q3 summary</dt><dd></dd>
+            <dt>Q4 summary</dt><dd></dd>
+            <dt>Q5 summary</dt><dd></dd>
+            <dt>Any direct quotes?</dt><dd></dd>
+            <dt>Did they offer follow-up?</dt><dd>yes / no · details</dd>
+            <dt>Anything surprising?</dt><dd></dd>
+            <dt>Your overall feel</dt><dd>very positive / positive / neutral / skeptical / negative</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- TRACKER -->
+      <section>
+        <div class="sec-tag">Section 06</div>
+        <h2>Your weekly tracker</h2>
+        <p class="sec-lead">Keep this table updated in the shared tracker spreadsheet (link in Slack). Glance at it every morning. Every Friday, send the team a one-line status per row.</p>
+
+        <table class="tr-table">
+          <thead>
+            <tr>
+              <th style="width: 26%;">Organization</th>
+              <th style="width: 20%;">Person</th>
+              <th style="width: 14%;">Outreach sent</th>
+              <th style="width: 14%;">Follow-up sent</th>
+              <th style="width: 14%;">Call date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Arbol</td>
+              <td>Siddhartha Jha</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Floodbase</td>
+              <td>Bessie Schwarz</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Descartes Underwriting</td>
+              <td>TBD</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Swiss Re Corp Solutions</td>
+              <td>TBD</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Munich Re / MS&amp;AD</td>
+              <td>TBD</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Adee Honey Farms</td>
+              <td>Bret Adee</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Olivarez Honey Bees</td>
+              <td>Ray Olivarez</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Third commercial beekeeper</td>
+              <td>TBD</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>AgriSound</td>
+              <td>Casey Woodward</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Polliknow / Wilder Sensing</td>
+              <td>TBD</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>Plan Vivo or Verra</td>
+              <td>Methodology team</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+            <tr>
+              <td>The Biodiversity Lab</td>
+              <td>Noah Wilson-Rich</td>
+              <td>—</td><td>—</td><td>—</td>
+              <td><span class="st todo">todo</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="lbl">Status legend</div>
+          <span class="st todo">todo</span> — not started &nbsp; · &nbsp;
+          <span class="st sent">sent</span> — outreach out, waiting for reply &nbsp; · &nbsp;
+          <span class="st sched">scheduled</span> — call on the calendar &nbsp; · &nbsp;
+          <span class="st done">done</span> — call complete, log filed
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section>
+        <div class="sec-tag">Section 07</div>
+        <h2>If you get stuck</h2>
+        <p class="sec-lead">Common situations and what to do. If something comes up that isn't in here, ping the team in Slack — don't guess.</p>
+
+        <div class="faq-item">
+          <div class="faq-q">They reply and ask what BuzzHive does before agreeing to a call.</div>
+          <div class="faq-a">Keep it short: "BuzzHive is building technology for beekeepers and pollination. We're doing industry research right now to figure out what to build next. That's what I'd love to talk to you about." Don't elaborate on products or strategy — you genuinely don't have the details yet.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">They redirect you to someone else on their team.</div>
+          <div class="faq-a">Thank them, add the new person to the tracker, and send the new person the same outreach template with a note: "Hi [new person], [first contact] suggested I reach out to you about [their industry] research. Would you be open to a 20-minute call?" That referral makes the new outreach ~3x more likely to land.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">They ask what specific questions you'll ask.</div>
+          <div class="faq-a">Share the five questions from Section 04 directly. There's nothing secret about them. People are much more likely to say yes when they know exactly what's being asked.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">They ghost after agreeing to a call.</div>
+          <div class="faq-a">One gentle nudge: "Hi [first name], still hoping to find 20 minutes if your calendar opens up — no pressure." If still no response a week later, mark as "no response" and move on.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">They're clearly hostile or think this is a sales call.</div>
+          <div class="faq-a">Thank them politely, end the outreach, don't follow up. "Completely understand — I appreciate you letting me know. Wishing you the best." Mark as "declined" in the tracker.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">You get a call offered during a timeslot an exec needs to join.</div>
+          <div class="faq-a">Default to accepting the slot they offered — never make them reschedule. If the exec who needs to join can't make it, you take notes solo and flag which questions the exec wants emphasized beforehand.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">You don't understand what someone said in a call.</div>
+          <div class="faq-a">Ask. "Can you explain that one more time, I'm new to this side of the industry." Every person you're talking to will be flattered to explain — and the clarification is worth much more than a smart-sounding summary you're unsure about.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">You're not sure if something you heard matters.</div>
+          <div class="faq-a">Write it down anyway. We'll sort importance later. The call-log form has an "anything surprising?" field — use it generously. A casual throwaway comment from one contact can end up being the most valuable thing we learn.</div>
+        </div>
+      </section>
+
+      <section style="padding-bottom: 60px;">
+        <div class="sec-tag">The finish line</div>
+        <h2>When this is done · <em>what success looks like</em></h2>
+        <p class="sec-lead">You'll know the sprint is a success if, by the end of six weeks, the shared folder has twelve call-log files, the tracker shows twelve rows marked "done," and the BuzzHive team has the information they need to decide what to build. The quality of your notes and the consistency of your outreach is what makes that possible.</p>
+        <p class="sec-lead">Thank you for running this. It matters a lot.</p>
+      </section>
+
+    </div>
+
+  </body>
+</html>

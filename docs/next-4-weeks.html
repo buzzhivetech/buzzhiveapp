@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Next 4 weeks · Operational plan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #141310;
+        --ink-soft: #3d3a33;
+        --ink-dim: #6a6558;
+        --paper: #f6f3ec;
+        --paper-warm: #efeadf;
+        --paper-deep: #e8e2d1;
+        --rule: #d6cfbd;
+        --rule-soft: #e2dcc9;
+        --accent: #a84d2e;
+        --accent-soft: #c97a5b;
+        --accent-bg: #f3e4d9;
+        --green: #4a6741;
+        --gold: #b68a2c;
+        --red: #9a3324;
+        --blue: #2e5266;
+        --indigo: #3c3f7a;
+      }
+
+      /* track colors */
+      :root {
+        --t-board: #2e5266;
+        --t-board-bg: #dbe4ea;
+        --t-phase: #a84d2e;
+        --t-phase-bg: #f3e4d9;
+        --t-cornell: #4a6741;
+        --t-cornell-bg: #dfe6d5;
+        --t-grow: #b68a2c;
+        --t-grow-bg: #efe5c8;
+        --t-disc: #5a5247;
+        --t-disc-bg: #ede7d7;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 15px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      .serif { font-family: "Newsreader", Georgia, serif; }
+      .mono { font-family: "IBM Plex Mono", monospace; }
+
+      /* COVER */
+      .cover {
+        padding: 40px 5vw 40px;
+        background: var(--paper-warm);
+        border-bottom: 2px solid var(--ink);
+      }
+      .cover .strip {
+        display: flex;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .cover .kind {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-top: 26px;
+      }
+      .cover h1 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(36px, 4.6vw, 60px);
+        letter-spacing: -0.02em;
+        line-height: 1.08;
+        margin: 14px 0 18px;
+        max-width: 1000px;
+      }
+      .cover h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+      .cover .deck {
+        font-size: clamp(15px, 1.2vw, 18px);
+        line-height: 1.5;
+        max-width: 760px;
+        color: var(--ink-soft);
+      }
+
+      .wrap { max-width: 1200px; margin: 0 auto; padding: 0 5vw; }
+
+      /* KEY DATES */
+      .keydates {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0;
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid var(--rule);
+      }
+      .keydates .kd {
+        padding: 0 16px;
+        border-right: 1px solid var(--rule);
+      }
+      .keydates .kd:last-child { border-right: none; }
+      .keydates .kd .label {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        margin-bottom: 6px;
+      }
+      .keydates .kd .date {
+        font-family: "Newsreader", serif;
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--ink);
+        letter-spacing: -0.01em;
+        margin-bottom: 2px;
+      }
+      .keydates .kd .note {
+        font-size: 12px;
+        color: var(--ink-soft);
+        line-height: 1.4;
+      }
+
+      /* TRACKS LEGEND */
+      .tracks-legend {
+        padding: 28px 0 24px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .tracks-legend h2 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 500;
+        margin: 0 0 14px;
+      }
+      .tracks-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+      }
+      .track-card {
+        padding: 14px 16px;
+        border-top: 3px solid var(--ink);
+        background: var(--paper-warm);
+      }
+      .track-card.t1 { border-top-color: var(--t-board); background: var(--t-board-bg); }
+      .track-card.t2 { border-top-color: var(--t-phase); background: var(--t-phase-bg); }
+      .track-card.t3 { border-top-color: var(--t-cornell); background: var(--t-cornell-bg); }
+      .track-card.t4 { border-top-color: var(--t-grow); background: var(--t-grow-bg); }
+      .track-card.t5 { border-top-color: var(--t-disc); background: var(--t-disc-bg); }
+      .track-card .n {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .track-card .h {
+        font-family: "Newsreader", serif;
+        font-size: 17px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        line-height: 1.2;
+      }
+      .track-card .t {
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--ink-soft);
+      }
+
+      /* WEEK */
+      .week {
+        padding: 44px 0 32px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .week-head {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 36px;
+        margin-bottom: 24px;
+      }
+      .week-num {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .week-num .sz {
+        display: block;
+        font-family: "Newsreader", serif;
+        font-size: 80px;
+        font-weight: 400;
+        color: var(--ink);
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin-top: 6px;
+      }
+      .week-num .range {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        color: var(--ink-dim);
+        margin-top: 10px;
+        letter-spacing: 0.06em;
+      }
+      .week-head h3 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(24px, 2.8vw, 34px);
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.15;
+        margin: 0 0 8px;
+      }
+      .week-head h3 em { color: var(--accent); font-style: italic; font-weight: 400; }
+      .week-head .sub {
+        font-size: 15px;
+        color: var(--ink-soft);
+        line-height: 1.5;
+        max-width: 780px;
+      }
+
+      .task-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .task {
+        display: grid;
+        grid-template-columns: 100px 140px 1fr;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--rule-soft);
+        align-items: baseline;
+      }
+      .task .day {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-dim);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .task .tag {
+        display: inline-block;
+        padding: 3px 8px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-weight: 700;
+        border-radius: 2px;
+      }
+      .task .tag.t1 { background: var(--t-board-bg); color: var(--t-board); }
+      .task .tag.t2 { background: var(--t-phase-bg); color: var(--t-phase); }
+      .task .tag.t3 { background: var(--t-cornell-bg); color: var(--t-cornell); }
+      .task .tag.t4 { background: var(--t-grow-bg); color: var(--t-grow); }
+      .task .tag.t5 { background: var(--t-disc-bg); color: var(--t-disc); }
+      .task .desc {
+        font-size: 14.5px;
+        line-height: 1.5;
+      }
+      .task .desc strong { color: var(--ink); font-weight: 600; }
+      .task .desc em { font-style: italic; color: var(--ink-soft); }
+
+      .milestone {
+        margin-top: 18px;
+        padding: 14px 18px;
+        background: var(--ink);
+        color: var(--paper);
+        display: flex;
+        gap: 14px;
+        align-items: baseline;
+      }
+      .milestone .lbl {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--accent-soft);
+        font-weight: 700;
+      }
+      .milestone .txt {
+        font-family: "Newsreader", serif;
+        font-size: 16px;
+        font-style: italic;
+        flex: 1;
+      }
+
+      /* END STATE */
+      .end-state {
+        padding: 48px 0 32px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .end-state h2 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(26px, 3vw, 38px);
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.15;
+        margin: 0 0 16px;
+        max-width: 900px;
+      }
+      .end-state h2 em { color: var(--accent); font-style: italic; font-weight: 400; }
+      .checklist {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0;
+      }
+      .checklist li {
+        display: grid;
+        grid-template-columns: 30px 1fr;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px dashed var(--rule-soft);
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .checklist li::before {
+        content: "☐";
+        color: var(--accent);
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      /* DO NOT DO */
+      .do-not {
+        padding: 44px 0 32px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .do-not h2 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(24px, 2.8vw, 32px);
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.15;
+        margin: 0 0 16px;
+      }
+      .do-not-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .do-not-list li {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--rule-soft);
+      }
+      .do-not-list li::before {
+        content: "✕";
+        color: var(--red);
+        font-weight: 700;
+        font-size: 17px;
+        padding-top: 1px;
+      }
+      .do-not-list li .h {
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 2px;
+      }
+      .do-not-list li .t {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        line-height: 1.5;
+      }
+
+      /* RISK */
+      .risks {
+        padding: 44px 0 40px;
+      }
+      .risks h2 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(24px, 2.8vw, 32px);
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.15;
+        margin: 0 0 16px;
+      }
+      .risks h2 em { color: var(--red); font-style: italic; font-weight: 400; }
+      .risk-card {
+        padding: 18px 22px;
+        background: #f6e6e2;
+        border-left: 4px solid var(--red);
+        margin-top: 14px;
+      }
+      .risk-card .tag {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--red);
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .risk-card .h {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: 18px;
+        margin-bottom: 6px;
+      }
+      .risk-card .t {
+        font-size: 14px;
+        color: var(--ink-soft);
+        line-height: 1.55;
+      }
+
+      .footer {
+        padding: 28px 0 44px;
+        color: var(--ink-dim);
+        font-size: 12px;
+        font-family: "IBM Plex Mono", monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 900px) {
+        .keydates, .tracks-grid { grid-template-columns: 1fr 1fr; }
+        .keydates .kd { border-right: none; border-bottom: 1px solid var(--rule); padding: 10px 0; }
+        .week-head { grid-template-columns: 1fr; gap: 16px; }
+        .task { grid-template-columns: 1fr; gap: 4px; }
+        .task .day { font-size: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="cover">
+      <div class="strip">
+        <span>Operational plan · next 28 days · from 17 April 2026</span>
+        <span>Companion to board-briefing · phase-0-playbook · intern-outreach-guide</span>
+      </div>
+      <div class="kind">What we do now</div>
+      <h1>
+        Four weeks. Five tracks.<br/>
+        <em>No engineering.</em>
+      </h1>
+      <div class="deck">
+        This is the day-by-day execution plan. Everything is already approved in concept by the strategic memos; this translates them into what happens between Monday and the end of week four. Open this document every morning and glance at the current week.
+      </div>
+
+      <div class="keydates">
+        <div class="kd">
+          <div class="label">Start</div>
+          <div class="date">Mon 20 Apr</div>
+          <div class="note">Intern onboarding · first outreach wave</div>
+        </div>
+        <div class="kd">
+          <div class="label">Week 2 milestone</div>
+          <div class="date">Fri 1 May</div>
+          <div class="note">First insurance calls complete · mid-sprint check</div>
+        </div>
+        <div class="kd">
+          <div class="label">Week 3 milestone</div>
+          <div class="date">Mon 4 May</div>
+          <div class="note">Noah Wilson-Rich call · highest-value conversation</div>
+        </div>
+        <div class="kd">
+          <div class="label">Week 4 end</div>
+          <div class="date">Fri 15 May</div>
+          <div class="note">10–12 calls done · synthesis memo 70% drafted</div>
+        </div>
+        <div class="kd">
+          <div class="label">Board reconvene</div>
+          <div class="date">Early Jun</div>
+          <div class="note">Go / pivot / kill decision · schedule now</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap">
+
+      <!-- TRACKS LEGEND -->
+      <section class="tracks-legend">
+        <h2>The five parallel tracks</h2>
+        <div class="tracks-grid">
+          <div class="track-card t1">
+            <div class="n">Track 01</div>
+            <div class="h">Board &amp; governance</div>
+            <div class="t">Capture decisions, schedule reconvene, keep board in the loop.</div>
+          </div>
+          <div class="track-card t2">
+            <div class="n">Track 02</div>
+            <div class="h">Phase 0 sprint</div>
+            <div class="t">12 calls, intern-led, founder joins key ones. Highest-effort track.</div>
+          </div>
+          <div class="track-card t3">
+            <div class="n">Track 03</div>
+            <div class="h">Cornell relationship</div>
+            <div class="t">New track. Credibility and methodology partner; critical for Grow-NY.</div>
+          </div>
+          <div class="track-card t4">
+            <div class="n">Track 04</div>
+            <div class="h">Grow-NY prep</div>
+            <div class="t">Conditional on cycle. Deck + pilot framing + Cornell tie-in.</div>
+          </div>
+          <div class="track-card t5">
+            <div class="n">Track 05</div>
+            <div class="h">Founder discipline</div>
+            <div class="t">Explicitly <em>not</em> engineering. Protect focus. Write the memo as we go.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEEK 1 -->
+      <section class="week">
+        <div class="week-head">
+          <div class="week-num">
+            Week One
+            <span class="sz">01</span>
+            <div class="range">Apr 17 → Apr 24</div>
+          </div>
+          <div>
+            <h3>Board lands. <em>Outreach opens.</em></h3>
+            <div class="sub">The week of setup. Get the intern productive, send the highest-stakes emails yourself, open the Cornell thread, decide whether Grow-NY is in this cycle.</div>
+          </div>
+        </div>
+
+        <ul class="task-list">
+          <li class="task">
+            <div class="day">Thu 17 Apr</div>
+            <div><span class="tag t1">board</span></div>
+            <div class="desc">Run the board meeting. Capture decisions <em>verbatim</em> in writing before bed. Send recap email within 24 hours confirming what was approved and what's open.</div>
+          </li>
+          <li class="task">
+            <div class="day">Mon 20 Apr</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc"><strong>Intern onboarding.</strong> Walk through the intern-outreach-guide. Set up shared <span class="mono">phase-0-calls/</span> folder and tracker spreadsheet. Add intern to Slack.</div>
+          </li>
+          <li class="task">
+            <div class="day">Mon–Tue 20–21 Apr</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc"><strong>You personally</strong> send the Noah Wilson-Rich outreach and the five insurance-axis outreach messages (Arbol · Floodbase · Descartes · Swiss Re · Munich Re/MS&amp;AD). <em>Do not delegate these.</em></div>
+          </li>
+          <li class="task">
+            <div class="day">Tue–Wed 21–22 Apr</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc">Intern sends beekeeper outreach (Adee · Olivarez · one mid-size operator) and acoustic-vendor outreach (AgriSound · Polliknow/Wilder). Templates are in the intern guide.</div>
+          </li>
+          <li class="task">
+            <div class="day">Tue–Wed 21–22 Apr</div>
+            <div><span class="tag t3">cornell</span></div>
+            <div class="desc">Email one Cornell contact. Primary target: <strong>Scott McArt</strong>, Entomology, pollinator ecology. Alternative: <strong>Cornell CIDA</strong> (runs Grow-NY). One paragraph, honest: "Building a pollination-risk data platform — 20 min on potential research intersection?"</div>
+          </li>
+          <li class="task">
+            <div class="day">Wed 22 Apr</div>
+            <div><span class="tag t4">grow-ny</span></div>
+            <div class="desc">Check current Grow-NY cycle deadline. If application opens within 8 weeks → Grow-NY becomes an active track week 2. If more than 12 weeks out → table it.</div>
+          </li>
+          <li class="task">
+            <div class="day">All week</div>
+            <div><span class="tag t5">discipline</span></div>
+            <div class="desc"><strong>Zero new engineering commitments.</strong> Only code touched this week is whatever absolutely needs refresh for a demo if a Phase 0 call requests one.</div>
+          </li>
+          <li class="task">
+            <div class="day">Fri 24 Apr</div>
+            <div><span class="tag t1">board</span></div>
+            <div class="desc">Schedule the end-of-Phase-0 board reconvene on calendars — first week of June. Lock the date even if exact agenda is TBD.</div>
+          </li>
+          <li class="task">
+            <div class="day">Fri 24 Apr</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc"><strong>Week-1 review.</strong> Who replied? What's scheduled? Where are the silences? Does the tracker need recalibration?</div>
+          </li>
+        </ul>
+
+        <div class="milestone">
+          <div class="lbl">Milestone</div>
+          <div class="txt">By end of week one: 8 outreach messages sent · 1 Cornell thread open · intern fully operational · board recap delivered.</div>
+        </div>
+      </section>
+
+      <!-- WEEK 2 -->
+      <section class="week">
+        <div class="week-head">
+          <div class="week-num">
+            Week Two
+            <span class="sz">02</span>
+            <div class="range">Apr 27 → May 1</div>
+          </div>
+          <div>
+            <h3>First calls happen. <em>Patterns begin.</em></h3>
+            <div class="sub">The first calls land this week. You lead insurance; intern leads beekeeper and acoustic. Biodiversity and methodology outreach still go out. Start drafting the synthesis memo even though it's early — prevents hindsight bias later.</div>
+          </div>
+        </div>
+
+        <ul class="task-list">
+          <li class="task">
+            <div class="day">Mon 27 Apr</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc">Intern sends methodology-shop outreach (Plan Vivo or Verra) and second biodiversity-consultancy outreach if a second spinout has emerged.</div>
+          </li>
+          <li class="task">
+            <div class="day">Tue–Fri 28 Apr – 1 May</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc"><strong>First insurance calls happen.</strong> You lead; intern takes verbatim notes in the call-log template. Fastest MGA responders typically reply within 5–8 days.</div>
+          </li>
+          <li class="task">
+            <div class="day">Wed 29 Apr</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc">Intern sends week-1 follow-ups to anyone who hasn't responded. Single gentle nudge, per FAQ in intern guide. No more than one follow-up.</div>
+          </li>
+          <li class="task">
+            <div class="day">Wed 29 Apr</div>
+            <div><span class="tag t3">cornell</span></div>
+            <div class="desc">If Cornell thread open: schedule a 30-minute call for week 3. If ghosted: try a second entry point — different faculty, or through a mutual contact.</div>
+          </li>
+          <li class="task">
+            <div class="day">Mon 27 Apr</div>
+            <div><span class="tag t4">grow-ny</span></div>
+            <div class="desc">If Grow-NY is in play: first pass at a <strong>6-slide pitch deck skeleton</strong>. Problem · insight · product shape · traction (existing + Phase-0 signal) · team · ask. Structural, not polished.</div>
+          </li>
+          <li class="task">
+            <div class="day">Wed 29 Apr</div>
+            <div><span class="tag t4">grow-ny</span></div>
+            <div class="desc">Draft the NY-specific pilot framing. Wayne County apples / Finger Lakes specialty crops. Specific acreage numbers. What year one of a regional pollination observatory looks like.</div>
+          </li>
+          <li class="task">
+            <div class="day">All week</div>
+            <div><span class="tag t5">discipline</span></div>
+            <div class="desc"><strong>Start the go/no-go memo file now</strong> even though it's not due until week 6. Add a paragraph after every call. Prevents synthesis-time hindsight bias.</div>
+          </li>
+          <li class="task">
+            <div class="day">Fri 1 May</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc"><strong>Mid-sprint checkpoint.</strong> Read through call logs. Is any axis showing early kill signal? Any unexpectedly strong signal that warrants more calls?</div>
+          </li>
+        </ul>
+
+        <div class="milestone">
+          <div class="lbl">Milestone</div>
+          <div class="txt">By end of week two: 2–4 calls complete · all 12 outreach messages sent · memo file started · Cornell call scheduled for week 3.</div>
+        </div>
+      </section>
+
+      <!-- WEEK 3 -->
+      <section class="week">
+        <div class="week-head">
+          <div class="week-num">
+            Week Three
+            <span class="sz">03</span>
+            <div class="range">May 4 → May 8</div>
+          </div>
+          <div>
+            <h3>Peak week. <em>Most calls cluster here.</em></h3>
+            <div class="sub">If week-one outreach worked, most of the 12 calls happen this week. Highest-value conversation of the entire sprint is Noah Wilson-Rich — block 45 min, not 20. Assessment at the end of the week: is the thesis tracking toward go, toward kill, or toward narrow?</div>
+          </div>
+        </div>
+
+        <ul class="task-list">
+          <li class="task">
+            <div class="day">Mon 4 May</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc"><strong>Noah Wilson-Rich call</strong> (if scheduled). Single highest-value conversation of the sprint. Block 45 minutes, not 20 — if it's going well, let it run. Intern takes notes; you lead.</div>
+          </li>
+          <li class="task">
+            <div class="day">Tue–Thu 5–7 May</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc">First beekeeper calls (intern leads). Remaining insurance calls (you lead). Acoustic vendor calls (intern leads). <em>Aim for 3–4 calls this week.</em></div>
+          </li>
+          <li class="task">
+            <div class="day">Tue or Wed</div>
+            <div><span class="tag t3">cornell</span></div>
+            <div class="desc"><strong>Cornell call.</strong> Goal: get one faculty member to say "I'd be interested in co-developing a methodology paper" or "you should talk to [specific colleague]." One of those two is the unlock.</div>
+          </li>
+          <li class="task">
+            <div class="day">Mon 4 May</div>
+            <div><span class="tag t4">grow-ny</span></div>
+            <div class="desc">Rehearse the 6-minute pitch with a non-BuzzHive audience — someone on the board or an advisor. Get one round of honest feedback.</div>
+          </li>
+          <li class="task">
+            <div class="day">Thu 7 May</div>
+            <div><span class="tag t4">grow-ny</span></div>
+            <div class="desc">Second draft of pitch deck reflecting feedback. Integrate Cornell-thread progress if call happened.</div>
+          </li>
+          <li class="task">
+            <div class="day">All week</div>
+            <div><span class="tag t5">discipline</span></div>
+            <div class="desc">Write down the <strong>three most surprising things</strong> heard across calls to date. Surprises are the most valuable signal and they fade fast. Put them in the memo file.</div>
+          </li>
+          <li class="task">
+            <div class="day">Fri 8 May</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc"><strong>Pattern assessment.</strong> By this point, 6–8 of 12 calls should be complete. Ask: is there 1+ strong signal on insurance, 1+ on consultancy, 2+ beekeeper-yes-under-terms? If three of three are showing → tracking toward go. If none → prepare for kill.</div>
+          </li>
+        </ul>
+
+        <div class="milestone">
+          <div class="lbl">Milestone</div>
+          <div class="txt">By end of week three: 6–8 calls complete · Cornell call done with a concrete next step · pitch deck at v2 if Grow-NY in play · directional verdict emerging.</div>
+        </div>
+      </section>
+
+      <!-- WEEK 4 -->
+      <section class="week">
+        <div class="week-head">
+          <div class="week-num">
+            Week Four
+            <span class="sz">04</span>
+            <div class="range">May 11 → May 15</div>
+          </div>
+          <div>
+            <h3>Finish calls. <em>Start the synthesis.</em></h3>
+            <div class="sub">Last calls land. Synthesis memo draft begins in earnest. Any call still unscheduled after a second follow-up is marked "no response" and closed out — don't extend the sprint. End-of-week honest question to yourself: <em>if Phase 0 ended today, what would the memo say?</em></div>
+          </div>
+        </div>
+
+        <ul class="task-list">
+          <li class="task">
+            <div class="day">Mon–Thu 11–14 May</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc">Finish remaining calls. Target: <strong>10–12 complete</strong> by Friday. Any calls unscheduled after a second follow-up → marked "no response" and moved on. Do not extend sprint for stragglers.</div>
+          </li>
+          <li class="task">
+            <div class="day">Wed 13 May</div>
+            <div><span class="tag t2">phase 0</span></div>
+            <div class="desc"><strong>Start the synthesis memo draft in earnest.</strong> Use the structure from the Phase 0 playbook. Fill in the rubric scoreboard first — easiest to fill, anchors everything else.</div>
+          </li>
+          <li class="task">
+            <div class="day">Tue 12 May</div>
+            <div><span class="tag t3">cornell</span></div>
+            <div class="desc">Follow up the Cornell call with a written next step. Either a collaboration memo, a paper concept, or a deferred "circle back in Q3." One of the three — <em>not</em> radio silence.</div>
+          </li>
+          <li class="task">
+            <div class="day">All week</div>
+            <div><span class="tag t4">grow-ny</span></div>
+            <div class="desc">If pitching this cycle: polish pitch + one-pager, confirm submission materials, line up mentors and ecosystem-builder letters of support.</div>
+          </li>
+          <li class="task">
+            <div class="day">Fri 15 May</div>
+            <div><span class="tag t5">discipline</span></div>
+            <div class="desc"><strong>Honest week-4 question.</strong> Write the one-paragraph answer to "if Phase 0 ended today, what would the memo say?" Not the final — a reality check on whether you're rationalizing or actually reading the signal.</div>
+          </li>
+        </ul>
+
+        <div class="milestone">
+          <div class="lbl">Milestone</div>
+          <div class="txt">By end of week four: 10–12 calls complete · memo 50–70% drafted · Cornell relationship documented · pitch ready to submit if Grow-NY is in cycle · verdict directionally obvious to anyone reading the logs.</div>
+        </div>
+      </section>
+
+      <!-- END STATE -->
+      <section class="end-state">
+        <h2>What success looks like on <em>Friday 15 May</em></h2>
+        <ul class="checklist">
+          <li>10–12 Phase 0 calls complete, each with a logged call-form in <span class="mono">phase-0-calls/</span></li>
+          <li>Tracker spreadsheet shows ≥10 rows at "done" status</li>
+          <li>Go/no-go memo draft at 50–70%, with the rubric scoreboard fully filled in</li>
+          <li>One Cornell relationship open with a documented next step</li>
+          <li>Zero new engineering commitments made during the sprint</li>
+          <li>Grow-NY pitch deck v3 complete with one external review round (if in cycle)</li>
+          <li>Board reconvene on calendars for early June · agenda drafted</li>
+          <li>Three surprising findings documented in the memo — the signal that was not in the original hypothesis</li>
+          <li>A clear emerging verdict — <strong>go, pivot, or kill</strong> — directionally obvious even before the memo is finalized</li>
+        </ul>
+      </section>
+
+      <!-- DO NOT DO -->
+      <section class="do-not">
+        <h2>What <strong>not</strong> to do for the next four weeks</h2>
+        <ul class="do-not-list">
+          <li>
+            <div>
+              <div class="h">No engineering sprints.</div>
+              <div class="t">The entire point of Phase 0 is to decide whether to build, not to build while deciding. The temptation to "just polish the dashboard" or "add one more sensor feature" is the single biggest risk to the sprint.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <div class="h">No full fundraise conversations.</div>
+              <div class="t">Exploratory investor calls for calibration are fine. Pitching an actual raise is not. Without Phase 0 evidence, you'll anchor low on valuation and lose leverage before you have the story to support it.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <div class="h">No broad announcement of the strategic reframe.</div>
+              <div class="t">Keep positioning quiet until the memo is written. Loose talk before validation creates brand confusion that's expensive to unwind if Phase 0 kills the thesis.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <div class="h">No extending Phase 0 "for one more call."</div>
+              <div class="t">Ship the synthesis on time. Scope creep is the mode of failure that looks most like progress. If the signal is unclear after 12 calls, two more calls won't fix it.</div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <div class="h">No pitching instead of diagnosing on Phase 0 calls.</div>
+              <div class="t">The moment you start describing a feature set, you're in sales mode. Contacts will be polite, data will be noise. If you hear yourself explaining the product for more than 90 seconds, stop and ask a question.</div>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- RISKS -->
+      <section class="risks">
+        <h2>Two things most likely to <em>go wrong</em></h2>
+        <div class="risk-card">
+          <div class="tag">Risk 01 · Insurance axis ghosts</div>
+          <div class="h">MGAs don't respond to cold outreach at high rates.</div>
+          <div class="t">Response rates for cold MGA outreach run 20–30%. If by end of week 2 you're at <strong>zero calls booked in the insurance axis</strong>, escalate immediately. Ask every board member for one warm intro. Consider a short LinkedIn post surfacing whether anyone in the extended network knows someone at Arbol or Floodbase. The insurance signal is too important to let slip through inaction.</div>
+        </div>
+        <div class="risk-card">
+          <div class="tag">Risk 02 · Phase 0 drifts into sales</div>
+          <div class="h">When conversations go well, diagnostic discipline breaks down.</div>
+          <div class="t">The most common Phase 0 failure mode is not poor response rates — it's slipping into pitch mode because the calls are warm. Re-read the anti-patterns section of the phase-0-playbook at the end of week 2 and week 3. Hold the line. A polite yes without the kill question is worthless data.</div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <span>BuzzHive · next-4-weeks · updated 17 April 2026</span>
+        <span>Operational · revise in place · do not distribute</span>
+      </div>
+
+    </div>
+
+  </body>
+</html>

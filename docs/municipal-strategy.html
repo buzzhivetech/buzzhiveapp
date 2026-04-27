@@ -1,0 +1,1152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BuzzHive · Civic Pollinator Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --paper:      #F2ECDB;
+  --paper-2:    #EAE1CA;
+  --paper-3:    #E0D4B6;
+  --ink:        #0F1A14;
+  --ink-soft:   #2C3A31;
+  --forest:     #1F3A2E;
+  --forest-dk:  #15281F;
+  --moss:       #4A6148;
+  --brass:      #B8924C;
+  --brass-dk:   #8A6A30;
+  --rust:       #B5542B;
+  --sage:       #8EA38A;
+  --rule:       #C4B38A;
+  --rule-soft:  #D9CBA4;
+  --rose:       #C67C72;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1.58;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'ss01', 'cv11', 'cv05';
+}
+
+/* Botanical paper texture */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 800px 400px at 80% -100px, rgba(31, 58, 46, 0.08), transparent 60%),
+    radial-gradient(ellipse 1000px 600px at -200px 800px, rgba(184, 146, 76, 0.1), transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.1 0 0 0 0 0.05 0 0 0 0.15 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+.wrap {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 64px 56px 120px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ════ TYPE ════ */
+.display {
+  font-family: 'Newsreader', serif;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 72;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
+.italic {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 72;
+}
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+
+h1 {
+  font-family: 'Newsreader', serif;
+  font-weight: 380;
+  font-variation-settings: 'opsz' 72;
+  font-size: clamp(54px, 8vw, 118px);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--forest-dk);
+}
+h2 {
+  font-family: 'Newsreader', serif;
+  font-weight: 420;
+  font-variation-settings: 'opsz' 48;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--forest-dk);
+}
+h3 {
+  font-family: 'Newsreader', serif;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  color: var(--forest-dk);
+}
+
+p.lead {
+  font-family: 'Newsreader', serif;
+  font-size: clamp(20px, 2.2vw, 26px);
+  line-height: 1.4;
+  color: var(--ink-soft);
+  font-style: italic;
+  font-weight: 380;
+  max-width: 760px;
+}
+
+/* ════ MASTHEAD ════ */
+.masthead {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 28px;
+  border-bottom: 2px solid var(--forest);
+  margin-bottom: 48px;
+}
+.masthead .mark { width: 36px; height: 36px; color: var(--forest-dk); }
+.masthead .name {
+  font-family: 'Newsreader', serif;
+  font-weight: 500;
+  font-size: 24px;
+  color: var(--forest-dk);
+  letter-spacing: -0.015em;
+}
+.masthead .sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--moss);
+  padding-left: 20px;
+  border-left: 1px solid var(--rule);
+  margin-left: 8px;
+}
+.masthead .vol {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass-dk);
+  text-align: right;
+}
+.masthead .vol strong { display: block; font-weight: 500; color: var(--forest-dk); font-size: 12px; }
+
+/* ════ HERO ════ */
+.hero {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 64px;
+  padding: 32px 0 72px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+.hero h1 .r { color: var(--rust); }
+.hero h1 .b { color: var(--brass-dk); }
+
+.hero .body {
+  margin-top: 36px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 580px;
+}
+.hero .body p + p { margin-top: 14px; }
+.hero .body strong { color: var(--forest-dk); font-weight: 600; }
+
+.hero .sidebar {
+  padding: 32px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  align-self: start;
+  position: relative;
+}
+.hero .sidebar::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: -1px; right: -1px;
+  height: 4px;
+  background: var(--forest-dk);
+}
+.hero .sidebar .label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 20px;
+}
+.hero .sidebar h3 { font-size: 20px; margin-bottom: 14px; }
+.hero .sidebar p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.hero .sidebar p:last-child { margin-bottom: 0; }
+.hero .sidebar .caller {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--forest-dk);
+  padding: 14px 0 4px;
+  border-top: 1px dashed var(--rule);
+  margin-top: 18px;
+}
+
+/* ════ SECTION FRAMES ════ */
+.sec {
+  padding: 80px 0 0;
+}
+.sec-head {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 32px;
+  align-items: baseline;
+  padding-bottom: 36px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--forest);
+}
+.sec-head .ordinal {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--brass);
+  letter-spacing: -0.04em;
+}
+.sec-head .t { display: flex; flex-direction: column; gap: 4px; }
+.sec-head .t .eyebrow { color: var(--rust); }
+.sec-head .aside {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--moss);
+  text-align: right;
+}
+
+/* ════ TWO-COMPANY BRIEF ════ */
+.brief-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.brief {
+  padding: 36px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  position: relative;
+}
+.brief.beewise {
+  background: linear-gradient(165deg, #E5EEDF 0%, #C9D9BF 100%);
+  border-color: var(--moss);
+}
+.brief.bestbees {
+  background: linear-gradient(165deg, #F3E8D0 0%, #E3CF9D 100%);
+  border-color: var(--brass);
+}
+.brief .tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--forest-dk);
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+.brief h3 {
+  font-size: 32px;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 48;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.brief h3 em {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  color: var(--rust);
+}
+.brief.beewise h3 em { color: var(--moss); }
+.brief.bestbees h3 em { color: var(--brass-dk); }
+.brief .tagline {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(47, 58, 49, 0.2);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.stat .n {
+  font-family: 'Newsreader', serif;
+  font-weight: 400;
+  font-size: 28px;
+  color: var(--forest-dk);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.stat .n sup { font-size: 14px; vertical-align: top; color: var(--brass-dk); margin-left: 2px; }
+.stat .l {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--moss);
+  margin-top: 6px;
+}
+
+.brief ul {
+  list-style: none;
+  padding: 16px 0 0;
+  border-top: 1px dashed rgba(47, 58, 49, 0.25);
+  margin-top: 6px;
+}
+.brief ul li {
+  position: relative;
+  padding: 6px 0 6px 22px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.brief ul li::before {
+  content: "";
+  position: absolute;
+  left: 6px; top: 14px;
+  width: 8px; height: 1.5px;
+  background: var(--brass-dk);
+}
+.brief.beewise ul li::before { background: var(--moss); }
+
+.brief .bottomline {
+  margin-top: 22px;
+  padding: 14px 16px;
+  background: rgba(31, 58, 46, 0.08);
+  border-left: 3px solid var(--forest);
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--forest-dk);
+  line-height: 1.45;
+}
+
+/* ════ GAP MATRIX ════ */
+.gapgrid {
+  display: grid;
+  grid-template-columns: 180px repeat(4, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.gapgrid > div {
+  background: var(--paper-2);
+  padding: 18px 20px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.gapgrid .h {
+  background: var(--forest-dk);
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.gapgrid .row-label {
+  font-family: 'Newsreader', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--forest-dk);
+  background: var(--paper-3);
+}
+.gapgrid .us {
+  background: linear-gradient(135deg, #F7F1DF 0%, #EFE3BE 100%);
+  color: var(--forest-dk);
+  font-weight: 500;
+}
+.gapgrid .gap {
+  background: rgba(181, 84, 43, 0.08);
+  color: var(--rust);
+  font-weight: 500;
+  font-style: italic;
+  font-family: 'Newsreader', serif;
+  font-size: 14px;
+}
+
+/* ════ PROPOSAL ════ */
+.prop {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 48px;
+  background: var(--forest-dk);
+  color: var(--paper);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.prop::before {
+  content: "";
+  position: absolute;
+  top: -100px; right: -80px;
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(184, 146, 76, 0.22) 0%, transparent 65%);
+  pointer-events: none;
+}
+.prop .eyebrow { color: #D7B468; }
+.prop h2 { color: var(--paper); font-weight: 360; margin-top: 10px; }
+.prop h2 em { font-style: italic; color: #D7B468; }
+.prop .lead { color: rgba(242, 236, 219, 0.85); margin-top: 20px; font-size: 20px; }
+
+.propmetrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(242, 236, 219, 0.18);
+}
+.propmetrics .m .k {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8CA583;
+  margin-bottom: 4px;
+}
+.propmetrics .m .v {
+  font-family: 'Newsreader', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--paper);
+  line-height: 1.3;
+}
+
+.prop-right {
+  padding: 0;
+}
+.prop-right h4 {
+  font-family: 'Newsreader', serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #D7B468;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(215, 180, 104, 0.3);
+}
+.prop-right ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 24px;
+}
+.prop-right ul li {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(242, 236, 219, 0.9);
+  padding: 6px 0 6px 18px;
+  position: relative;
+}
+.prop-right ul li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: #D7B468;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ════ BINGHAMTON PILOT ════ */
+.pilot {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+.pilot .hero-card {
+  padding: 32px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--rust);
+  border-radius: 2px;
+}
+.pilot .hero-card .loc {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 14px;
+}
+.pilot .hero-card h3 {
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.pilot .hero-card .sub {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--moss);
+  margin-bottom: 22px;
+}
+.pilot .hero-card .stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+.pilot .hero-card .stat-row .k {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--moss);
+  margin-bottom: 2px;
+}
+.pilot .hero-card .stat-row .v {
+  font-family: 'Newsreader', serif;
+  font-size: 15px;
+  color: var(--forest-dk);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.pilot-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.plan-step {
+  display: grid;
+  grid-template-columns: 60px 1fr 160px;
+  gap: 20px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  align-items: start;
+}
+.plan-step:last-child { border: none; }
+.plan-step .stage {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 28px;
+  color: var(--rust);
+  line-height: 1;
+  padding-top: 4px;
+}
+.plan-step h4 {
+  font-family: 'Newsreader', serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--forest-dk);
+  margin-bottom: 4px;
+}
+.plan-step p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.plan-step .timing {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--moss);
+  text-align: right;
+  padding-top: 4px;
+}
+.plan-step .timing strong {
+  display: block;
+  font-family: 'Newsreader', serif;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--rust);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-top: 2px;
+}
+
+/* ════ TRADEOFF ════ */
+.tradeoff {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.path {
+  padding: 32px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+.path.a { border-top: 4px solid var(--brass); }
+.path.b { border-top: 4px solid var(--rust); }
+.path .t {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--moss);
+  margin-bottom: 10px;
+}
+.path h3 {
+  font-size: 24px;
+  font-weight: 450;
+  letter-spacing: -0.018em;
+  margin-bottom: 16px;
+  line-height: 1.1;
+}
+.path .gist {
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed var(--rule);
+}
+.path table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.path table td {
+  padding: 8px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule-soft);
+  vertical-align: top;
+}
+.path table td:first-child {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--moss);
+  width: 110px;
+  padding-right: 16px;
+}
+.path table tr:last-child td { border-bottom: none; }
+
+/* ════ RECOMMENDATION ════ */
+.recbox {
+  margin-top: 48px;
+  padding: 40px 44px;
+  background: linear-gradient(135deg, #F3E8D0 0%, #E8D4A5 100%);
+  border: 1px solid var(--brass);
+  border-radius: 4px;
+  position: relative;
+}
+.recbox::before {
+  content: "REC";
+  position: absolute;
+  top: 20px; right: 28px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--brass-dk);
+}
+.recbox h3 {
+  font-size: 28px;
+  font-weight: 400;
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+  color: var(--forest-dk);
+}
+.recbox h3 em { font-style: italic; color: var(--rust); }
+.recbox p {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 900px;
+}
+.recbox p + p { margin-top: 12px; }
+.recbox .nextline {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(139, 105, 48, 0.35);
+  font-family: 'Newsreader', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--forest-dk);
+}
+
+/* ════ FOOT ════ */
+.foot {
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 2px solid var(--forest);
+  display: flex;
+  justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--moss);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Entrance */
+@keyframes drift {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim { animation: drift 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.d1 { animation-delay: 0.04s; }
+.d2 { animation-delay: 0.14s; }
+.d3 { animation-delay: 0.28s; }
+.d4 { animation-delay: 0.42s; }
+
+@media (max-width: 900px) {
+  .wrap { padding: 40px 24px 80px; }
+  .masthead { grid-template-columns: auto 1fr auto; gap: 10px; }
+  .masthead .sub { display: none; }
+  .hero { grid-template-columns: 1fr; gap: 36px; }
+  .brief-pair { grid-template-columns: 1fr; }
+  .gapgrid { grid-template-columns: 1fr 1fr; font-size: 12px; }
+  .gapgrid .h:nth-child(4), .gapgrid .h:nth-child(5) { display: none; }
+  .prop { grid-template-columns: 1fr; padding: 32px; }
+  .pilot { grid-template-columns: 1fr; gap: 28px; }
+  .tradeoff { grid-template-columns: 1fr; }
+  .sec-head { grid-template-columns: 1fr; gap: 8px; }
+  .plan-step { grid-template-columns: 40px 1fr; }
+  .plan-step .timing { grid-column: 1 / -1; text-align: left; margin-top: 6px; }
+  .propmetrics { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- ════════ MASTHEAD ════════ -->
+<div class="masthead anim d1">
+  <svg class="mark" viewBox="0 0 36 36" fill="none">
+    <path d="M10 6 L26 6 L30 13 L26 20 L10 20 L6 13 Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <path d="M13 20 L23 20 L26 26 L23 32 L13 32 L10 26 Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <circle cx="18" cy="13" r="1.8" fill="currentColor"/>
+    <circle cx="18" cy="26" r="1.8" fill="currentColor"/>
+  </svg>
+  <div class="name">BuzzHive <span class="sub">Civic Pollinator Brief</span></div>
+  <div></div>
+  <div class="vol">Vol. 01 · Nº 02<strong>Nov 2025</strong></div>
+</div>
+
+<!-- ════════ HERO ════════ -->
+<section class="hero">
+  <div>
+    <div class="eyebrow anim d1">A strategic inquiry · Binghamton anchor</div>
+    <h1 class="anim d2" style="margin-top:20px">
+      Between <span class="b">Beewise's</span><br/>
+      $400/month<br/>
+      robot <span class="italic">and</span><br/>
+      <span class="r">Best Bees'</span><br/>
+      $2,550/yr service.
+    </h1>
+
+    <div class="body anim d3">
+      <p>Beewise built the <strong>$170M AI-robotic hive</strong> that runs almond pollination at commercial scale. Best Bees built the <strong>$4.8M ARR service business</strong> that puts hives on corporate rooftops. Between them is a $90B pollinator economy and a market nobody has actually served: <strong>cities, universities, and mid-sized institutions who want bees on their property with real telemetry and no beekeeper on staff.</strong></p>
+      <p>The call with Saar Safra (Beewise CEO) and the interest from the Mayor of Binghamton together suggest a real opening: <strong>a consumer-accessible, service-wrapped, sensor-native hive</strong> positioned for municipal ESG programs, university campuses, and corporate sustainability. Less ambitious than Beewise. More scalable than Best Bees. Defensibly in between.</p>
+    </div>
+  </div>
+
+  <aside class="hero sidebar anim d4">
+    <div class="label">Inbound · Live Signal</div>
+    <h3>Mayor of Binghamton · expressed interest</h3>
+    <p>Kraham administration has an active climate action plan, a citywide composting program ($215K grant, June 2025), and Cornell Cooperative Extension as an operational partner on environmental programs.</p>
+    <p>Broome County Pollinator Pathway already exists as scaffolding. Binghamton University is in-city. All three would plausibly sponsor a flagship civic pollinator pilot.</p>
+    <div class="caller">"Best Bees model + Beewise tech" — paraphrased from the conversation.</div>
+  </aside>
+</section>
+
+<!-- ════════ §01 — BEEWISE + BEST BEES ════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="ordinal">I.</div>
+    <div class="t">
+      <div class="eyebrow">The two poles</div>
+      <h2>Who Beewise and Best Bees actually are</h2>
+    </div>
+    <div class="aside">$90B market &nbsp;·&nbsp; Two incumbents &nbsp;·&nbsp; One unserved middle</div>
+  </div>
+
+  <div class="brief-pair">
+
+    <!-- Beewise -->
+    <div class="brief beewise">
+      <div class="tag">The robotic incumbent</div>
+      <h3>Beewise — <em>commercial robot</em></h3>
+      <div class="tagline">AI-powered robotic hive the size of a minivan, for almond pollination at scale.</div>
+
+      <div class="stats">
+        <div class="stat"><div class="n">$170<sup>M</sup></div><div class="l">Total funding</div></div>
+        <div class="stat"><div class="n">1,240</div><div class="l">BeeHomes deployed</div></div>
+        <div class="stat"><div class="n">24–48</div><div class="l">Colonies per unit</div></div>
+        <div class="stat"><div class="n">$400<sup>/mo</sup></div><div class="l">Service fee per unit</div></div>
+      </div>
+
+      <ul>
+        <li>Solar powered, 7 feet long, forklift-compatible</li>
+        <li>AI + computer vision + robotic frame inspection</li>
+        <li>Heat-chamber varroa treatment (99% non-chemical)</li>
+        <li>Autonomous swarm prevention and climate control</li>
+        <li>80% mortality reduction, 50% yield increase vs wooden hives</li>
+        <li>Deployed primarily at commercial almond operations</li>
+      </ul>
+
+      <div class="bottomline">Not for consumers. Never will be. Wrong form factor, wrong economics, wrong buyer. $170M of engineering went into industrial scale.</div>
+    </div>
+
+    <!-- Best Bees -->
+    <div class="brief bestbees">
+      <div class="tag">The service incumbent</div>
+      <h3>Best Bees — <em>beekeeping-as-a-service</em></h3>
+      <div class="tagline">Human beekeepers visiting hives monthly in 21 US cities. Science-backed, labor-intensive.</div>
+
+      <div class="stats">
+        <div class="stat"><div class="n">$4.8<sup>M</sup></div><div class="l">ARR</div></div>
+        <div class="stat"><div class="n">21</div><div class="l">US cities</div></div>
+        <div class="stat"><div class="n">$2,550</div><div class="l">Per hive, per year</div></div>
+        <div class="stat"><div class="n">70<sup>%</sup></div><div class="l">Revenue to labor</div></div>
+      </div>
+
+      <ul>
+        <li>Residential + corporate + institutional rooftops</li>
+        <li>Monthly visits by employee beekeepers</li>
+        <li>Honey extracted, bottled, labeled, returned to client</li>
+        <li>Data contributes to pollinator research database</li>
+        <li>Corporate: ESG reporting, onsite tours, co-branding</li>
+        <li>15+ years old, Inc. 5000 fast-growth recognition</li>
+      </ul>
+
+      <div class="bottomline">Zero automation. Zero sensor stack. Margins capped by labor cost. Can't cross the $10M ARR line at current structure without tech leverage.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════ §02 — THE GAP ════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="ordinal">II.</div>
+    <div class="t">
+      <div class="eyebrow">The unserved middle</div>
+      <h2>What neither of them does</h2>
+    </div>
+    <div class="aside">Shape of the opportunity &nbsp;·&nbsp; Four dimensions</div>
+  </div>
+
+  <div class="gapgrid">
+    <div class="h"></div>
+    <div class="h">Beewise</div>
+    <div class="h">Best Bees</div>
+    <div class="h">Us (BuzzHive Civic)</div>
+    <div class="h">Verdict</div>
+
+    <div class="row-label">Form factor</div>
+    <div>Minivan-sized robot</div>
+    <div>Standard wooden hive</div>
+    <div class="us">Standard wooden hive + sensor</div>
+    <div class="gap">We can deploy anywhere; Beewise can't.</div>
+
+    <div class="row-label">Automation</div>
+    <div>Full robotic (varroa, swarm, harvest)</div>
+    <div>None — human labor does everything</div>
+    <div class="us">Telemetry + AI triage, human for physical work</div>
+    <div class="gap">Automate knowing, not doing.</div>
+
+    <div class="row-label">Price / hive / year</div>
+    <div>~$2,400</div>
+    <div>$2,550</div>
+    <div class="us">$1,200–1,800 institutional · $300 residential</div>
+    <div class="gap">30–60% cheaper via sensor leverage.</div>
+
+    <div class="row-label">Buyer</div>
+    <div>Almond growers (B2B)</div>
+    <div>Affluent residential + corporate HQs</div>
+    <div class="us">Cities, universities, mid-size institutions</div>
+    <div class="gap">Municipal ESG is wide-open territory.</div>
+
+    <div class="row-label">Data output</div>
+    <div>Proprietary, internal</div>
+    <div>Aggregated research, not client-facing</div>
+    <div class="us">Client-facing ESG dashboard + sector data</div>
+    <div class="gap">Reporting is the hidden product.</div>
+
+    <div class="row-label">Geographic scale</div>
+    <div>Almond belt (CA + AU)</div>
+    <div>Top-21 US cities only</div>
+    <div class="us">Any NE/MW city with institutional demand</div>
+    <div class="gap">Mid-sized cities have been ignored.</div>
+  </div>
+</section>
+
+<!-- ════════ §03 — THE PROPOSAL ════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="ordinal">III.</div>
+    <div class="t">
+      <div class="eyebrow">The proposal</div>
+      <h2>BuzzHive Civic — a municipal ESG wedge</h2>
+    </div>
+    <div class="aside">Service + sensor + reporting &nbsp;·&nbsp; Not a robot</div>
+  </div>
+
+  <div class="prop">
+    <div>
+      <div class="eyebrow">What we'd actually build</div>
+      <h2>A <em>sensor-native</em> pollinator<br/>service for cities<br/><em>and institutions.</em></h2>
+      <p class="lead">Best Bees' delivery model + BuzzHive's sensor and AI + an ESG reporting layer municipal and corporate buyers actually need. Local beekeeper partners do the physical work. We monitor, triage, and report.</p>
+
+      <div class="propmetrics">
+        <div class="m">
+          <div class="k">Target ARPU</div>
+          <div class="v">$1,500–6,000 per deployed apiary per year</div>
+        </div>
+        <div class="m">
+          <div class="k">Unit economics vs. Best Bees</div>
+          <div class="v">2–3× gross margin at 60% of their price</div>
+        </div>
+        <div class="m">
+          <div class="k">Revenue composition</div>
+          <div class="v">Service fee + sensor leasing + ESG report</div>
+        </div>
+        <div class="m">
+          <div class="k">Year-3 target</div>
+          <div class="v">8 cities · $2–3M ARR · 400 deployed apiaries</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prop-right">
+      <h4>Why this works where robot-cloning wouldn't</h4>
+      <ul>
+        <li>Zero hardware moonshot; uses the BuzzHive V1 sensor already in pipeline</li>
+        <li>Labor stays local — contract with existing beekeeper partners per city</li>
+        <li>Fits a wooden hive; no regulatory or zoning novelty to clear</li>
+        <li>ESG reporting is the differentiator, and we already own that data</li>
+      </ul>
+
+      <h4>Why municipal is the right entry</h4>
+      <ul>
+        <li>Climate Action Plans = line-item budget for pollinator work</li>
+        <li>Grant-funded pilots ($50K–$250K range) are accessible</li>
+        <li>Mayor endorsement → local press → social proof for next 3 cities</li>
+        <li>Universities and hospitals become natural next buyers</li>
+      </ul>
+
+      <h4>What we explicitly are not doing</h4>
+      <ul>
+        <li>Not building a consumer robot. $170M problem.</li>
+        <li>Not replacing Best Bees in Boston. Wrong city shape.</li>
+        <li>Not competing with Beewise for almond growers.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ §04 — BINGHAMTON PILOT ════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="ordinal">IV.</div>
+    <div class="t">
+      <div class="eyebrow">The anchor pilot</div>
+      <h2>Binghamton as lighthouse</h2>
+    </div>
+    <div class="aside">Spring 2026 deployment &nbsp;·&nbsp; Four quarters to reference</div>
+  </div>
+
+  <div class="pilot">
+    <div class="hero-card">
+      <div class="loc">Binghamton, NY · Broome County</div>
+      <h3>The lighthouse</h3>
+      <div class="sub">Mid-sized NE city with the right institutional mix and mayoral sponsorship already warm.</div>
+      <div class="stat-row">
+        <div>
+          <div class="k">Population</div>
+          <div class="v">~ 45,000</div>
+        </div>
+        <div>
+          <div class="k">Mayor</div>
+          <div class="v">Jared Kraham</div>
+        </div>
+        <div>
+          <div class="k">Climate plan</div>
+          <div class="v">Active</div>
+        </div>
+        <div>
+          <div class="k">Research partner</div>
+          <div class="v">Cornell Coop Ext</div>
+        </div>
+        <div>
+          <div class="k">University</div>
+          <div class="v">SUNY Binghamton</div>
+        </div>
+        <div>
+          <div class="k">Existing program</div>
+          <div class="v">Pollinator Pathway</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pilot-plan">
+      <div class="plan-step">
+        <div class="stage">i.</div>
+        <div>
+          <h4>Memorandum of intent with mayor's office</h4>
+          <p>Non-binding letter framing the pilot as a civic pollinator program under the Climate Action Plan. Cornell Cooperative Extension co-signed. Binghamton University sustainability office invited as research partner.</p>
+        </div>
+        <div class="timing">Dec 2025<strong>Stakeholder lock</strong></div>
+      </div>
+
+      <div class="plan-step">
+        <div class="stage">ii.</div>
+        <div>
+          <h4>Grant scoping — $100K–$250K seed</h4>
+          <p>Target NYSERDA Climate Smart Communities, USDA Specialty Crop Block Grant, and SUNY IMPACT funding. Grant covers hardware + first-year operations. Binghamton provides matching in-kind via parks department.</p>
+        </div>
+        <div class="timing">Jan–Mar 2026<strong>Funding</strong></div>
+      </div>
+
+      <div class="plan-step">
+        <div class="stage">iii.</div>
+        <div>
+          <h4>Deploy 10 apiaries across 5 sites</h4>
+          <p>City Hall roof · SUNY Binghamton campus · Broome County office · two public parks. 20–30 hives total. Local beekeeper contracted for physical visits; BuzzHive sensors + app handle monitoring and triage.</p>
+        </div>
+        <div class="timing">Apr 2026<strong>Install</strong></div>
+      </div>
+
+      <div class="plan-step">
+        <div class="stage">iv.</div>
+        <div>
+          <h4>Public ESG dashboard + quarterly report</h4>
+          <p>Citizen-facing real-time map of civic hive health. Quarterly ESG report with colony survival, pollinator activity, nectar flow, and climate indicator correlations. Press, ribbon-cutting, local news cycle.</p>
+        </div>
+        <div class="timing">May–Sep 2026<strong>Visibility</strong></div>
+      </div>
+
+      <div class="plan-step">
+        <div class="stage">v.</div>
+        <div>
+          <h4>Winter survival + case study + expansion</h4>
+          <p>Full winter of telemetry. Published case study with Cornell co-signatures. Use Binghamton as the reference to open conversations in Ithaca, Syracuse, Scranton, Rochester, Albany, Pittsburgh, Cleveland.</p>
+        </div>
+        <div class="timing">Oct 2026–Mar 2027<strong>Scale</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ §05 — TRADEOFF ════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="ordinal">V.</div>
+    <div class="t">
+      <div class="eyebrow">The honest tradeoff</div>
+      <h2>This is a different trajectory from Shape A</h2>
+    </div>
+    <div class="aside">Not addition &nbsp;·&nbsp; Substitution</div>
+  </div>
+
+  <div class="tradeoff">
+    <div class="path a">
+      <div class="t">Path A</div>
+      <h3>Sideliner winter-survival SaaS</h3>
+      <div class="gist">Email the 25 survey "yes" responses. Ship V1 hardware. Win stationary sideliners across NE + Upper Midwest.</div>
+      <table>
+        <tr><td>Customer</td><td>Individual sideliner (11–500 hives)</td></tr>
+        <tr><td>Channel</td><td>E-commerce + associations + workshops</td></tr>
+        <tr><td>Sales cycle</td><td>Days to weeks</td></tr>
+        <tr><td>ARPU</td><td>$500–5,000 per year per customer</td></tr>
+        <tr><td>Capital need</td><td>Bootstrappable</td></tr>
+        <tr><td>Year-3 target</td><td>$2M ARR, 3,000 sensors</td></tr>
+        <tr><td>Moat</td><td>Cold-climate labeled dataset</td></tr>
+        <tr><td>Acquirers</td><td>BroodMinder, BeeHero</td></tr>
+      </table>
+    </div>
+
+    <div class="path b">
+      <div class="t">Path B</div>
+      <h3>Civic pollinator service (Binghamton)</h3>
+      <div class="gist">Land the mayor's pilot. Deploy 10 apiaries, publish an ESG report, scale into 8 cities by year 3.</div>
+      <table>
+        <tr><td>Customer</td><td>Cities · universities · institutions</td></tr>
+        <tr><td>Channel</td><td>Mayor offices · sustainability depts · grants</td></tr>
+        <tr><td>Sales cycle</td><td>Months to quarters (procurement)</td></tr>
+        <tr><td>ARPU</td><td>$25K–$150K per contract per year</td></tr>
+        <tr><td>Capital need</td><td>Angel / grant-funded runway</td></tr>
+        <tr><td>Year-3 target</td><td>$2–3M ARR, 8 cities, 400 apiaries</td></tr>
+        <tr><td>Moat</td><td>Municipal references + ESG product</td></tr>
+        <tr><td>Acquirers</td><td>Best Bees, CPG ESG platforms, ag-tech PE</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="recbox">
+    <h3>Recommendation — <em>run Path B as the lead</em>, keep Path A warm in parallel</h3>
+    <p>A mayor-backed pilot with grant money, institutional validation, and a pre-warm CEO conversation at Beewise is <em>materially stronger</em> than emailing 25 survey responses cold. The signal-to-noise on Path B is genuinely higher. It also produces exactly the data asset (labeled hive telemetry + winter survival + civic visibility) that Path A aims at — just bought through institutional budget instead of individual credit cards.</p>
+    <p>Path A doesn't die; it becomes <strong>the consumer SKU we ship in year 2</strong> once the hardware has been proven through the civic deployments. Same sensor, same AI, same winter-survival model — funded to existence by Binghamton and replicated in cities, then hobbyist-priced for the associations as a follow-on product.</p>
+    <div class="nextline">Trigger condition: if Binghamton MOI is secured by year-end, Path B becomes the lead. If not, Path A ships first.</div>
+  </div>
+</section>
+
+<!-- ════════ FOOT ════════ -->
+<div class="foot">
+  <div>BuzzHive · Civic Pollinator Brief v0.1</div>
+  <div>Drafted from Beewise + Best Bees + Binghamton research · Nov 2025</div>
+</div>
+
+</div>
+</body>
+</html>

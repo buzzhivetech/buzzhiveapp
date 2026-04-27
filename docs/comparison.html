@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Old vs. new · Side-by-side comparison</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #141310;
+        --ink-soft: #3d3a33;
+        --ink-dim: #6a6558;
+        --paper: #f6f3ec;
+        --paper-warm: #efeadf;
+        --paper-deep: #e8e2d1;
+        --rule: #d6cfbd;
+        --rule-soft: #e2dcc9;
+        --accent: #a84d2e;
+        --accent-soft: #c97a5b;
+        --accent-bg: #f3e4d9;
+        --green: #4a6741;
+        --gold: #b68a2c;
+        --red: #9a3324;
+        --blue: #2e5266;
+        --old-ink: #5a5247;
+        --old-bg: #ede7d7;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Newsreader", Georgia, serif;
+        font-size: 17px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .sans { font-family: "IBM Plex Sans", sans-serif; }
+      .mono { font-family: "IBM Plex Mono", monospace; }
+
+      /* COVER */
+      .cover {
+        padding: 48px 5vw 44px;
+        background: var(--paper-warm);
+        border-bottom: 2px solid var(--ink);
+      }
+      .cover .strip {
+        display: flex;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .cover .kind {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-top: 28px;
+      }
+      .cover h1 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(40px, 5.4vw, 72px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        margin: 14px 0 20px;
+        max-width: 1100px;
+      }
+      .cover h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+      .cover .deck {
+        font-size: clamp(17px, 1.3vw, 21px);
+        line-height: 1.5;
+        max-width: 840px;
+        color: var(--ink-soft);
+      }
+
+      .wrap { max-width: 1280px; margin: 0 auto; padding: 0 5vw; }
+
+      /* COLUMN HEADERS */
+      .col-heads {
+        display: grid;
+        grid-template-columns: 220px 1fr 1fr;
+        gap: 0;
+        margin-top: 48px;
+        position: sticky;
+        top: 0;
+        background: var(--paper);
+        z-index: 10;
+        border-bottom: 2px solid var(--ink);
+      }
+      .col-heads .dim-head {
+        padding: 20px 22px;
+        border-right: 1px solid var(--rule);
+      }
+      .col-heads .old-head,
+      .col-heads .new-head {
+        padding: 20px 22px;
+      }
+      .col-heads .old-head {
+        background: var(--old-bg);
+        border-right: 1px solid var(--rule);
+      }
+      .col-heads .new-head {
+        background: var(--accent-bg);
+      }
+      .col-heads .tag {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .col-heads .dim-head .tag { color: var(--ink-dim); }
+      .col-heads .old-head .tag { color: var(--old-ink); }
+      .col-heads .new-head .tag { color: var(--accent); }
+      .col-heads .name {
+        font-family: "Newsreader", serif;
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 1.15;
+        color: var(--ink);
+      }
+      .col-heads .name em { font-style: italic; color: var(--accent); font-weight: 400; }
+      .col-heads .tiny {
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 12px;
+        color: var(--ink-dim);
+        margin-top: 4px;
+      }
+
+      /* ROWS */
+      .row {
+        display: grid;
+        grid-template-columns: 220px 1fr 1fr;
+        gap: 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .row > div {
+        padding: 18px 22px;
+      }
+      .row .dim {
+        background: var(--paper-warm);
+        border-right: 1px solid var(--rule);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: var(--ink);
+        display: flex;
+        align-items: flex-start;
+      }
+      .row .old {
+        background: color-mix(in srgb, var(--old-bg) 40%, var(--paper) 60%);
+        border-right: 1px solid var(--rule);
+        color: var(--old-ink);
+      }
+      .row .new {
+        background: color-mix(in srgb, var(--accent-bg) 40%, var(--paper) 60%);
+        color: var(--ink);
+      }
+      .row .old strong, .row .new strong { font-weight: 600; color: var(--ink); }
+      .row .old em, .row .new em { font-style: italic; }
+      .row .new em { color: var(--accent); }
+
+      .row.hero {
+        background: var(--ink);
+      }
+      .row.hero .dim {
+        background: var(--ink);
+        color: var(--accent-soft);
+        border-right: 1px solid #2a2824;
+      }
+      .row.hero .old {
+        background: #1e1c18;
+        color: #c7beac;
+        border-right: 1px solid #2a2824;
+      }
+      .row.hero .new {
+        background: #241d17;
+        color: var(--paper);
+      }
+      .row.hero .old strong, .row.hero .new strong { color: var(--paper); }
+      .row.hero .new em { color: var(--accent-soft); }
+
+      .row:first-of-type { border-top: 2px solid var(--ink); }
+
+      /* VARIANCE VIS */
+      .variance {
+        display: grid;
+        grid-template-columns: 220px 1fr 1fr;
+        border-top: 2px solid var(--ink);
+        border-bottom: 2px solid var(--ink);
+        margin-top: 2px;
+      }
+      .variance > div {
+        padding: 28px 22px;
+      }
+      .variance .lbl {
+        background: var(--paper-warm);
+        border-right: 1px solid var(--rule);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .variance .chart {
+        background: var(--paper-warm);
+        border-right: 1px solid var(--rule);
+        position: relative;
+      }
+      .variance .chart:last-child { border-right: none; }
+      .variance .chart .ctitle {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        margin-bottom: 18px;
+      }
+      .variance .curve {
+        position: relative;
+        height: 140px;
+        margin-bottom: 12px;
+      }
+      .variance .curve svg { width: 100%; height: 100%; display: block; }
+      .variance .xaxis {
+        display: flex;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        color: var(--ink-dim);
+        letter-spacing: 0.12em;
+        border-top: 1px solid var(--rule);
+        padding-top: 6px;
+      }
+      .variance .note {
+        margin-top: 14px;
+        font-size: 13px;
+        color: var(--ink-soft);
+        line-height: 1.5;
+      }
+
+      /* BOTTOM LINE */
+      .bottom {
+        padding: 56px 0 36px;
+      }
+      .bottom h2 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 500;
+        margin: 0 0 18px;
+      }
+      .bottom .lead {
+        font-family: "Newsreader", serif;
+        font-size: clamp(22px, 2.2vw, 28px);
+        font-weight: 500;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        margin: 0 0 32px;
+        max-width: 940px;
+      }
+      .bottom .lead em { color: var(--accent); font-style: italic; font-weight: 400; }
+
+      .summary-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .sc {
+        padding: 24px 26px;
+        border-top: 3px solid var(--ink);
+      }
+      .sc.old {
+        background: var(--old-bg);
+        border-top-color: var(--old-ink);
+      }
+      .sc.new {
+        background: var(--accent-bg);
+        border-top-color: var(--accent);
+      }
+      .sc .tag {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .sc.old .tag { color: var(--old-ink); }
+      .sc.new .tag { color: var(--accent); }
+      .sc .h {
+        font-family: "Newsreader", serif;
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        line-height: 1.25;
+      }
+      .sc .t {
+        font-size: 15px;
+        line-height: 1.55;
+        color: var(--ink-soft);
+      }
+      .sc .t strong { color: var(--ink); font-weight: 600; }
+
+      .final {
+        margin-top: 36px;
+        padding: 28px 32px;
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .final .tag {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--accent-soft);
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .final .q {
+        font-family: "Newsreader", serif;
+        font-size: clamp(20px, 1.9vw, 26px);
+        font-weight: 500;
+        line-height: 1.35;
+        font-style: italic;
+      }
+      .final .q em { color: var(--accent-soft); }
+
+      .footer {
+        padding: 28px 0 40px;
+        color: var(--ink-dim);
+        font-size: 12px;
+        font-family: "IBM Plex Mono", monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 900px) {
+        .col-heads,
+        .row,
+        .variance {
+          grid-template-columns: 1fr;
+        }
+        .col-heads .dim-head,
+        .col-heads .old-head,
+        .row .dim,
+        .row .old,
+        .variance .lbl,
+        .variance .chart:first-of-type {
+          border-right: none;
+          border-bottom: 1px solid var(--rule);
+        }
+        .col-heads { position: static; }
+        .summary-cards { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="cover">
+      <div class="strip">
+        <span>Comparison memo · for board use · 17 April 2026</span>
+        <span>Companion to board-briefing.html</span>
+      </div>
+      <div class="kind">The trade, in one document</div>
+      <h1>
+        Old business. New proposition.<br/>
+        <em>Side by side, honestly.</em>
+      </h1>
+      <div class="deck">
+        Both are real businesses. The question in front of the board isn't whether one is valid and the other isn't — it's whether we prefer a high-probability small outcome or a lower-probability large one. This document places them side by side across every dimension that matters, so the choice is legible.
+      </div>
+    </header>
+
+    <div class="wrap">
+
+      <div class="col-heads">
+        <div class="dim-head">
+          <div class="tag">Dimension</div>
+          <div class="name">What we're comparing</div>
+        </div>
+        <div class="old-head">
+          <div class="tag">Column A · status quo</div>
+          <div class="name">The original business</div>
+          <div class="tiny">Beekeeper mobile app + BLE sensors + SaaS subscription</div>
+        </div>
+        <div class="new-head">
+          <div class="tag">Column B · proposition</div>
+          <div class="name">The <em>new proposition</em></div>
+          <div class="tiny">Neutral data infrastructure for the pollination event</div>
+        </div>
+      </div>
+
+      <!-- ROW: CUSTOMER -->
+      <div class="row">
+        <div class="dim">Customer</div>
+        <div class="old">Individual beekeepers — hobbyist and sideliner. Managing 1–50 hives.</div>
+        <div class="new">Enterprise buyers — <strong>parametric insurance MGAs, biodiversity consultancies, CPG sustainability teams, growers.</strong> Four convergent categories buying the same data.</div>
+      </div>
+
+      <!-- ROW: USER -->
+      <div class="row">
+        <div class="dim">User</div>
+        <div class="old">The beekeeper — same as the customer.</div>
+        <div class="new">Beekeepers and growers, <em>instrumented</em>. Customer and user are different people; user participation is the data-acquisition mechanism, not the revenue.</div>
+      </div>
+
+      <!-- ROW: PRODUCT -->
+      <div class="row">
+        <div class="dim">Product</div>
+        <div class="old">Flutter mobile app + BLE hive sensors + cloud sync. Colony health tracking, alerts, logs.</div>
+        <div class="new">Integrated per-site pollination record: <strong>hive telemetry + native pollinator acoustic + landscape phenology</strong>, with an API/dashboard for enterprise buyers and white-label reporting for consultancies.</div>
+      </div>
+
+      <!-- ROW: REVENUE MODEL -->
+      <div class="row">
+        <div class="dim">Revenue model</div>
+        <div class="old">SaaS subscription.</div>
+        <div class="new">Enterprise data licensing + API access. Potential design-partner services in year one.</div>
+      </div>
+
+      <!-- ROW: DEAL SIZE -->
+      <div class="row">
+        <div class="dim">Deal size</div>
+        <div class="old"><strong>~$120–$300 per user per year.</strong></div>
+        <div class="new"><strong>~$50K–$500K per enterprise contract</strong> (consultancy pilots at the low end, insurance data licenses at the high end).</div>
+      </div>
+
+      <!-- ROW: DATA ASSET -->
+      <div class="row">
+        <div class="dim">Core data asset</div>
+        <div class="old">Per-hive sensor readings, single-user, not aggregated.</div>
+        <div class="new">Aggregated, multi-source, multi-site pollination record with <em>re-licensing rights</em>. The asset compounds; the original does not.</div>
+      </div>
+
+      <!-- ROW: DEFENSIBILITY -->
+      <div class="row">
+        <div class="dim">Defensibility</div>
+        <div class="old">Product UX, workflow stickiness, switching cost.</div>
+        <div class="new">Data network effects, aggregated rights, scientific methodology, integration partnerships (acoustic vendors, eDNA labs, satellite APIs).</div>
+      </div>
+
+      <!-- ROW: CEILING -->
+      <div class="row hero">
+        <div class="dim">Realistic revenue ceiling</div>
+        <div class="old"><strong>$1–5M ARR.</strong> Proven out by BroodMinder, HiveTracks, ApisProtect, Pollenity, Arnia.</div>
+        <div class="new"><strong>$50–250M ARR</strong> if two of the four buyer segments convert. Upside case references Floodbase ($17M raised, Swiss Re partner), Climate Corp ($1.1B exit), Alvéole Aura trajectory.</div>
+      </div>
+
+      <!-- ROW: PRECEDENT -->
+      <div class="row">
+        <div class="dim">Closest precedent</div>
+        <div class="old">BroodMinder, HiveTracks — capped lifestyle SaaS.</div>
+        <div class="new"><strong>Floodbase</strong> (flood data vendor to reinsurers), <strong>Climate Corporation</strong> (weather data → agriculture), <strong>Alvéole Aura</strong> (biodiversity data → enterprise REITs).</div>
+      </div>
+
+      <!-- ROW: TIME TO REVENUE -->
+      <div class="row">
+        <div class="dim">Time to first revenue</div>
+        <div class="old"><strong>3–6 months.</strong></div>
+        <div class="new"><strong>12–18 months.</strong> Longer because enterprise sales cycles are longer and at least one methodology publication or pilot case study is required to clear the insurance-grade rigor bar.</div>
+      </div>
+
+      <!-- ROW: CAPITAL -->
+      <div class="row">
+        <div class="dim">Capital to MVP</div>
+        <div class="old"><strong>~$200K.</strong></div>
+        <div class="new"><strong>~$2–4M seed.</strong> Funds hardware, partner integrations, first pilot deployments, and a scientific-credibility hire or advisor.</div>
+      </div>
+
+      <!-- ROW: TEAM FIT -->
+      <div class="row">
+        <div class="dim">Team fit</div>
+        <div class="old">Strong. We are exactly this team.</div>
+        <div class="new">Technical fit strong. <em>Scientific-credibility and enterprise-sales fit is the gap</em> — closable via advisor, methodology publication, or co-founder hire. Not closable via wishful thinking.</div>
+      </div>
+
+      <!-- ROW: COMPETITION -->
+      <div class="row">
+        <div class="dim">Competitive pressure</div>
+        <div class="old">High. Five-plus direct competitors, all capped, all converging on the same features.</div>
+        <div class="new">Moderate. No integrated multi-layer player exists today. Adjacent giants (BeeHero, NatureMetrics, Alvéole, AgriSound) each own one layer — none owns the integration.</div>
+      </div>
+
+      <!-- ROW: BEACHHEAD -->
+      <div class="row">
+        <div class="dim">Beachhead / GTM</div>
+        <div class="old">App store launch, direct marketing to beekeeping community, conference presence.</div>
+        <div class="new">Phase 0 validation (six weeks, 12 calls) → design-partner pilot with one consultancy <em>or</em> one MGA → expand instrumented footprint. Founder-sold, not ad-acquired.</div>
+      </div>
+
+      <!-- ROW: WHAT CARRIES FORWARD -->
+      <div class="row">
+        <div class="dim">Stack continuity</div>
+        <div class="old">N/A — this <em>is</em> the existing stack.</div>
+        <div class="new">BLE firmware as one data layer <em>if it passes insurance-grade rigor in Phase 0</em>. Cloud ingest carries forward. Beekeeper relationships carry forward. <strong>Stack is a tailwind, not the reason to pick this bet.</strong></div>
+      </div>
+
+      <!-- ROW: SUCCESS LOOKS LIKE -->
+      <div class="row">
+        <div class="dim">Successful outcome</div>
+        <div class="old">Profitable small business, $2–5M ARR, possible acquihire exit at $2–10M.</div>
+        <div class="new">Scientific-data-vendor business, $50–250M ARR, acquisition target for reinsurer, ag-insurance group, or AgTech strategic. Outcome range $100M–$1B+.</div>
+      </div>
+
+      <!-- ROW: FAILURE LOOKS LIKE -->
+      <div class="row">
+        <div class="dim">Failed outcome</div>
+        <div class="old">Slow decline as beekeepers churn to free tools. Years of runway burned reaching a ceiling that was visible from day one.</div>
+        <div class="new">Phase 0 kills the thesis cleanly in six weeks for $5K. Board decides: return capital, or run a value-first restart on a different market. No years lost.</div>
+      </div>
+
+      <!-- ROW: PRIMARY RISK -->
+      <div class="row">
+        <div class="dim">Primary risk</div>
+        <div class="old">The ceiling <em>is</em> the business. No amount of execution unlocks venture-scale. The risk is certainty of a small outcome, not probability of failure.</div>
+        <div class="new">Buyer validation — will enterprises actually license pollination data at scale? Plus: 18-month runway to meaningful revenue, and a scientific-credibility gap to close.</div>
+      </div>
+
+      <!-- VARIANCE VISUALIZATION -->
+      <div class="variance">
+        <div class="lbl">Outcome distribution</div>
+        <div class="chart">
+          <div class="ctitle">Column A · original</div>
+          <div class="curve">
+            <svg viewBox="0 0 400 140" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="oldFill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#5a5247" stop-opacity="0.4"/>
+                  <stop offset="100%" stop-color="#5a5247" stop-opacity="0.05"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="130" x2="400" y2="130" stroke="#d6cfbd" stroke-width="1"/>
+              <!-- narrow peaked distribution around small outcome -->
+              <path d="M 0 130 Q 20 130 40 128 Q 60 125 80 115 Q 100 100 120 70 Q 140 35 160 25 Q 175 20 185 25 Q 210 40 220 80 Q 235 115 250 125 Q 270 130 290 130 L 400 130 Z"
+                    fill="url(#oldFill)" stroke="#5a5247" stroke-width="1.5"/>
+              <!-- peak marker -->
+              <line x1="175" y1="20" x2="175" y2="130" stroke="#5a5247" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+              <text x="180" y="16" font-family="IBM Plex Mono, monospace" font-size="9" fill="#5a5247" font-weight="600">~$3M ARR</text>
+            </svg>
+          </div>
+          <div class="xaxis">
+            <span>$0</span>
+            <span>$5M</span>
+            <span>$50M</span>
+            <span>$500M</span>
+            <span>$1B+</span>
+          </div>
+          <div class="note">Narrow, peaked around a small-but-likely outcome. Low variance. Very high probability of <em>some</em> revenue. Near-zero probability of a venture outcome.</div>
+        </div>
+        <div class="chart">
+          <div class="ctitle">Column B · new proposition</div>
+          <div class="curve">
+            <svg viewBox="0 0 400 140" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="newFill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#a84d2e" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#a84d2e" stop-opacity="0.05"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="130" x2="400" y2="130" stroke="#d6cfbd" stroke-width="1"/>
+              <!-- bimodal-ish: big lump at 0 (kill) + wide right tail -->
+              <path d="M 0 130 Q 10 128 20 115 Q 30 95 40 80 Q 50 70 65 75 Q 80 82 95 90 Q 120 105 150 105 Q 180 105 210 95 Q 240 82 270 70 Q 300 60 330 62 Q 360 66 380 75 Q 395 82 400 90 L 400 130 Z"
+                    fill="url(#newFill)" stroke="#a84d2e" stroke-width="1.5"/>
+              <!-- markers -->
+              <line x1="35" y1="80" x2="35" y2="130" stroke="#a84d2e" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+              <text x="40" y="76" font-family="IBM Plex Mono, monospace" font-size="9" fill="#a84d2e" font-weight="600">kill</text>
+              <line x1="280" y1="65" x2="280" y2="130" stroke="#a84d2e" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+              <text x="198" y="61" font-family="IBM Plex Mono, monospace" font-size="9" fill="#a84d2e" font-weight="600">venture zone</text>
+            </svg>
+          </div>
+          <div class="xaxis">
+            <span>$0</span>
+            <span>$5M</span>
+            <span>$50M</span>
+            <span>$500M</span>
+            <span>$1B+</span>
+          </div>
+          <div class="note">Wider. Meaningful mass at zero (Phase 0 kills the thesis) <em>and</em> meaningful right tail (scientific data vendor outcome). Lower probability of revenue, higher probability of a venture outcome if revenue appears at all.</div>
+        </div>
+      </div>
+
+      <!-- BOTTOM LINE -->
+      <section class="bottom">
+        <h2>The bottom line</h2>
+        <p class="lead">
+          We are not choosing between "a good business" and "a bad business." We are choosing between a <em>near-certain small outcome</em> and a <em>less-certain large one</em>, with a cheap six-week decision point in between that tells us which side of that trade to commit to.
+        </p>
+        <div class="summary-cards">
+          <div class="sc old">
+            <div class="tag">Column A summary</div>
+            <div class="h">High-probability, low-ceiling business.</div>
+            <div class="t">
+              Run it for ten years and you end with <strong>a lifestyle business</strong>. Real revenue, small outcome, no venture return. The risk here is <em>certainty of a small result</em> — not uncertainty of failure.
+            </div>
+          </div>
+          <div class="sc new">
+            <div class="tag">Column B summary</div>
+            <div class="h">Lower-probability, higher-ceiling business.</div>
+            <div class="t">
+              Phase 0 tells us within six weeks whether the probability is high enough to commit $2–4M and 18 months. <strong>If killed, we're out six weeks and $5K.</strong> If validated, we're aimed at an outcome the original business couldn't produce at its best.
+            </div>
+          </div>
+        </div>
+        <div class="final">
+          <div class="tag">The actual question before the board tonight</div>
+          <div class="q">
+            Would we rather <em>almost certainly</em> land a small outcome, or <em>plausibly</em> land a large one — with a cheap, pre-committed way to know the difference in six weeks?
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <span>BuzzHive · side-by-side comparison · 17 Apr 2026</span>
+        <span>Confidential · do not distribute</span>
+      </div>
+
+    </div>
+
+  </body>
+</html>

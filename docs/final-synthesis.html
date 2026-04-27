@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Final synthesis · What the bee economy actually tells us</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #141310;
+        --ink-soft: #3d3a33;
+        --paper: #f6f3ec;
+        --paper-warm: #efeadf;
+        --rule: #d6cfbd;
+        --accent: #a84d2e;
+        --accent-soft: #c97a5b;
+        --green: #4a6741;
+        --gold: #b68a2c;
+        --red: #9a3324;
+        --blue: #2e5266;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Newsreader", Georgia, serif;
+        font-size: 17px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .sans { font-family: "IBM Plex Sans", sans-serif; }
+      .mono { font-family: "IBM Plex Mono", monospace; }
+
+      .masthead {
+        border-bottom: 2px solid var(--ink);
+        padding: 28px 5vw 20px;
+        background: var(--paper-warm);
+      }
+      .masthead .strip {
+        display: flex;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .masthead h1 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(42px, 6vw, 84px);
+        letter-spacing: -0.02em;
+        line-height: 1.02;
+        margin: 28px 0 14px;
+        max-width: 1100px;
+      }
+      .masthead h1 em {
+        font-style: italic;
+        color: var(--accent);
+        font-weight: 400;
+      }
+      .masthead .deck {
+        font-size: clamp(18px, 1.6vw, 22px);
+        line-height: 1.45;
+        max-width: 820px;
+        color: var(--ink-soft);
+        margin-bottom: 6px;
+      }
+      .masthead .byline {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        margin-top: 18px;
+      }
+
+      .wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 5vw;
+      }
+
+      .preface {
+        padding: 48px 0 24px;
+        border-bottom: 1px solid var(--rule);
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+      }
+      .preface .label {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+        padding-top: 6px;
+      }
+      .preface p {
+        font-size: 19px;
+        line-height: 1.55;
+        margin: 0 0 14px;
+        max-width: 780px;
+      }
+      .preface p:first-of-type { font-size: 22px; line-height: 1.45; }
+      .preface p strong { font-weight: 600; color: var(--ink); }
+
+      section.chapter {
+        padding: 56px 0 36px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .chapter-head {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+        margin-bottom: 32px;
+      }
+      .chapter-head .num {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        padding-top: 6px;
+      }
+      .chapter-head h2 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(32px, 3.4vw, 44px);
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+        margin: 0 0 12px;
+      }
+      .chapter-head h2 em { color: var(--accent); font-style: italic; font-weight: 400; }
+      .chapter-head .sub {
+        font-size: 18px;
+        color: var(--ink-soft);
+        max-width: 720px;
+      }
+
+      /* Zigzag timeline */
+      .timeline {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+      }
+      .timeline-body {
+        border-left: 1px solid var(--rule);
+        padding-left: 0;
+      }
+      .moment {
+        position: relative;
+        padding: 18px 0 18px 32px;
+        border-bottom: 1px dashed var(--rule);
+      }
+      .moment:last-child { border-bottom: none; }
+      .moment::before {
+        content: "";
+        position: absolute;
+        left: -6px;
+        top: 26px;
+        width: 11px;
+        height: 11px;
+        background: var(--paper);
+        border: 2px solid var(--ink);
+        border-radius: 50%;
+      }
+      .moment.reversal::before { background: var(--accent); border-color: var(--accent); }
+      .moment .when {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+      .moment .what {
+        font-family: "Newsreader", serif;
+        font-size: 20px;
+        font-weight: 500;
+        margin: 4px 0 6px;
+        line-height: 1.3;
+      }
+      .moment .why {
+        font-size: 16px;
+        color: var(--ink-soft);
+        line-height: 1.5;
+      }
+      .moment .why em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+      /* Theses grid */
+      .thesis-grid {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+      }
+      .thesis {
+        border-top: 1px solid var(--rule);
+        padding: 24px 0;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 24px;
+      }
+      .thesis:first-child { border-top: 2px solid var(--ink); }
+      .thesis-name {
+        font-family: "Newsreader", serif;
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 1.25;
+      }
+      .thesis-name small {
+        display: block;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        font-weight: 400;
+        margin-bottom: 6px;
+      }
+      .thesis-evidence {
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--ink-soft);
+      }
+      .thesis-evidence ul { margin: 0; padding-left: 18px; }
+      .thesis-evidence li { margin-bottom: 4px; }
+      .thesis-verdict {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .verdict-badge {
+        display: inline-block;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      .v-kill { background: var(--red); color: var(--paper); }
+      .v-lifestyle { background: var(--gold); color: var(--ink); }
+      .v-wait { background: var(--blue); color: var(--paper); }
+      .v-maybe { background: var(--green); color: var(--paper); }
+      .v-ruled { background: var(--ink); color: var(--paper); }
+
+      /* Evidence tables */
+      .evidence-section {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+        margin-top: 40px;
+      }
+      table.evidence {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      table.evidence th {
+        text-align: left;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding: 10px 12px 10px 0;
+        border-bottom: 2px solid var(--ink);
+      }
+      table.evidence td {
+        padding: 14px 12px 14px 0;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: top;
+        line-height: 1.5;
+      }
+      table.evidence td.co {
+        font-weight: 600;
+        font-size: 15px;
+        font-family: "IBM Plex Sans", sans-serif;
+      }
+      table.evidence td.metric {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        color: var(--ink-soft);
+      }
+
+      /* Pull quote */
+      .pullquote {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+        margin: 36px 0;
+      }
+      .pullquote .body {
+        font-family: "Newsreader", serif;
+        font-size: 28px;
+        line-height: 1.35;
+        font-style: italic;
+        color: var(--ink);
+        border-left: 3px solid var(--accent);
+        padding: 4px 0 4px 24px;
+        max-width: 820px;
+      }
+      .pullquote .body strong { font-style: normal; font-weight: 600; color: var(--accent); }
+
+      /* Options grid */
+      .options {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+      }
+      .option-card {
+        border: 1px solid var(--rule);
+        background: var(--paper-warm);
+        padding: 28px;
+        margin-bottom: 18px;
+      }
+      .option-card.highlight {
+        border-color: var(--accent);
+        border-width: 2px;
+        background: var(--paper);
+      }
+      .option-card .opt-num {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .option-card h3 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: 28px;
+        line-height: 1.2;
+        margin: 0 0 14px;
+      }
+      .option-card h3 em { color: var(--accent); font-style: italic; font-weight: 400; }
+      .option-card .opt-body {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 28px;
+      }
+      .option-card .opt-body p {
+        margin: 0 0 12px;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+      .option-card .opt-stats {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        line-height: 1.7;
+        color: var(--ink-soft);
+        border-left: 1px solid var(--rule);
+        padding-left: 20px;
+      }
+      .option-card .opt-stats .stat-label {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 10px;
+        color: var(--accent);
+      }
+      .option-card .opt-stats .stat-val {
+        color: var(--ink);
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+
+      /* Triggers */
+      .triggers {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+      }
+      .trigger-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      .trigger {
+        border-top: 2px solid var(--ink);
+        padding-top: 16px;
+      }
+      .trigger .label {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .trigger .statement {
+        font-family: "Newsreader", serif;
+        font-size: 19px;
+        line-height: 1.4;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+      .trigger .detail {
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--ink-soft);
+      }
+
+      /* Closing */
+      .closing {
+        padding: 60px 0 80px;
+        background: var(--paper-warm);
+        margin-top: 36px;
+      }
+      .closing .wrap { display: grid; grid-template-columns: 200px 1fr; gap: 40px; }
+      .closing h2 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(32px, 3.6vw, 48px);
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+        margin: 0 0 20px;
+        max-width: 860px;
+      }
+      .closing h2 em { color: var(--accent); font-style: italic; }
+      .closing p {
+        font-size: 18px;
+        line-height: 1.6;
+        max-width: 780px;
+        margin: 0 0 14px;
+      }
+      .closing .sig {
+        margin-top: 36px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        color: var(--ink-soft);
+        border-top: 1px solid var(--rule);
+        padding-top: 16px;
+        max-width: 780px;
+      }
+
+      /* Section markers */
+      .section-marker {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding-top: 4px;
+      }
+
+      /* Responsive */
+      @media (max-width: 860px) {
+        .preface, .chapter-head, .timeline, .thesis-grid, .evidence-section, .pullquote, .options, .triggers, .closing .wrap {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .thesis { grid-template-columns: 1fr; }
+        .trigger-list { grid-template-columns: 1fr; }
+        .option-card .opt-body { grid-template-columns: 1fr; }
+        .option-card .opt-stats { border-left: none; border-top: 1px solid var(--rule); padding-left: 0; padding-top: 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="strip">
+        <span>Final synthesis · supersedes prior strategy briefs</span>
+        <span>Internal research report · 17 April 2026</span>
+      </div>
+      <h1>The bee economy<br/>is <em>legible</em> now.</h1>
+      <div class="deck">
+        Nine months of on-and-off research, five strategy documents, a dozen
+        reversals. This is the one that stops the zigzag — every category mapped,
+        every thesis ruled on, and an honest statement of which wedges actually
+        fit what we are, what we have, and what 2026–2029 will reward.
+      </div>
+      <div class="byline">
+        Research basis · 60+ targeted web queries · competitor financials · USDA/RMA filings · reinsurance trade press · funding rounds 2022–2026
+      </div>
+    </header>
+
+    <div class="wrap">
+      <section class="preface">
+        <div class="label">Preface</div>
+        <div>
+          <p>
+            <strong>Why this document exists.</strong> The feedback was fair:
+            I've kept rebuilding on top of whatever the last idea was instead of
+            stress-testing each one to the point of breaking it. This report
+            does the opposite. I started by listing every thesis we've entertained,
+            then ran adversarial research designed to <em>kill</em> each one, and
+            only kept what survived.
+          </p>
+          <p>
+            Three theses survive in a modified form. Six do not. The result
+            isn't a pitch for any single direction — it's a map that tells us
+            which paths have evidence behind them, which are dead ends
+            dressed up as opportunities, and what single external event would
+            change the answer.
+          </p>
+          <p>
+            Read it as a research report, not a strategy brief. The decision is yours.
+          </p>
+        </div>
+      </section>
+
+      <section class="chapter">
+        <div class="chapter-head">
+          <div class="num">Ch. 01 · The zigzag</div>
+          <div>
+            <h2>What we've said, and why each answer <em>broke</em>.</h2>
+            <div class="sub">
+              Before the synthesis, the honest ledger of positions I've held over
+              the past nine months. Reversals are marked in orange. The point
+              isn't to apologize for them — it's to show what evidence moved
+              each position, so you can judge whether this one is different.
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="section-marker">Position ledger</div>
+          <div class="timeline-body">
+            <div class="moment">
+              <div class="when">Early · Sideliner SaaS thesis</div>
+              <div class="what">"Start with sideliner beekeepers, charge $10/month, build to BeeHero-acquisition or scaled SaaS."</div>
+              <div class="why">Broke when ApisProtect's financials came back: <em>$210K annual revenue, 3 employees, ~$2M raised since 2016.</em> BroodMinder unfunded since 2015. HiveTracks capped. Every comparable sideliner-SaaS bee company has hit the same ~$1–5M ARR ceiling.</div>
+            </div>
+            <div class="moment reversal">
+              <div class="when">Reversal 1 · Municipal / Beewise-like</div>
+              <div class="what">"Civic pollinator service for cities and institutions, Best-Bees-model, Binghamton-anchored."</div>
+              <div class="why">Broke on two fronts: <em>Alvéole already owns the enterprise commercial-real-estate version</em> (just landed Brookfield, Blackstone, CBRE, ESRT, BGO with their Aura platform in Feb 2026). The "beewashing" narrative has made cities reluctant to fund hive programs — municipal budgets are moving to native pollinator habitat, not more honeybees.</div>
+            </div>
+            <div class="moment reversal">
+              <div class="when">Reversal 2 · Pollinator-acoustic MRV for CPGs</div>
+              <div class="what">"Sell acoustic pollinator data up the supply chain to US food processors and brands with regen-ag commitments."</div>
+              <div class="why">Broke on the Q3 customer test: <em>every US CPG biodiversity budget we could identify is already spent with an incumbent</em> (NatureMetrics eDNA, Watershed/Persefoni carbon, Regrow acreage). AgriSound has tried to enter the US for 5 years and still hasn't. The wedge is real; our slice of it is blocked.</div>
+            </div>
+            <div class="moment reversal">
+              <div class="when">Reversal 3 · Parametric pollination insurance</div>
+              <div class="what">Whipsawed: first "no room," then "huge gap, send your friend the prompt."</div>
+              <div class="why">Both were partially right. The <em>peril-gap is real</em> — the 2025 colony crisis (62% commercial losses) did break contract-based hedges. But the <em>builder is not us</em>. The role this analysis kept pointing at — a neutral sensor data oracle feeding insurer triggers — is a regulated, trust-heavy, 3–5 year business that does not match our capital or skill set.</div>
+            </div>
+            <div class="moment">
+              <div class="when">Now · What this synthesis rules</div>
+              <div class="what">The bee economy has three venture-scale winners already capitalized, one lifestyle tier, and one latent gap that isn't ours to fill.</div>
+              <div class="why">Details below. The honest answer is that our existing codebase is <em>reference architecture</em>, not the foundation of a billion-dollar company. That's not a failure — it's data.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter">
+        <div class="chapter-head">
+          <div class="num">Ch. 02 · The nine theses, ruled</div>
+          <div>
+            <h2>One table, nine verdicts, <em>honest</em> evidence.</h2>
+            <div class="sub">
+              Every direction we've seriously considered, plus three I hadn't
+              properly evaluated. Each has a verdict, the evidence that produced
+              it, and the strength of that evidence. Nothing is on this list
+              because it's interesting — only because it's been considered, in
+              this project or in my own research.
+            </div>
+          </div>
+        </div>
+
+        <div class="thesis-grid">
+          <div class="section-marker">Thesis map</div>
+          <div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-01</small>
+                  Sideliner beekeeper SaaS
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Subscription hive-monitoring app for the 100K+ sideliner beekeepers in the US. Low ARPU, high retention-theoretically.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>ApisProtect: $210K rev, 3 FTE, ~$2M raised since 2016</li>
+                  <li>BroodMinder: unfunded since 2015</li>
+                  <li>HiveTracks: quietly capped at low-single-digit ARR</li>
+                  <li>Beekeepers resist maintenance-heavy sensor subscriptions</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-lifestyle">Lifestyle ceiling</span>
+                <div>Real demand. Real churn. Real ceiling at $1–5M ARR. Not venture-scale but fully achievable by a two-person team. Only correct if your goal is a profitable small business, not a fund return.</div>
+              </div>
+            </div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-02</small>
+                  Municipal / institutional pollinator service
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Managed hives + biodiversity reporting for cities, schools, corporate campuses. Service-led (Best Bees) plus software layer.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>Alvéole has 1,500+ properties, ~$30M+ revenue, just launched Aura (Feb 2026) with Brookfield, Blackstone, CBRE, ESRT</li>
+                  <li>Best Bees est. 2011, ~$15M revenue, 45 cities</li>
+                  <li>"Beewashing" critique now mainstream in conservation press</li>
+                  <li>12-year head start on field ops, distribution, enterprise sales</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-kill">Invalidated</span>
+                <div>Alvéole captured the enterprise buyer in 2025–2026 after 12 years of on-the-ground work. Entering now means copying their go-to-market at a point when they've already signed the buyers who would pay premium. Dead wedge.</div>
+              </div>
+            </div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-03</small>
+                  Pollinator-acoustic MRV for US CPG buyers
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Sell acoustic sensors + reporting to food processors / retailers / brands with regen-ag commitments. The "build in the trough" thesis.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>AgriSound 5 years in, still no US commercial customers</li>
+                  <li>Sensibee, Polliknow, Wilder Sensing, Hula Earth all in this exact space for EU CSRD/TNFD</li>
+                  <li>NatureMetrics $25M Series B Jan 2025 — eDNA incumbent with same biodiversity buyer</li>
+                  <li>US CPG budgets defaulting to certification (Bee Friendly Farming) not sensors</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-kill">Invalidated</span>
+                <div>Real trough. Real category. The wedge that survives is eDNA-plus-satellite (NatureMetrics) or bioacoustic-to-real-estate (Alvéole), not acoustic-to-agriculture. US ag buyer pathway is blocked and EU sensor competition is 3+ years ahead of us.</div>
+              </div>
+            </div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-04</small>
+                  Parametric pollination insurance (MGA / carrier)
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Underwrite pollination-failure peril directly. Sensor-triggered product sold to almond, blueberry, apple, cucurbit growers.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>REVO ParametricXHoney (Italy, 2023): only €400K in premium by 2024</li>
+                  <li>Arbol + Pollen Systems (Feb 2026): no hive sensor triggers, satellite-based</li>
+                  <li>USDA API program: 211% loss ratio but covers only rainfall peril</li>
+                  <li>Requires state DOI licensing, ~$5–10M in regulatory capital, actuarial team</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-wait">Not our shape</span>
+                <div>Gap is real. Builder is an MGA with insurance DNA (Arbol, Descartes, Stable-type) partnered with BeeHero's data layer. Our skill set is mobile + BLE firmware, not actuarial science + state DOI filings. Right idea, wrong founder profile.</div>
+              </div>
+            </div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-05</small>
+                  Neutral sensor-data oracle for pollination triggers
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Be the independent data-feed layer that insurers and reinsurers trust to verify pollination performance. Sell to MGAs, not growers.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>Shamba Network, MicroCrop, Chainlink, WeatherXM already fight for this seat in weather/NDVI</li>
+                  <li>BeeHero has 25M samples/day from ~300K+ hives — near-monopoly on bee sensor data</li>
+                  <li>No one occupies bee-specific oracle role; opening exists</li>
+                  <li>Trust-heavy business; requires 3+ years and statistical validation before first real policy</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-maybe">Possible but slow</span>
+                <div>The only bee-adjacent wedge where a small technical team might have an honest shot — specifically because BeeHero is a <em>conflicted</em> oracle (they're the MGA's data vendor and the grower's service provider). Requires $3–5M seed and 3 years of non-revenue validation. Partnership with riskify.ai or similar could accelerate.</div>
+              </div>
+            </div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-06</small>
+                  Full-stack robotic pollination service (Beewise-like)
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Operated BeeHomes, contract with growers, data layer is a feature not a product.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>Beewise: $170M raised, ~8 years to revenue + profitability in 2026</li>
+                  <li>1,240 BeeHomes, 300K acres, clients: Blue Diamond, Driscoll's, Taylor Farms, Olam</li>
+                  <li>8% colony collapse vs ~60% industry in 2024–2025 — genuine moat</li>
+                  <li>Requires hardware, biology, logistics, field ops teams</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-kill">Invalidated</span>
+                <div>Beewise owns this wedge and is about to become profitable with $170M of moat. Entering now means competing against a company with a 7-year head start on autonomous hive robotics. Not feasible for any team without both deep biology and heavy hardware capital.</div>
+              </div>
+            </div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-07</small>
+                  Honey traceability / anti-fraud
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Blockchain + lab testing to authenticate honey origin, combat Chinese import adulteration.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>Blockchain food traceability: $4B (2025) → $69B (2036), 32.9% CAGR</li>
+                  <li>Intertek HoneyTrace already launched, dozens of lab-testing competitors</li>
+                  <li>NMR / isotopic analysis / FTIR reach 97–100% classification accuracy</li>
+                  <li>Industry lacks data-sharing consensus — fragmented, political</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-wait">Adjacent, not owned</span>
+                <div>Growing market but crowded with lab-testing incumbents and blockchain traceability platforms. Any bee-specific entry needs a proprietary angle (e.g. a sensor-provenance chain beekeepers already participate in). Interesting as extension, not a starting wedge.</div>
+              </div>
+            </div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-08</small>
+                  Hybrid seed / crop-pollination verification
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Sell pollination verification to sunflower / canola / cucurbit hybrid seed producers, who have strict isolation-zone requirements.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>Canola seed market: $1.85B in 2024, 90%+ hybrids</li>
+                  <li>Regrow Ag / FluroSense already uses satellite for cross-pollination monitoring</li>
+                  <li>Hazera Seeds already partnering with BeeHero on pollinator monitoring</li>
+                  <li>Very concentrated buyer base (4–6 hybrid seed majors)</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-wait">Narrow, defensible</span>
+                <div>Small but real — Hazera-BeeHero partnership proves the buyer exists. ~$50–150M ARR ceiling if executed well. Would require direct enterprise sales to Bayer/Corteva/Syngenta-seed divisions. Realistic as a narrow play, not as a breakout.</div>
+              </div>
+            </div>
+
+            <div class="thesis">
+              <div>
+                <div class="thesis-name">
+                  <small>T-09</small>
+                  Pivot: apply our stack outside bees
+                </div>
+                <div class="thesis-evidence" style="margin-top: 10px;">
+                  Treat the existing Flutter + BLE + Firebase/Supabase codebase as reference architecture, apply to any consumer/prosumer IoT domain with better economics.
+                </div>
+              </div>
+              <div class="thesis-evidence">
+                <ul>
+                  <li>Stack is genuinely well-architected (repositories, Riverpod, error mapping, offline sync)</li>
+                  <li>~70% of current code is domain-agnostic</li>
+                  <li>BLE + offline-first is hard and generalizable</li>
+                  <li>Not bee-specific opportunity research, but the skill-fit is highest here</li>
+                </ul>
+              </div>
+              <div class="thesis-verdict">
+                <span class="verdict-badge v-maybe">Highest skill-fit</span>
+                <div>The uncomfortable answer. If the research says no bee wedge matches our capital and skills at venture scale, the best use of what we've built may be to keep the <em>architecture</em> and change the <em>domain</em>. Not what anyone wants to hear after months in the bee economy, but the evidence supports it more than any bee-specific option.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter">
+        <div class="chapter-head">
+          <div class="num">Ch. 03 · The evidence table</div>
+          <div>
+            <h2>Who actually <em>raised</em>, who actually <em>sells</em>, who actually <em>ships</em>.</h2>
+            <div class="sub">
+              The single most useful thing this research produced: a cleaned-up
+              snapshot of every company occupying a seat we'd have to compete
+              for, with their real numbers. Read across the rows and you can
+              see why the verdicts above land where they do.
+            </div>
+          </div>
+        </div>
+
+        <div class="evidence-section">
+          <div class="section-marker">Key players · 2026</div>
+          <table class="evidence">
+            <thead>
+              <tr>
+                <th style="width: 18%">Company</th>
+                <th style="width: 18%">Wedge</th>
+                <th style="width: 20%">Funding / scale</th>
+                <th style="width: 22%">Customers / signal</th>
+                <th style="width: 22%">What it tells us</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="co">Beewise</td>
+                <td>Robotic autonomous hives</td>
+                <td class="metric">$170M raised<br/>Rev-generating, profitable 2026</td>
+                <td>Blue Diamond, Driscoll's, Taylor Farms, Olam, TIAA/Nuveen, 1,240 units / 300K acres</td>
+                <td>Full-stack commercial pollination is owned. Not a wedge for anyone else.</td>
+              </tr>
+              <tr>
+                <td class="co">BeeHero</td>
+                <td>Precision pollination data platform</td>
+                <td class="metric">$64M raised<br/>~300K+ hives, 25M samples/day</td>
+                <td>General Mills, Rabobank, MS&amp;AD (Japan insurer), 100K+ acres under mgmt</td>
+                <td>Bee-sensor data monopoly. Insurance-adjacent investor (MS&amp;AD) signals their trajectory.</td>
+              </tr>
+              <tr>
+                <td class="co">Alvéole (Aura)</td>
+                <td>Bioacoustic + satellite biodiversity MRV for real estate</td>
+                <td class="metric">12 years ops<br/>Aura platform launched Feb 2026</td>
+                <td>Brookfield, Blackstone, CBRE, Empire State Realty, BGO, PGIM, Generali, Fengate</td>
+                <td>Biodiversity MRV to enterprise buyers: solved in commercial real estate, not ag.</td>
+              </tr>
+              <tr>
+                <td class="co">NatureMetrics</td>
+                <td>eDNA biodiversity for TNFD/CSRD</td>
+                <td class="metric">$25M Series B Jan 2025</td>
+                <td>Just Climate, BNP Paribas, EDF Pulse, corporate enterprise</td>
+                <td>Incumbent for enterprise biodiversity reporting. Acoustic entrants compete with eDNA for same budget line.</td>
+              </tr>
+              <tr>
+                <td class="co">AgriSound</td>
+                <td>Acoustic pollinator monitoring for ag</td>
+                <td class="metric">~£5M raised<br/>UK-based, 5 yrs old</td>
+                <td>M&amp;S (18 Select farms), Dole UK (28% yield boost), Importaco (Spain almond pilot), Niagara College (Canada)</td>
+                <td>Real proof points in yield uplift. Zero US commercial customers despite 5 years of trying. US barrier is real.</td>
+              </tr>
+              <tr>
+                <td class="co">ApisProtect</td>
+                <td>Commercial beekeeper sensor SaaS</td>
+                <td class="metric">$2M total raised<br/>$210K ARR, 3 FTE</td>
+                <td>Commercial beekeepers, academic partners</td>
+                <td>The ceiling on sensor-SaaS-to-beekeepers. 10 years. $1M lifetime revenue. Don't repeat this.</td>
+              </tr>
+              <tr>
+                <td class="co">BroodMinder / HiveTracks</td>
+                <td>Hobbyist &amp; sideliner beekeeper SaaS</td>
+                <td class="metric">BroodMinder unfunded<br/>HiveTracks very small</td>
+                <td>Mostly direct-to-beekeeper subscribers</td>
+                <td>Confirms sideliner-SaaS lifestyle ceiling. Real business, not venture outcome.</td>
+              </tr>
+              <tr>
+                <td class="co">REVO Insurance (ParametricXHoney)</td>
+                <td>Parametric honey-yield insurance</td>
+                <td class="metric">€400K premium in 2024<br/>30.7% YoY</td>
+                <td>Piedmont acacia honey producers, Aspromiele assoc.</td>
+                <td>Parametric bee insurance is <em>technically feasible and commercially tiny</em>. The peril exists; demand doesn't scale without heavy distribution.</td>
+              </tr>
+              <tr>
+                <td class="co">Arbol + Pollen Systems</td>
+                <td>Parametric orchard insurance (launched Feb 2026)</td>
+                <td class="metric">Arbol: ~$100M+ raised<br/>Pollen Systems: satellite + field data</td>
+                <td>Launched at Esri FedGIS Feb 2026, integrates Omniris GIS</td>
+                <td>The parametric orchard product is live. No hive sensors in the trigger yet. This is the gap — but Arbol, not us, will fill it.</td>
+              </tr>
+              <tr>
+                <td class="co">Polliknow / Sensibee / Wilder Sensing / Hula Earth</td>
+                <td>Native pollinator acoustic monitoring (EU)</td>
+                <td class="metric">Hula Earth €1.6M pre-seed Nov 2024<br/>Others modest</td>
+                <td>CSRD/TNFD/GRI reporting buyers in EU</td>
+                <td>EU native-pollinator acoustic space is crowded with ~4 funded startups. Entering now as a 5th is late.</td>
+              </tr>
+              <tr>
+                <td class="co">USDA RMA Apiculture Pilot (API)</td>
+                <td>Federal rainfall-index insurance for beekeepers</td>
+                <td class="metric">$2.11 paid per $1 premium<br/>48 states since 2017</td>
+                <td>~1.4M colonies in CA, 532K in FL, 369K in ND</td>
+                <td>Heavy federal subsidy. Single-peril (rainfall) only — doesn't cover CCD, virus, pesticide, pollination-failure losses. Explains beekeeper need for a better product.</td>
+              </tr>
+              <tr>
+                <td class="co">Almond Board of CA + Project Apis m.</td>
+                <td>Industry-funded pollinator research</td>
+                <td class="metric">$13M over lifetime (Project Apis m.)<br/>$750K/yr ABC pollinator</td>
+                <td>135+ farms in Seeds for Bees, 54K acres Bee Friendly certified</td>
+                <td>Industry money flows to habitat, certification, bee-health biotech (BHRC 2026) — <em>not</em> to sensors or insurance products.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="chapter">
+        <div class="chapter-head">
+          <div class="num">Ch. 04 · What it all means</div>
+          <div>
+            <h2>The three sentences that <em>survived</em> the research.</h2>
+            <div class="sub">
+              Stripping away the color, three findings held up across every adversarial pass. These are the things we can stake real decisions on.
+            </div>
+          </div>
+        </div>
+
+        <div class="pullquote">
+          <div class="section-marker">Finding 01</div>
+          <div class="body">
+            The venture-scale seats in the bee economy are all filled. Beewise owns autonomous robotic pollination. BeeHero owns bee-sensor data. Alvéole owns biodiversity MRV-to-enterprise. <strong>Entering any of these now is a late-mover problem, not a category-creation problem.</strong>
+          </div>
+        </div>
+
+        <div class="pullquote">
+          <div class="section-marker">Finding 02</div>
+          <div class="body">
+            Every bee-SaaS-to-beekeeper company caps at $1–5M ARR. Not sometimes — <strong>every single one since 2015.</strong> That's a structural property of the beekeeper as a customer (price-sensitive, maintenance-averse, churn-prone), not a failure of execution.
+          </div>
+        </div>
+
+        <div class="pullquote">
+          <div class="section-marker">Finding 03</div>
+          <div class="body">
+            The genuine gap — a neutral sensor-data oracle feeding parametric pollination insurance triggers — is a 3–5 year, insurance-regulated, trust-heavy business that <strong>doesn't match a two-person mobile-and-BLE team.</strong> The gap is real. The operator for it is someone else.
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter">
+        <div class="chapter-head">
+          <div class="num">Ch. 05 · Three paths</div>
+          <div>
+            <h2>The options that survived, ranked by <em>honesty</em>.</h2>
+            <div class="sub">
+              Nothing here is an obvious winner. Each option has a different shape — capital required, time horizon, skill fit, ceiling. Pick the one whose shape matches what you actually want.
+            </div>
+          </div>
+        </div>
+
+        <div class="options">
+          <div class="section-marker">Choices</div>
+          <div>
+
+            <div class="option-card highlight">
+              <div class="opt-num">Option A · Highest skill-fit</div>
+              <h3>Pivot the stack, keep the <em>architecture</em>, change the domain.</h3>
+              <div class="opt-body">
+                <div>
+                  <p>
+                    The buzzhive codebase — Flutter + BLE + offline sync + Supabase/Firebase + proper repository architecture — is a solid reference design for consumer / prosumer IoT. The research says no bee wedge at venture scale matches the team shape. It also says the <em>architecture</em> would work for dozens of domains where the economics are better: health wearables, industrial sensor monitoring, connected outdoor gear, home-environment devices.
+                  </p>
+                  <p>
+                    Bee work becomes the case study and the scars. The next product is the one you ship. Uncomfortable because it admits the bee thesis didn't clear venture bar. Honest because it respects what the evidence said.
+                  </p>
+                </div>
+                <div class="opt-stats">
+                  <div class="stat-label">Capital to start</div>
+                  <div class="stat-val">~$250K pre-seed + personal runway</div>
+                  <div class="stat-label">Time to revenue</div>
+                  <div class="stat-val">6–12 months in new domain</div>
+                  <div class="stat-label">Ceiling</div>
+                  <div class="stat-val">Unbounded (depends on domain)</div>
+                  <div class="stat-label">Skill match</div>
+                  <div class="stat-val">Very high — 90% of code reusable</div>
+                  <div class="stat-label">Emotional cost</div>
+                  <div class="stat-val">High — means "bee company" is over</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="option-card">
+              <div class="opt-num">Option B · Lowest risk</div>
+              <h3>Ship the <em>best</em> sideliner beekeeper app, accept the ceiling.</h3>
+              <div class="opt-body">
+                <div>
+                  <p>
+                    Treat BuzzHive as a profitable small business, not a venture bet. Target serious sideliners (5–100 hive operators) who actually value sensor data. Charge $20–40/month. Bundle hardware at cost, make money on software. Cap yourself at $2–4M ARR in 3–4 years. Everything the research says points to this as <em>achievable</em> — the ceiling is real but so is the floor.
+                  </p>
+                  <p>
+                    This is the version where the whole codebase stays bee-related, the hardware matters, and the business can sustain 2–3 people for a decade. Not a fund return. Potentially a very good life.
+                  </p>
+                </div>
+                <div class="opt-stats">
+                  <div class="stat-label">Capital to start</div>
+                  <div class="stat-val">Self-funded or $100–500K friends</div>
+                  <div class="stat-label">Time to revenue</div>
+                  <div class="stat-val">Now — existing product</div>
+                  <div class="stat-label">Ceiling</div>
+                  <div class="stat-val">$1–5M ARR (hard cap, every comp shows it)</div>
+                  <div class="stat-label">Skill match</div>
+                  <div class="stat-val">Very high — directly uses current work</div>
+                  <div class="stat-label">Emotional cost</div>
+                  <div class="stat-val">Low — but requires accepting no exit</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="option-card">
+              <div class="opt-num">Option C · Highest variance</div>
+              <h3>Become the neutral <em>oracle</em> for pollination-peril triggers.</h3>
+              <div class="opt-body">
+                <div>
+                  <p>
+                    The one bee-specific venture-scale path the research didn't kill. Build statistical infrastructure — not a consumer product — that validates pollination performance from third-party hive sensors (non-BeeHero hives, native pollinator data, ground-truth counts) and feeds insurer-grade triggers to MGAs like Arbol.
+                  </p>
+                  <p>
+                    Requires a $3–5M seed, 3+ years before revenue, a reinsurer or MGA partner willing to co-develop (riskify.ai is one candidate), and eventual state DOI data-vendor status. Very low probability of working. Only path where a mobile + sensor team has a credible entry into the $1B+ parametric ag category using what we've already built.
+                  </p>
+                </div>
+                <div class="opt-stats">
+                  <div class="stat-label">Capital to start</div>
+                  <div class="stat-val">$3–5M seed, climate/insurtech VCs</div>
+                  <div class="stat-label">Time to revenue</div>
+                  <div class="stat-val">3–4 years (insurance cycles)</div>
+                  <div class="stat-label">Ceiling</div>
+                  <div class="stat-val">$50M+ ARR if it works</div>
+                  <div class="stat-label">Skill match</div>
+                  <div class="stat-val">Medium — IoT fit, zero insurance fit (hire for it)</div>
+                  <div class="stat-label">Emotional cost</div>
+                  <div class="stat-val">Medium — 80%+ chance of ending in zero</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter">
+        <div class="chapter-head">
+          <div class="num">Ch. 06 · What would change the answer</div>
+          <div>
+            <h2>Concrete external events that <em>re-open</em> the map.</h2>
+            <div class="sub">
+              Every ruling in this document is based on 2026 evidence. Any of the triggers below would force a re-evaluation. If none of them happen within 12 months, the rulings hold.
+            </div>
+          </div>
+        </div>
+
+        <div class="triggers">
+          <div class="section-marker">Change-my-mind triggers</div>
+          <div class="trigger-list">
+            <div class="trigger">
+              <div class="label">Trigger 01</div>
+              <div class="statement">AgriSound lands a first US commercial customer at $200K+ ARR.</div>
+              <div class="detail">Reopens Thesis 3 (pollinator-acoustic MRV for US). Confirms US CPG/ag buyer has actually formed for acoustic pollinator data, and the window to enter behind them is open.</div>
+            </div>
+            <div class="trigger">
+              <div class="label">Trigger 02</div>
+              <div class="statement">Arbol or Descartes announces a pollination-peril parametric product with a sensor-data trigger.</div>
+              <div class="detail">If the trigger is a public data layer (not BeeHero-exclusive), reopens Thesis 5 (neutral oracle) with a named customer. If BeeHero-exclusive, closes it permanently.</div>
+            </div>
+            <div class="trigger">
+              <div class="label">Trigger 03</div>
+              <div class="statement">2027 almond season sees a second 40%+ colony loss event.</div>
+              <div class="detail">Reopens Thesis 4 (parametric pollination insurance) by forcing federal and private insurance response. Even then we would not be the builder — but we would know the market has arrived.</div>
+            </div>
+            <div class="trigger">
+              <div class="label">Trigger 04</div>
+              <div class="statement">TNFD v2 sector guidance explicitly names pollinator metrics.</div>
+              <div class="detail">Unlikely before 2027 per current TNFD roadmap. If it happens, reopens the MRV wedge with regulatory force behind it — but Alvéole and NatureMetrics still have a 12–18 month head start.</div>
+            </div>
+            <div class="trigger">
+              <div class="label">Trigger 05</div>
+              <div class="statement">Beewise IPO fails or freezes, signaling capital-markets appetite for bee tech is actually closed.</div>
+              <div class="detail">Closes all venture-scale bee paths, including Option C. Option A (domain pivot) and Option B (lifestyle) become the only rational paths forward.</div>
+            </div>
+            <div class="trigger">
+              <div class="label">Trigger 06</div>
+              <div class="statement">A strategic acquirer (General Mills, Rabobank, Syngenta) makes an informal acqui-hire approach.</div>
+              <div class="detail">Overrides everything. If a buyer with distribution wants the team + stack, the correct move is to talk. None of the theses above are better than a real offer from someone who already owns the customer relationship.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="closing">
+      <div class="wrap">
+        <div class="section-marker">Closing</div>
+        <div>
+          <h2>Nine months of zigzag, one <em>clear</em> question.</h2>
+          <p>
+            The question is not "what should BuzzHive do." The research can't answer that, because the answer depends on what you actually want.
+          </p>
+          <p>
+            If you want a venture-scale outcome and the bee economy specifically, the evidence says Option C — and only if you can raise $3–5M and wait 3 years for revenue with ~80% chance of zero. If you want to ship and make money with what you've already built, Option A — accept that bee work was training, and apply the architecture somewhere the economics are better. If you want to stay in bees and run a profitable small business, Option B — ship the best sideliner app there is, charge for it, and accept the ceiling as a feature, not a bug.
+          </p>
+          <p>
+            The one thing the research rules out is the thing we spent the most time on: a venture-scale, category-creating, bee-sensor company built on our current stack. That company exists — it's called BeeHero or Beewise or Alvéole or NatureMetrics — and it was already capitalized before we started. That's not a failure on our part. It's just the geometry of the market in April 2026.
+          </p>
+          <p>
+            Pick the shape you want. The research is done.
+          </p>
+          <div class="sig">
+            — Final synthesis. Supersedes: strategy.html, municipal-strategy.html, landscape.html, decision-memo.html. Any prior position not consistent with this document should be treated as outdated. 17 April 2026.
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

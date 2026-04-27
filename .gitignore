@@ -20,6 +20,10 @@ build/
 *.swp
 *.swo
 
+# macOS
+.DS_Store
+**/.DS_Store
+
 # iOS
 ios/Pods/
 ios/.symlinks/

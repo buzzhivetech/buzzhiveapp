@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Board briefing · 17 April 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #141310;
+        --ink-soft: #3d3a33;
+        --ink-dim: #6a6558;
+        --paper: #f6f3ec;
+        --paper-warm: #efeadf;
+        --paper-deep: #e8e2d1;
+        --rule: #d6cfbd;
+        --rule-soft: #e2dcc9;
+        --accent: #a84d2e;
+        --accent-soft: #c97a5b;
+        --green: #4a6741;
+        --gold: #b68a2c;
+        --red: #9a3324;
+        --blue: #2e5266;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Newsreader", Georgia, serif;
+        font-size: 17px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .sans { font-family: "IBM Plex Sans", sans-serif; }
+      .mono { font-family: "IBM Plex Mono", monospace; }
+
+      /* COVER */
+
+      .cover {
+        padding: 40px 5vw 48px;
+        background: var(--paper-warm);
+        border-bottom: 2px solid var(--ink);
+      }
+      .cover .strip {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .cover .strip .dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: var(--accent);
+        display: inline-block;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+      .cover .kind {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-top: 32px;
+      }
+      .cover h1 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(40px, 5.2vw, 72px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        margin: 14px 0 22px;
+        max-width: 1100px;
+      }
+      .cover h1 em {
+        font-style: italic;
+        color: var(--accent);
+        font-weight: 400;
+      }
+      .cover .deck {
+        font-size: clamp(17px, 1.4vw, 21px);
+        line-height: 1.5;
+        max-width: 820px;
+        color: var(--ink-soft);
+      }
+      .cover .meta {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 28px;
+        margin-top: 36px;
+        padding-top: 20px;
+        border-top: 1px solid var(--rule);
+      }
+      .cover .meta .label {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        margin-bottom: 6px;
+      }
+      .cover .meta .val {
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 13px;
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 5vw;
+      }
+
+      /* AGENDA */
+
+      .agenda {
+        padding: 48px 0 36px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .agenda h2 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 500;
+        margin: 0 0 24px;
+      }
+      .agenda ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        counter-reset: agenda;
+      }
+      .agenda li {
+        display: grid;
+        grid-template-columns: 44px 1fr 120px 80px;
+        gap: 18px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--rule-soft);
+        align-items: baseline;
+        counter-increment: agenda;
+      }
+      .agenda li:last-child { border-bottom: none; }
+      .agenda li::before {
+        content: counter(agenda, decimal-leading-zero);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        color: var(--accent);
+        font-weight: 500;
+      }
+      .agenda .title {
+        font-family: "Newsreader", serif;
+        font-size: 19px;
+        font-weight: 500;
+      }
+      .agenda .hint {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+      }
+      .agenda .time {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-dim);
+        text-align: right;
+      }
+
+      /* TOPIC SECTIONS */
+
+      .topic {
+        padding: 56px 0 48px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .topic .head {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 40px;
+        margin-bottom: 32px;
+      }
+      .topic .num {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .topic .num .sz {
+        display: block;
+        font-family: "Newsreader", serif;
+        font-size: 56px;
+        font-weight: 400;
+        color: var(--ink);
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin-top: 8px;
+      }
+      .topic h3 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(28px, 3.4vw, 42px);
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.1;
+        margin: 0 0 10px;
+      }
+      .topic h3 em {
+        color: var(--accent);
+        font-style: italic;
+        font-weight: 400;
+      }
+      .topic .sub {
+        font-size: clamp(16px, 1.2vw, 19px);
+        color: var(--ink-soft);
+        line-height: 1.5;
+        max-width: 800px;
+      }
+
+      .body {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 40px;
+      }
+      .body .lane {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        padding-top: 4px;
+      }
+      .body .content p { margin: 0 0 14px; max-width: 780px; }
+      .body .content p:last-child { margin-bottom: 0; }
+      .body .content strong { color: var(--ink); font-weight: 600; }
+
+      .say {
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+        max-width: 820px;
+      }
+      .say li {
+        position: relative;
+        padding: 10px 0 10px 26px;
+        border-bottom: 1px dashed var(--rule-soft);
+        font-size: 16px;
+        line-height: 1.55;
+      }
+      .say li:last-child { border-bottom: none; }
+      .say li::before {
+        content: "•";
+        position: absolute;
+        left: 8px;
+        top: 10px;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .ask {
+        margin-top: 24px;
+        padding: 20px 24px;
+        background: var(--paper-warm);
+        border-left: 3px solid var(--accent);
+      }
+      .ask .tag {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .ask p {
+        margin: 0;
+        font-size: 17px;
+        font-style: italic;
+        color: var(--ink);
+      }
+
+      .rulings {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-top: 18px;
+        max-width: 860px;
+      }
+      .rule-card {
+        padding: 14px 16px;
+        border: 1px solid var(--rule);
+        background: var(--paper-warm);
+      }
+      .rule-card.green { border-left: 3px solid var(--green); }
+      .rule-card.red { border-left: 3px solid var(--red); }
+      .rule-card .lbl {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .rule-card.green .lbl { color: var(--green); }
+      .rule-card.red .lbl { color: var(--red); }
+      .rule-card .txt {
+        font-size: 14px;
+        line-height: 1.45;
+        color: var(--ink-soft);
+      }
+
+      .pullquote {
+        margin: 28px 0 4px;
+        padding: 22px 28px;
+        background: var(--ink);
+        color: var(--paper);
+        max-width: 820px;
+      }
+      .pullquote .lbl {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--accent-soft);
+        margin-bottom: 8px;
+      }
+      .pullquote .q {
+        font-family: "Newsreader", serif;
+        font-size: 21px;
+        line-height: 1.4;
+        font-style: italic;
+        font-weight: 400;
+      }
+      .pullquote .q em { color: var(--accent-soft); font-style: italic; }
+
+      .evidence {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 18px;
+        max-width: 1000px;
+      }
+      .ev {
+        padding: 14px 14px 16px;
+        background: var(--paper-warm);
+        border-top: 2px solid var(--accent);
+      }
+      .ev .n {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .ev .h {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 1.3;
+        margin-bottom: 6px;
+      }
+      .ev .t {
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--ink-soft);
+      }
+
+      .phases {
+        margin-top: 18px;
+        max-width: 900px;
+      }
+      .phase-row {
+        display: grid;
+        grid-template-columns: 100px 130px 1fr 120px;
+        gap: 18px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--rule-soft);
+        align-items: baseline;
+      }
+      .phase-row .wk {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: 600;
+        letter-spacing: 0.1em;
+      }
+      .phase-row .who {
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .phase-row .task {
+        font-size: 15px;
+        line-height: 1.45;
+      }
+      .phase-row .cost {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-dim);
+        text-align: right;
+      }
+
+      .kill-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-top: 18px;
+        max-width: 900px;
+      }
+      .kill {
+        padding: 16px 18px;
+        background: var(--paper-warm);
+        border-left: 3px solid var(--red);
+      }
+      .kill .signal {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--red);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .kill .line {
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .kill .then {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-dim);
+        margin-top: 6px;
+      }
+
+      .decisions {
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 14px 22px;
+        max-width: 900px;
+        margin-top: 10px;
+      }
+      .decisions .n {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        color: var(--accent);
+        font-weight: 600;
+        padding-top: 2px;
+      }
+      .decisions .d {
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--rule-soft);
+      }
+      .decisions .d:last-of-type { border-bottom: none; }
+      .decisions .d .dh {
+        font-family: "IBM Plex Sans", sans-serif;
+        font-weight: 600;
+        font-size: 17px;
+        margin-bottom: 4px;
+        color: var(--ink);
+      }
+      .decisions .d .dt {
+        font-size: 15px;
+        color: var(--ink-soft);
+        line-height: 1.5;
+      }
+
+      .open-q {
+        max-width: 860px;
+        margin-top: 8px;
+      }
+      .open-q .q {
+        padding: 16px 0;
+        border-bottom: 1px solid var(--rule-soft);
+      }
+      .open-q .q .qn {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: var(--ink-dim);
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .open-q .q .qt {
+        font-family: "Newsreader", serif;
+        font-style: italic;
+        font-size: 19px;
+        line-height: 1.4;
+      }
+
+      /* FOOTER */
+
+      .footer {
+        padding: 36px 0 48px;
+        color: var(--ink-dim);
+        font-size: 13px;
+      }
+      .footer .strip {
+        display: flex;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      /* RESPONSIVE */
+
+      @media (max-width: 900px) {
+        .cover .meta { grid-template-columns: repeat(2, 1fr); }
+        .topic .head,
+        .body { grid-template-columns: 1fr; gap: 16px; }
+        .body .lane { border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
+        .evidence { grid-template-columns: repeat(2, 1fr); }
+        .rulings, .kill-grid { grid-template-columns: 1fr; }
+        .phase-row { grid-template-columns: 1fr; gap: 6px; }
+        .agenda li { grid-template-columns: 32px 1fr; }
+        .agenda li .hint, .agenda li .time { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="cover">
+      <div class="strip">
+        <span><span class="dot"></span>Executive board briefing · confidential</span>
+        <span>Prepared 17 April 2026</span>
+      </div>
+      <div class="kind">Topics to bring up tonight</div>
+      <h1>
+        We are not optimizing for the stack.<br/>
+        We are optimizing for <em>value creation</em> — and the bet that wins on merit is the <em>pollination-event data layer</em>.
+      </h1>
+      <div class="deck">
+        This document captures the topics to surface with the board tonight, the talking points for each, the explicit ask for each, and the open questions worth discussing. It is structured so you can read it top-to-bottom or jump to any section. Everything on these pages is traceable to the written memos (<span class="mono" style="font-size: 12px;">landscape</span> · <span class="mono" style="font-size: 12px;">decision-memo</span> · <span class="mono" style="font-size: 12px;">final-synthesis</span> · <span class="mono" style="font-size: 12px;">value-analysis</span> · <span class="mono" style="font-size: 12px;">history-rhymes</span>).
+      </div>
+      <div class="meta">
+        <div>
+          <div class="label">Meeting</div>
+          <div class="val">BuzzHive executive board</div>
+        </div>
+        <div>
+          <div class="label">Date</div>
+          <div class="val">17 April 2026 · evening</div>
+        </div>
+        <div>
+          <div class="label">Duration (recommended)</div>
+          <div class="val">90 minutes</div>
+        </div>
+        <div>
+          <div class="label">Outcome sought</div>
+          <div class="val">Approve Phase 0 validation plan</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap">
+
+      <!-- AGENDA -->
+
+      <section class="agenda">
+        <h2>Agenda</h2>
+        <ol>
+          <li>
+            <div class="title">State of play · where six weeks of analysis has landed us</div>
+            <div class="hint">Frame · no decisions</div>
+            <div class="time">10 min</div>
+          </li>
+          <li>
+            <div class="title">The strategic reframe · from honeybee app to pollination-event data layer</div>
+            <div class="hint">Positioning</div>
+            <div class="time">15 min</div>
+          </li>
+          <li>
+            <div class="title">What changed · the theses we ruled out and why</div>
+            <div class="hint">Evidence · walk-through</div>
+            <div class="time">15 min</div>
+          </li>
+          <li>
+            <div class="title">The wedge · what we'd actually build, for whom, in what order</div>
+            <div class="hint">Product shape</div>
+            <div class="time">15 min</div>
+          </li>
+          <li>
+            <div class="title">Phase 0 validation · six weeks, twelve calls, go/no-go decision</div>
+            <div class="hint">Plan · approval needed</div>
+            <div class="time">15 min</div>
+          </li>
+          <li>
+            <div class="title">Kill conditions · what would make us stop</div>
+            <div class="hint">Risk discipline</div>
+            <div class="time">10 min</div>
+          </li>
+          <li>
+            <div class="title">Decisions I need from the board tonight</div>
+            <div class="hint">Vote / consensus</div>
+            <div class="time">10 min</div>
+          </li>
+          <li>
+            <div class="title">Open questions I don't have an answer to yet</div>
+            <div class="hint">Discussion</div>
+            <div class="time">remaining</div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- TOPIC 01 -->
+
+      <section class="topic">
+        <div class="head">
+          <div class="num">
+            Topic 01
+            <span class="sz">01</span>
+          </div>
+          <div>
+            <h3>State of play. <em>Where six weeks of analysis has landed us.</em></h3>
+            <div class="sub">Open the meeting by acknowledging the journey was longer and more winding than originally planned, and explain why. Arrive at the clean one-sentence conclusion. Do not defend past positions.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="lane">Talking points</div>
+          <div class="content">
+            <p>Set the frame honestly: we went into this thinking we were building a commercial beekeeper-facing app. Six weeks of independent research, three reversed theses, and one academic finding that required a full rethink got us to a different answer. It is a better answer, but the board should know it is different.</p>
+            <ul class="say">
+              <li><strong>The question we were really trying to answer.</strong> What is the highest-expected-value bet this team — our skills, network, market knowledge, and capital position — can plausibly win? The existing stack is relevant only to the extent it accelerates that bet; it is not the starting point.</li>
+              <li><strong>Why that distinction matters.</strong> "What can we build on our stack" is a constrained-optimization question and produces rationalized answers. "What bet wins on merit for a team like ours" is the honest question, and the answer has to survive independent of any sunk code.</li>
+              <li><strong>The method that worked.</strong> Forward-looking structural analysis (what durable forces are actually moving) combined with backward-looking competitive analysis (what categories are already filled). Either alone would have led us wrong.</li>
+              <li><strong>The finding that changed everything.</strong> Honeybees are classified as livestock, not biodiversity. The "beewashing" critique is now regulatory and procurement-level, not just academic. This invalidates a honeybee-only biodiversity product but clarifies what the real product is.</li>
+              <li><strong>Where we are today.</strong> We have a candidate wedge that survives both the forward and backward tests, four plausible buyer categories, and a six-week validation plan that costs ~$5K and tells us whether to build.</li>
+            </ul>
+            <div class="pullquote">
+              <div class="lbl">The one-sentence state of play</div>
+              <div class="q">
+                The highest-expected-value bet available to this team is to build the <em>neutral data infrastructure layer for the crop-pollination event</em> — managed hive telemetry plus native-pollinator bioacoustics plus landscape phenology — sold to multiple convergent buyers. It is the right bet on merit; the existing stack happens to accelerate a portion of it, which is a tailwind but not the reason we're choosing it.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ask">
+          <div class="tag">Ask · no action required yet</div>
+          <p>Tonight is for <strong>alignment on the frame</strong>, not approval of the plan. If anyone on the board has a material disagreement with the one-sentence state of play, flag it now so we address it before the harder asks later in the agenda.</p>
+        </div>
+      </section>
+
+      <!-- TOPIC 02 -->
+
+      <section class="topic">
+        <div class="head">
+          <div class="num">
+            Topic 02
+            <span class="sz">02</span>
+          </div>
+          <div>
+            <h3>The strategic reframe. <em>From honeybee app to pollination-event data layer.</em></h3>
+            <div class="sub">Explain the positioning shift in plain language. The words matter — the wrong framing will have the board still thinking we are a beekeeper app and then be confused by everything downstream.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="lane">Talking points</div>
+          <div class="content">
+            <p>The reframe is not a pivot away from what we have built — it is picking the right bet on merit, and asking what (if anything) of the existing work accelerates it. Some of our BLE and cloud work happens to fit. That is a tailwind, not the justification.</p>
+            <ul class="say">
+              <li><strong>The old frame.</strong> "A mobile app for hobbyist and sideliner beekeepers, monetized by subscription." Ceiling: $1–5M ARR. No venture outcome. Confirmed by every comparable company (BroodMinder, HiveTracks, ApisProtect).</li>
+              <li><strong>The new frame.</strong> "A neutral data infrastructure layer for the pollination event that serves four convergent enterprise buyers: parametric insurance MGAs, CPG sustainability teams, biodiversity consultancies, and growers." Ceiling: $50–250M ARR if two buyer segments convert. Venture-plausible.</li>
+              <li><strong>Why this shape and not another.</strong> Climate Corp, Waze, Floodbase, Alvéole — every durable data-company outcome of the last 15 years was built one abstraction above the initial product. The asset at exit was always data + relationships, not the consumer-facing app.</li>
+              <li><strong>What carries forward from what we've built.</strong> Team skill, domain knowledge, beekeeper network, and a working BLE-to-cloud data path. The BLE stack itself is <em>useful if it fits</em> the managed-pollinator data layer; if Phase 0 reveals that partner-sourced or reference hardware wins on rigor or unit economics, we use that instead. We are not married to the code. We are married to value creation.</li>
+              <li><strong>What this does to our identity.</strong> We are not selling to beekeepers anymore. We are selling to insurers, brands, consultants, and growers. Beekeepers become <em>instrumented users</em> — the data-acquisition mechanism, not the revenue.</li>
+            </ul>
+            <div class="pullquote">
+              <div class="lbl">The one-line framing for the board</div>
+              <div class="q">
+                We are Floodbase for pollination — a scientific data vendor whose technology is deployed with beekeepers and whose revenue comes from the institutions downstream who need to price, insure, and verify pollination risk.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ask">
+          <div class="tag">Ask</div>
+          <p>Does the board accept the positioning shift from <strong>"beekeeper app"</strong> to <strong>"pollination-event data infrastructure"</strong>? If not, what specifically would you change about the frame? We need alignment on this before we discuss what to build.</p>
+        </div>
+      </section>
+
+      <!-- TOPIC 03 -->
+
+      <section class="topic">
+        <div class="head">
+          <div class="num">
+            Topic 03
+            <span class="sz">03</span>
+          </div>
+          <div>
+            <h3>What changed. <em>The theses we ruled out and why.</em></h3>
+            <div class="sub">Show the discipline of the analysis by walking through what we rejected. This is where board trust is earned — not by defending an idea, but by showing you were willing to kill the ones that didn't survive evidence.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="lane">Ruled out</div>
+          <div class="content">
+            <div class="rulings">
+              <div class="rule-card red">
+                <div class="lbl">Ruled out</div>
+                <div class="txt"><strong>Sideliner SaaS beachhead.</strong> Beekeeper-facing subscription caps at $1–5M ARR across every comparable company. Beekeepers are tech-resistant, price-sensitive, and heterogeneous. No venture outcome from this starting point.</div>
+              </div>
+              <div class="rule-card red">
+                <div class="lbl">Ruled out</div>
+                <div class="txt"><strong>Municipal / civic sustainability.</strong> Alvéole (Blackstone, Brookfield, CBRE) and Best Bees (legacy) have twelve years of operational relationship depth. We would lose a capital and channel war against better-funded incumbents.</div>
+              </div>
+              <div class="rule-card red">
+                <div class="lbl">Ruled out</div>
+                <div class="txt"><strong>Honeybee biodiversity MRV.</strong> Honeybees are livestock, not native biodiversity. This is regulatory and academic consensus. A honeybee-only biodiversity product is unsellable to any audit-grade buyer regardless of market timing.</div>
+              </div>
+              <div class="rule-card red">
+                <div class="lbl">Ruled out</div>
+                <div class="txt"><strong>Single-buyer insurance-only play.</strong> Parametric pollination insurance is a real opportunity post-2024 colony crisis but requires insurance DNA we do not have today. As sole focus it is too narrow; as one of four buyers it is powerful.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="body" style="margin-top: 24px;">
+          <div class="lane">Ruled in</div>
+          <div class="content">
+            <div class="rulings">
+              <div class="rule-card green">
+                <div class="lbl">Ruled in</div>
+                <div class="txt"><strong>Integrated pollination-event data layer.</strong> Managed hive telemetry + native pollinator bioacoustics + landscape phenology. Nobody owns this integrated stack today. Multiple non-overlapping buyers. Our existing IP is the beachhead.</div>
+              </div>
+              <div class="rule-card green">
+                <div class="lbl">Ruled in</div>
+                <div class="txt"><strong>Scientific-vendor DNA, not insurance DNA.</strong> Floodbase proved you can enter insurance as a climate-science vendor without insurance experience. Our technical-team profile is a better match than we assumed.</div>
+              </div>
+              <div class="rule-card green">
+                <div class="lbl">Ruled in</div>
+                <div class="txt"><strong>Biodiversity consultancies as a 5th buyer.</strong> Two high-signal launches in Feb 2026 — Alvéole Aura (with Brookfield/Blackstone/CBRE) and Noah Wilson-Rich's Biodiversity Lab spinout from Best Bees. Real market inflecting now.</div>
+              </div>
+              <div class="rule-card green">
+                <div class="lbl">Ruled in</div>
+                <div class="txt"><strong>"Build users now + bet on future catalyst" is a single strategy, not two.</strong> User layer acquires data; institutional buyers monetize it; regulatory catalyst drives scale. Same Strava-Metro / Floodbase pattern.</div>
+              </div>
+            </div>
+            <div class="pullquote" style="margin-top: 28px;">
+              <div class="lbl">What to say if asked "did you flip-flop?"</div>
+              <div class="q">
+                Yes — twice. The analysis reversed on parametric insurance when we discovered the 2024 colony crisis broke traditional hedges, and reversed again on honeybee biodiversity when we discovered honeybees are livestock not biodiversity. Both reversals were driven by evidence, documented in writing, and made the final thesis stronger. I would rather change my mind twice on paper than once in the market.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ask">
+          <div class="tag">Ask</div>
+          <p>Does any board member have a thesis we ruled out that they would like to re-open? Pushback is useful here — if someone has evidence we missed, the cost of hearing it tonight is far lower than the cost of hearing it after we commit to Phase 0.</p>
+        </div>
+      </section>
+
+      <!-- TOPIC 04 -->
+
+      <section class="topic">
+        <div class="head">
+          <div class="num">
+            Topic 04
+            <span class="sz">04</span>
+          </div>
+          <div>
+            <h3>The wedge. <em>What we'd actually build, for whom, in what order.</em></h3>
+            <div class="sub">Make the abstract concrete. Show the product shape, the build sequence, and the buyer sequence. The board needs to be able to picture what year one looks like.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="lane">The product shape</div>
+          <div class="content">
+            <p>A continuous-monitoring data platform, instrumented at <em>pollination sites</em> (commercial almond orchards, blueberry fields, sunflower acreage, urban pollinator installations), producing a unified per-site record that multiple enterprise buyers can license, query, and integrate.</p>
+            <div class="evidence">
+              <div class="ev">
+                <div class="n">Layer 01</div>
+                <div class="h">Managed hive telemetry</div>
+                <div class="t">Our existing BLE stack. Weight, temperature, activity, brood condition. Beachhead layer — already in production.</div>
+              </div>
+              <div class="ev">
+                <div class="n">Layer 02</div>
+                <div class="h">Native pollinator acoustics</div>
+                <div class="t">Passive bioacoustic devices (partner-sourced — AgriSound or Wilder Sensing) detecting native pollinator presence and diversity.</div>
+              </div>
+              <div class="ev">
+                <div class="n">Layer 03</div>
+                <div class="h">Landscape phenology</div>
+                <div class="t">Satellite + weather API integration for bloom timing, floral density, temperature stress. No hardware. Partner data.</div>
+              </div>
+              <div class="ev">
+                <div class="n">Layer 04</div>
+                <div class="h">Outcome data (year 2+)</div>
+                <div class="t">Yield, set rate, crop quality — pulled from grower records under data-sharing agreements. This is what turns the record into an insurance-grade trigger.</div>
+              </div>
+            </div>
+            <p style="margin-top: 22px;"><strong>The convergent buyers.</strong> One dataset, four independent revenue surfaces. This is the structural asymmetry that makes the wedge venture-plausible — we only need two of the four to convert for the business to work.</p>
+            <ul class="say">
+              <li><strong>Parametric insurance MGAs</strong> (Arbol, Floodbase, Descartes, eventually Swiss Re Corp Solutions) — buying defensible data to price pollination-peril triggers. Precedent: Floodbase sells flood data to the same buyers. Market: $3–8B parametric ag insurance, growing 15% annually.</li>
+              <li><strong>Biodiversity consultancies</strong> (Alvéole, Biodiversity Lab, future spinouts) — buying continuous site-level data to deliver TNFD/CSRD/GRESB reports under their own brand. Precedent: consulting firms have always been the first to pay for defensible data layers they can't build themselves.</li>
+              <li><strong>CPG sustainability teams</strong> (Unilever, General Mills, Nestlé regenerative-ag programs) — buying supplier-linked pollination data as part of MRV on sourcing commitments. Slower to buy, larger contracts when they do.</li>
+              <li><strong>Growers and beekeepers</strong> — the instrumented layer. Not a paid customer segment at first. Pay-in-kind via data access, seat costs absorbed by enterprise buyers.</li>
+            </ul>
+            <div class="pullquote">
+              <div class="lbl">The line to repeat to the board</div>
+              <div class="q">
+                Our user layer is how we acquire proprietary data that no one else has. The institutional layer is where we are paid for it. The regulatory layer is what makes the institutions buy at scale. Each leg supports the next. None of them work alone — but <em>together</em> they make the business durable.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ask">
+          <div class="tag">Ask</div>
+          <p>Does the board agree with the <strong>four-layer product shape</strong> and the <strong>four-buyer monetization thesis</strong>? Specifically: is anyone unconvinced that two of the four buyers would plausibly convert? Name the weakest buyer in the stack so we can pressure-test it in Phase 0.</p>
+        </div>
+      </section>
+
+      <!-- TOPIC 05 -->
+
+      <section class="topic">
+        <div class="head">
+          <div class="num">
+            Topic 05
+            <span class="sz">05</span>
+          </div>
+          <div>
+            <h3>Phase 0 validation. <em>Six weeks, twelve calls, one go/no-go.</em></h3>
+            <div class="sub">This is the approval topic. Everything before it was framing. Walk the board through the cost, the deliverables, and the decision that comes out the other end.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="lane">The plan</div>
+          <div class="content">
+            <p>Before committing any engineering, run twelve targeted conversations designed to confirm or kill the thesis. Each category of call is designed to kill a specific part of the wedge. A pass is all twelve surface signal; a kill is any category returning unanimous "no appetite" or "already solved."</p>
+            <div class="phases">
+              <div class="phase-row">
+                <div class="wk">Week 1–2</div>
+                <div class="who">Insurance axis</div>
+                <div class="task">3 parametric-MGA conversations (Arbol · Floodbase · Descartes) + 2 reinsurer conversations (Swiss Re Corp Solutions · MS&amp;AD) on appetite for bee-sensor triggers, data rigor required, willingness to pay.</div>
+                <div class="cost">~$0</div>
+              </div>
+              <div class="phase-row">
+                <div class="wk">Week 2–3</div>
+                <div class="who">Beekeeper axis</div>
+                <div class="task">3 non-BeeHero commercial beekeeper conversations on data-sharing terms, what they would want in return, whether sensor deployment is tractable at 1,000+ hive scale.</div>
+                <div class="cost">~$500 travel</div>
+              </div>
+              <div class="phase-row">
+                <div class="wk">Week 3–4</div>
+                <div class="who">Biodiversity axis</div>
+                <div class="task">2 conversations with native-pollinator acoustic vendors (AgriSound · Polliknow) on data interoperability and OEM partnership. 1 conversation with a nature-credit methodology shop (Plan Vivo · Verra) on landscape data standards.</div>
+                <div class="cost">~$0</div>
+              </div>
+              <div class="phase-row">
+                <div class="wk">Week 4–5</div>
+                <div class="who">Consultancy axis</div>
+                <div class="task">1–2 conversations with biodiversity consultancies (Noah Wilson-Rich / Biodiversity Lab; ideally one additional spinout if one emerges) on what data they would license under a white-label platform.</div>
+                <div class="cost">~$0</div>
+              </div>
+              <div class="phase-row">
+                <div class="wk">Week 5–6</div>
+                <div class="who">Founder synthesis</div>
+                <div class="task">Write a go/no-go memo. Either: (a) commit to 6-month MVP build with named anchor buyers, (b) pivot to a narrower bet, or (c) kill the thesis and return capital.</div>
+                <div class="cost">—</div>
+              </div>
+            </div>
+            <p style="margin-top: 22px;"><strong>Total Phase 0 cost.</strong> ~$5,000 out-of-pocket plus founder time. No hiring, no hardware commitments, no vendor lock-in. Cheaper than a single week of engineering on the wrong product.</p>
+            <p><strong>What Phase 0 is explicitly not.</strong> It is not a sales cycle. It is not a fundraise. It is not a partnership negotiation. It is twelve diagnostic conversations designed to produce one decision: do we build, or do we not.</p>
+          </div>
+        </div>
+        <div class="ask">
+          <div class="tag">Ask · action required</div>
+          <p>Approve Phase 0 as scoped: <strong>six weeks, twelve conversations, ~$5K budget, decision memo as deliverable</strong>. Also: ask each board member to flag any warm intros they can provide into the call list (especially MGAs, reinsurers, and CPG sustainability officers).</p>
+        </div>
+      </section>
+
+      <!-- TOPIC 06 -->
+
+      <section class="topic">
+        <div class="head">
+          <div class="num">
+            Topic 06
+            <span class="sz">06</span>
+          </div>
+          <div>
+            <h3>Kill conditions. <em>The outcomes that would make us stop.</em></h3>
+            <div class="sub">Every board expects the upside pitch. Fewer get the downside discipline. Present the kill conditions <em>before</em> asking for approval — it demonstrates honest skepticism and builds credibility for the asks that follow.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="lane">Kill signals</div>
+          <div class="content">
+            <div class="kill-grid">
+              <div class="kill">
+                <div class="signal">Kill · Insurance</div>
+                <div class="line">0 of 3 MGAs express appetite for pollination-peril data, or all 3 say "we would only buy from an entity with a peer-reviewed methodology already published."</div>
+                <div class="then">Then: the insurance buyer is out. Re-scope to 3-buyer thesis; pressure-test whether consultancies + CPG + grower alone is venture-scale.</div>
+              </div>
+              <div class="kill">
+                <div class="signal">Kill · Native acoustic</div>
+                <div class="line">Both native-pollinator acoustic vendors refuse data interoperability, or their licensing terms make the integrated product unit-economically impossible.</div>
+                <div class="then">Then: we cannot deliver the integrated record. Either build the acoustic classifier ourselves (18–24 months, wrong team) or kill the thesis.</div>
+              </div>
+              <div class="kill">
+                <div class="signal">Kill · Beekeeper</div>
+                <div class="line">3 of 3 commercial beekeepers say "no, we would never share raw hive data with a vendor regardless of terms."</div>
+                <div class="then">Then: the data-acquisition layer is broken at the source. No amount of demand downstream fixes this.</div>
+              </div>
+              <div class="kill">
+                <div class="signal">Kill · Regulation</div>
+                <div class="line">Between now and end of Phase 0: CSRD scope rolled back, SEC climate rule formally withdrawn with no state-level replacement, or TNFD adoption flatlines below 2025 levels.</div>
+                <div class="then">Then: the compliance-buyer catalyst recedes by 2–4 years. Runway required to reach revenue doubles.</div>
+              </div>
+              <div class="kill">
+                <div class="signal">Kill · Consultancy</div>
+                <div class="line">Noah and any second consultancy both already have a preferred data platform under contract, or neither is willing to discuss licensing terms.</div>
+                <div class="then">Then: the fastest-to-revenue buyer is closed. Phase 0 shifts to testing whether insurance alone is enough.</div>
+              </div>
+              <div class="kill">
+                <div class="signal">Kill · Founder-fit</div>
+                <div class="line">After Phase 0, the honest answer to "do we have the scientific credibility to be taken seriously as a data vendor" is no — and no co-founder with that credibility is willing to join.</div>
+                <div class="then">Then: we are the wrong team for this wedge. The plan is right; we are not. Return capital or pivot into an adjacent lane where technical-founder profile is sufficient.</div>
+              </div>
+            </div>
+            <p style="margin-top: 24px;">Any one of these kills the current thesis. Two or more and we should return capital to the board. Zero and we proceed to an MVP build with named anchor buyers, which becomes a separate board approval in Q3.</p>
+          </div>
+        </div>
+        <div class="ask">
+          <div class="tag">Ask</div>
+          <p>Does the board accept these as the <strong>pre-committed kill conditions</strong>? Are there additional kill conditions any member would add? The value of pre-committing to kill conditions is that we don't rationalize past them six months from now.</p>
+        </div>
+      </section>
+
+      <!-- TOPIC 07 -->
+
+      <section class="topic">
+        <div class="head">
+          <div class="num">
+            Topic 07
+            <span class="sz">07</span>
+          </div>
+          <div>
+            <h3>Decisions I need from the board tonight.</h3>
+            <div class="sub">Close the loop. Every previous section should funnel into these asks. If the board agrees with the frame, the reframe, the rulings, the wedge, Phase 0, and the kill conditions, then these decisions are already implied — the purpose of the vote is to make the commitment visible and public.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="lane">Decisions</div>
+          <div class="content">
+            <div class="decisions">
+              <div class="n">01</div>
+              <div class="d">
+                <div class="dh">Endorse the value-first strategic reframe</div>
+                <div class="dt">BuzzHive's go-forward operating principle: we optimize for highest-expected-value bet for this team, not for reuse of the existing stack. On current evidence the best bet is "neutral data infrastructure layer for the pollination event, serving four convergent enterprise buyers." Direction, not yet a product commitment.</div>
+              </div>
+              <div class="n">02</div>
+              <div class="d">
+                <div class="dh">Approve Phase 0 validation plan</div>
+                <div class="dt">Six weeks, twelve conversations, ~$5K out-of-pocket, founder-led. Deliverable is a written go/no-go memo at week 6 with named anchor buyers (go) or honest kill rationale (no-go).</div>
+              </div>
+              <div class="n">03</div>
+              <div class="d">
+                <div class="dh">Accept pre-committed kill conditions</div>
+                <div class="dt">If any of the six kill conditions in Topic 06 trigger during Phase 0, we are pre-committed to act — not to rationalize. Board members each hold the plan accountable to the conditions.</div>
+              </div>
+              <div class="n">04</div>
+              <div class="d">
+                <div class="dh">Commit to warm-intro outreach</div>
+                <div class="dt">Each board member identifies, within 72 hours, any relationships they can warm-intro into the Phase 0 call list. Especially valuable: parametric MGA contacts, reinsurance underwriters, CPG sustainability officers, commercial beekeeper operators.</div>
+              </div>
+              <div class="n">05</div>
+              <div class="d">
+                <div class="dh">Set the Q3 reconvene</div>
+                <div class="dt">A second board meeting at the end of Phase 0 to review the go/no-go memo. If go: approve a 6-month MVP build budget and timeline. If no-go: discuss return of capital or narrower pivot. Date held open now, formally scheduled by end of April.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ask">
+          <div class="tag">Ask · vote</div>
+          <p>Five items above. Consent or object on each. We can decide individually or as a block — whichever the board prefers. Dissent is welcome and recorded; unanimous approval is not required, majority is.</p>
+        </div>
+      </section>
+
+      <!-- TOPIC 08 -->
+
+      <section class="topic">
+        <div class="head">
+          <div class="num">
+            Topic 08
+            <span class="sz">08</span>
+          </div>
+          <div>
+            <h3>Open questions. <em>Things I do not have an answer to.</em></h3>
+            <div class="sub">End with what you don't know. Naming uncertainty is more credible than pretending it isn't there, and the board's judgment on these questions is more valuable than their judgment on the things you already have answers to.</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="lane">Open questions</div>
+          <div class="content">
+            <div class="open-q">
+              <div class="q">
+                <div class="qn">Q 01 · Capital horizon</div>
+                <div class="qt">"If Phase 0 converts to a go, do we have a credible path to a $2–4M seed round on a scientific-data-vendor pitch — or are we still fundraising as an app company?"</div>
+              </div>
+              <div class="q">
+                <div class="qn">Q 02 · Scientific credibility</div>
+                <div class="qt">"Floodbase's moat was a Nature cover and Yale climate-science bona fides. What is our equivalent? If the honest answer is 'none yet,' what is the minimum viable version — a co-founder hire, a published methodology paper, a lab partnership?"</div>
+              </div>
+              <div class="q">
+                <div class="qn">Q 03 · Patience vs. speed</div>
+                <div class="qt">"Alvéole took twelve years to get to Aura. Floodbase took eight years to get to Swiss Re. Are we building for a 2029–2031 compliance catalyst, or do we need revenue signal within 18 months? The answer changes product shape and runway."</div>
+              </div>
+              <div class="q">
+                <div class="qn">Q 04 · Stack discipline</div>
+                <div class="qt">"We are not married to the current code — we are married to value creation. That said, carrying forward the pieces that genuinely accelerate the wedge is real leverage. Is the board aligned that Phase 0 should evaluate existing stack components on merit (does this hardware pass insurance-grade rigor? does this schema fit the partner APIs?) rather than on preservation?"</div>
+              </div>
+              <div class="q">
+                <div class="qn">Q 05 · Plan B</div>
+                <div class="qt">"If Phase 0 kills the primary thesis, the right plan B is the highest-EV bet this team can make <em>next</em> — not the smallest thing we can salvage from the current code. Is the board aligned that plan B gets the same value-first treatment (new analysis, honest ruling) rather than a reflexive retreat to sideliner SaaS?"</div>
+              </div>
+              <div class="q">
+                <div class="qn">Q 06 · Competitive timing</div>
+                <div class="qt">"Two high-signal launches in Feb 2026 — Alvéole Aura and Biodiversity Lab. Does the market converging around this wedge mean we're late, or does it mean we're on time? The answer influences urgency."</div>
+              </div>
+              <div class="q">
+                <div class="qn">Q 07 · Founder match</div>
+                <div class="qt">"This wedge rewards a hybrid of scientific credibility, enterprise sales, and data-platform engineering. Our team skews engineering. What's the gap and how do we close it — advisor, co-founder hire, or scoping the product tighter to what we can do?"</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ask">
+          <div class="tag">Ask · discussion</div>
+          <p>No decisions needed on these. The ask is <strong>honest input</strong>. Which of these questions do board members have strong opinions on? Which ones does the board want me to prioritize resolving before the Q3 reconvene?</p>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+
+      <footer class="footer">
+        <div class="strip">
+          <span>BuzzHive · board briefing · 17 April 2026</span>
+          <span>Confidential · do not distribute</span>
+        </div>
+      </footer>
+
+    </div>
+
+  </body>
+</html>

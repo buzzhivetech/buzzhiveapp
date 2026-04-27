@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Decision memo · The three questions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #141211;
+        --ink-soft: #3d3935;
+        --ink-faint: #78716c;
+        --rule: #d6d0c8;
+        --rule-soft: #ebe5dc;
+        --paper: #f6f1e8;
+        --paper-dim: #ede6d8;
+        --accent: #7a2018;
+        --accent-soft: #b5523c;
+        --caution: #8a6a16;
+        --go: #2d5a3d;
+        --block: #a52a1a;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Source Serif 4", Georgia, serif;
+        font-size: 17px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: var(--paper);
+      }
+
+      .masthead {
+        border-bottom: 3px double var(--ink);
+        padding: 48px 0 28px;
+        margin: 0 auto 0;
+        max-width: 1180px;
+        padding-left: 56px;
+        padding-right: 56px;
+      }
+
+      .masthead .dateline {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .masthead h1 {
+        font-family: "Fraunces", serif;
+        font-weight: 500;
+        font-size: clamp(40px, 5.5vw, 72px);
+        line-height: 1;
+        letter-spacing: -0.02em;
+        margin: 0 0 8px;
+      }
+
+      .masthead h1 em {
+        font-style: italic;
+        font-weight: 400;
+        color: var(--accent);
+      }
+
+      .masthead .strapline {
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-size: 20px;
+        color: var(--ink-soft);
+        max-width: 760px;
+        line-height: 1.4;
+      }
+
+      .container {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 56px;
+      }
+
+      /* ————— VERDICT BAND ————— */
+      .verdict {
+        margin-top: 32px;
+        padding: 36px 40px;
+        background: var(--ink);
+        color: var(--paper);
+        border-radius: 2px;
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 40px;
+        align-items: start;
+      }
+
+      .verdict .label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(246, 241, 232, 0.55);
+      }
+
+      .verdict .headline {
+        font-family: "Fraunces", serif;
+        font-weight: 400;
+        font-size: 26px;
+        line-height: 1.3;
+        margin: 4px 0 14px;
+      }
+
+      .verdict .headline strong {
+        font-weight: 600;
+        color: #f0b36a;
+      }
+
+      .verdict .detail {
+        font-size: 15px;
+        line-height: 1.55;
+        color: rgba(246, 241, 232, 0.85);
+      }
+
+      /* ————— TABLE OF RULINGS ————— */
+      .rulings {
+        margin-top: 56px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .rulings .cell {
+        padding: 28px 28px 28px 0;
+        border-right: 1px solid var(--rule);
+        position: relative;
+      }
+
+      .rulings .cell:last-child { border-right: none; padding-right: 0; }
+      .rulings .cell:nth-child(n + 2) { padding-left: 28px; }
+
+      .rulings .q-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+      }
+
+      .rulings .q-title {
+        font-family: "Fraunces", serif;
+        font-weight: 500;
+        font-size: 19px;
+        line-height: 1.3;
+        margin: 6px 0 14px;
+      }
+
+      .rulings .ruling {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        display: inline-block;
+        border-radius: 2px;
+      }
+
+      .ruling.weak { background: rgba(165, 42, 26, 0.12); color: var(--block); }
+      .ruling.tight { background: rgba(138, 106, 22, 0.14); color: var(--caution); }
+      .ruling.blocked { background: var(--block); color: var(--paper); }
+
+      .rulings .cell p {
+        margin: 12px 0 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--ink-soft);
+      }
+
+      /* ————— SECTION HEADERS ————— */
+      .section {
+        margin-top: 88px;
+      }
+
+      .section > .sec-head {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 40px;
+        margin-bottom: 36px;
+        align-items: baseline;
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 10px;
+      }
+
+      .sec-head .marker {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        color: var(--accent);
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      .sec-head h2 {
+        font-family: "Fraunces", serif;
+        font-weight: 500;
+        font-size: clamp(28px, 3.5vw, 40px);
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+        margin: 0;
+      }
+
+      .sec-head h2 em {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      /* ————— BODY GRID ————— */
+      .two-col {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 40px;
+      }
+
+      .two-col .lede {
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        line-height: 1.5;
+      }
+
+      .prose {
+        max-width: 720px;
+      }
+
+      .prose p {
+        margin: 0 0 16px;
+        font-size: 17px;
+        line-height: 1.65;
+      }
+
+      .prose p:first-of-type::first-letter {
+        font-family: "Fraunces", serif;
+        font-size: 3.4em;
+        float: left;
+        line-height: 0.9;
+        margin: 6px 8px 0 -2px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .prose h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 22px;
+        line-height: 1.3;
+        margin: 32px 0 12px;
+      }
+
+      .prose h3 small {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 500;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .prose strong { color: var(--ink); font-weight: 600; }
+
+      /* ————— DATA TABLES ————— */
+      .data {
+        margin: 24px 0 32px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--paper-dim);
+      }
+
+      .data th {
+        text-align: left;
+        font-weight: 600;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        padding: 12px 14px 10px;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: bottom;
+      }
+
+      .data td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--rule-soft);
+        vertical-align: top;
+        line-height: 1.5;
+      }
+
+      .data td.label {
+        font-family: "Fraunces", serif;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      .data td.num {
+        font-variant-numeric: tabular-nums;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+
+      .data tr:last-child td { border-bottom: none; }
+
+      .data .verdict-cell {
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 11px;
+      }
+      .vc-green { color: var(--go); }
+      .vc-amber { color: var(--caution); }
+      .vc-red { color: var(--block); }
+
+      /* ————— PULL QUOTE ————— */
+      .pull {
+        margin: 40px 0;
+        padding: 28px 0 28px 32px;
+        border-left: 3px solid var(--accent);
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-size: 24px;
+        line-height: 1.35;
+        color: var(--ink);
+        max-width: 720px;
+      }
+
+      .pull .attribution {
+        display: block;
+        font-family: "JetBrains Mono", monospace;
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin-top: 14px;
+      }
+
+      /* ————— FINDING BOX ————— */
+      .finding {
+        margin: 28px 0;
+        padding: 20px 24px;
+        background: var(--paper-dim);
+        border-left: 3px solid var(--ink);
+        max-width: 720px;
+      }
+
+      .finding .tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .finding p {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.55;
+        color: var(--ink);
+      }
+
+      /* ————— FOOTNOTE LIST ————— */
+      .foot {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-faint);
+        line-height: 1.6;
+        margin: 32px 0 0;
+        padding: 16px 0 0;
+        border-top: 1px solid var(--rule-soft);
+        max-width: 720px;
+      }
+
+      .foot span {
+        display: block;
+        padding-left: 20px;
+        text-indent: -20px;
+        margin-bottom: 4px;
+      }
+
+      /* ————— SCENARIO TABLE ————— */
+      .scenarios {
+        margin: 40px 0 24px;
+        border-top: 2px solid var(--ink);
+        border-bottom: 2px solid var(--ink);
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+
+      .scenarios th {
+        text-align: left;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--ink);
+        background: var(--paper-dim);
+      }
+
+      .scenarios td {
+        padding: 20px 16px;
+        border-bottom: 1px solid var(--rule-soft);
+        vertical-align: top;
+        line-height: 1.5;
+      }
+
+      .scenarios td.sn {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 17px;
+        color: var(--ink);
+        max-width: 260px;
+      }
+
+      .scenarios td.sn small {
+        display: block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        margin-bottom: 6px;
+      }
+
+      .scenarios td .q-score {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      .verdict-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 700;
+        padding: 4px 10px;
+        display: inline-block;
+      }
+      .vt-no { background: var(--block); color: var(--paper); }
+      .vt-maybe { background: var(--caution); color: var(--paper); }
+      .vt-rec { background: var(--go); color: var(--paper); }
+
+      /* ————— TRIGGERS ————— */
+      .triggers {
+        margin-top: 32px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+      }
+
+      .trigger {
+        padding: 24px;
+        background: var(--paper-dim);
+        border-radius: 2px;
+      }
+
+      .trigger .tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .trigger h4 {
+        font-family: "Fraunces", serif;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 1.3;
+        margin: 10px 0 10px;
+      }
+
+      .trigger p {
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--ink-soft);
+        margin: 0;
+      }
+
+      /* ————— CLOSING ————— */
+      .closing {
+        margin-top: 96px;
+        padding: 56px 0 64px;
+        border-top: 3px double var(--ink);
+      }
+
+      .closing .sig {
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-size: 15px;
+        color: var(--ink-faint);
+        margin-top: 40px;
+      }
+
+      /* ————— MOBILE ————— */
+      @media (max-width: 860px) {
+        .masthead, .container { padding-left: 24px; padding-right: 24px; }
+        .verdict { grid-template-columns: 1fr; gap: 20px; padding: 24px; }
+        .rulings { grid-template-columns: 1fr; border: none; }
+        .rulings .cell { border-right: none; border-bottom: 1px solid var(--rule); padding: 24px 0; }
+        .rulings .cell:nth-child(n+2) { padding-left: 0; }
+        .section > .sec-head { grid-template-columns: 1fr; gap: 8px; }
+        .two-col { grid-template-columns: 1fr; gap: 12px; }
+        .triggers { grid-template-columns: 1fr; }
+        .scenarios { font-size: 13px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="dateline">
+        <span>Internal decision memo · not for circulation</span>
+        <span>17 April 2026</span>
+      </div>
+      <h1>The three <em>questions</em>, answered.</h1>
+      <div class="strapline">
+        Before any code commitment, we owe ourselves honest answers to the three
+        tests: method defensibility, capital survivability, and customer demand.
+        This document reports what the research returned — and it is not what
+        we wanted it to return.
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="verdict">
+        <div class="label">Ruling</div>
+        <div>
+          <div class="headline">
+            On the specific wedge of
+            <strong>pollinator-acoustic MRV for US CPG buyers</strong>,
+            the evidence says <strong>do not build.</strong>
+            The forward curve exists; our slice of it does not.
+          </div>
+          <div class="detail">
+            Q1 (method) returns <em>tight</em> — acoustic is a defensible
+            sensor layer, not a standalone product. Q2 (capital) returns
+            <em>tight</em> — a $4–8M grant-stacked path is feasible only if
+            USDA funding survives FY2026 cuts. Q3 (customer) returns
+            <em>blocked</em> — every major US CPG biodiversity budget is
+            already spent with incumbents, and the US structurally pays
+            certification bodies, not sensor vendors. One blocked pillar is
+            enough to stop.
+          </div>
+        </div>
+      </section>
+
+      <section class="rulings">
+        <div class="cell">
+          <div class="q-num">Question 01</div>
+          <div class="q-title">Does pollinator acoustic beat eDNA &amp; satellite?</div>
+          <span class="ruling tight">Partial · layer not product</span>
+          <p>
+            Passive acoustic has the lowest cost-per-species at five-plus
+            campaigns, but 82% species-ID accuracy and 27% sensitivity are
+            below regulatory threshold. Neither ESRS E4 nor the TNFD food/ag
+            draft names pollinator metrics as mandatory.
+          </p>
+        </div>
+        <div class="cell">
+          <div class="q-num">Question 02</div>
+          <div class="q-title">Can we capitalize a 5-year trough?</div>
+          <span class="ruling tight">Feasible · politically fragile</span>
+          <p>
+            Realistic path: $125K–$305K SBIR I, $600K–$1M SBIR II, CIG up
+            to $2M, angel pre-seed $1–2M. Totals $4–8M over 4 years.
+            Comparable seeds: Hula Earth €1.6M, Chirrup $1.2M. Trump FY2026
+            budget proposes gutting NRCS conservation research.
+          </p>
+        </div>
+        <div class="cell">
+          <div class="q-num">Question 03</div>
+          <div class="q-title">Who is the 2026–2028 customer?</div>
+          <span class="ruling blocked">Blocked · no open budget line</span>
+          <p>
+            Unilever signed NatureMetrics. General Mills signed Regrow for
+            175M acres. Blue Diamond channels $45M USDA through grower
+            cost-share. Driscoll's uses organic certification. Wonderful is
+            vertically integrated. AgriSound hasn't cracked the US in five
+            years.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ QUESTION 1 ============ -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="marker">§ Q1 · Method</div>
+          <h2>
+            Is pollinator acoustic actually <em>must-have</em>, or a
+            supplemental layer on a broader stack?
+          </h2>
+        </div>
+
+        <div class="two-col">
+          <div class="lede">The scientific case, stress-tested</div>
+          <div class="prose">
+            <p>
+              The honest read on methodology is that passive acoustic
+              monitoring has one clear structural advantage and three structural
+              weaknesses. At scale — five or more repeat campaigns — PAM
+              produces the lowest cost per species recorded, approximately
+              seventy times more detections than traditional survey methods,
+              and an average of ten or more species per site than any other
+              technique for vocalizing taxa.¹ That is a real moat for any
+              buyer that needs <strong>continuous, temporal-resolution
+              indicator data</strong> over years.
+            </p>
+            <p>
+              The weaknesses sit where the specific wedge would need to
+              hold. Acoustic classifies only vocalizing or wing-beating
+              species; it is silent on invertebrates eDNA captures in one
+              campaign. Current deep-learning models top out at 82.2%
+              accuracy and 64.5% F1 on buzz-pollinator species identification,
+              and the leading open-source tool (<em>buzzdetect</em>)
+              reaches 95% precision at only 27% sensitivity.² That is
+              enough for <strong>activity and intensity trend data</strong>,
+              which is useful, but below the standard an auditor asks for
+              when verifying a CSRD E4 species-abundance claim.
+            </p>
+
+            <h3><small>Evidence A</small>Method comparison, at five-campaign cost floor</h3>
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Strength</th>
+                  <th>Weakness</th>
+                  <th>Cost curve</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="label">Passive acoustic (PAM)</td>
+                  <td>Continuous, temporal, 10+ more spp/site for vocal taxa</td>
+                  <td>Silent taxa invisible; ID models immature</td>
+                  <td class="num">Lowest per spp at 5+ campaigns</td>
+                </tr>
+                <tr>
+                  <td class="label">Environmental DNA</td>
+                  <td>Invertebrate coverage; multi-taxa in one sample</td>
+                  <td>Presence/absence only; no population, no behavior</td>
+                  <td class="num">Fast start, steep scaling</td>
+                </tr>
+                <tr>
+                  <td class="label">Satellite / remote sensing</td>
+                  <td>Landscape-scale habitat extent &amp; condition</td>
+                  <td>No species data; proxies only</td>
+                  <td class="num">Flat; near-zero marginal</td>
+                </tr>
+                <tr>
+                  <td class="label">Camera traps</td>
+                  <td>Mid-size fauna, images for audit trail</td>
+                  <td>Labor-heavy; poor for insects</td>
+                  <td class="num">High per-site fixed</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3><small>Evidence B</small>What the frameworks actually require</h3>
+            <p>
+              ESRS E4-5 asks for changes in number of individuals, population
+              size and range, habitat extent and condition — and is
+              <strong>agnostic on method</strong>.³ The TNFD LEAP approach
+              recommends IBAT for the Locate phase (satellite + global
+              databases); species-level data is only required if the company's
+              materiality assessment names specific species.⁴ The draft TNFD
+              food-and-agriculture sector guidance (June 2024) lists
+              land-use change, conservation area, and pollutant flux as
+              priority metrics — <strong>pollinators are not called out as a
+              mandatory indicator</strong>.⁵
+            </p>
+
+            <div class="finding">
+              <div class="tag">Finding · Q1</div>
+              <p>
+                Pollinator acoustic is a defensible <em>layer</em> in a
+                multi-modal biodiversity stack — not a must-buy standalone
+                category. NatureMetrics has already added bioacoustics to
+                its eDNA platform; Alvéole Aura bundles acoustic with
+                satellite; Pivotal Earth is multi-taxa. The buyer wants
+                one vendor covering E4, not a bee-specific specialist.
+              </p>
+            </div>
+
+            <div class="foot">
+              <span>¹ Biodiversity monitoring for biocredits, <em>Biodiversity &amp; Conservation</em> (Springer, 2025).</span>
+              <span>² Fernandes et al., transformer bee-ID (2025); Lignier et al., <em>buzzdetect</em> (bioRxiv 2025).</span>
+              <span>³ EFRAG, ESRS E4 Delegated Act Annex 1 (2023).</span>
+              <span>⁴ TNFD LEAP v1.1 (Oct 2023) &amp; TNFD IBAT guidance.</span>
+              <span>⁵ TNFD draft sector guidance — food &amp; agriculture (June 2024).</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ QUESTION 2 ============ -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="marker">§ Q2 · Capital</div>
+          <h2>
+            Five-year runway through a climate-hardware winter — is there a
+            <em>path</em>?
+          </h2>
+        </div>
+
+        <div class="two-col">
+          <div class="lede">The realistic stack, and its political risk</div>
+          <div class="prose">
+            <p>
+              A grant-stacked path exists, but it is thin and exposed to
+              the FY2026 USDA budget proposal. The OMB has directed USDA to
+              develop plans that would "gut research and conservation efforts,
+              trim program budgets nearly across the board, and cut staff" —
+              including 22% cuts to FSA salaries and consolidation of county
+              NRCS offices.⁶ SBIR and CIG are not yet explicitly cut, but
+              they live inside the envelope being squeezed.
+            </p>
+
+            <h3><small>Evidence C</small>The grant stack, with real award ranges</h3>
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Source</th>
+                  <th>Award range</th>
+                  <th>Pool</th>
+                  <th>Evidence (2024–2025)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="label">USDA SBIR Phase I</td>
+                  <td class="num">$125K – $181.5K</td>
+                  <td class="num">$13M/yr</td>
+                  <td>Atolla Tech $175K (LiDAR pollinator), Field Data $165K</td>
+                </tr>
+                <tr>
+                  <td class="label">USDA SBIR Phase II</td>
+                  <td class="num">$600K – $650K</td>
+                  <td class="num">$19.5M/yr</td>
+                  <td>Sept 2025 RFA, ~30 awards</td>
+                </tr>
+                <tr>
+                  <td class="label">NSF SBIR Phase I</td>
+                  <td class="num">≈ $305K</td>
+                  <td class="num">—</td>
+                  <td>AI Sense $305K acoustic wildlife deterrent</td>
+                </tr>
+                <tr>
+                  <td class="label">NSF SBIR Phase II</td>
+                  <td class="num">≈ $1M</td>
+                  <td class="num">—</td>
+                  <td>GAIA AI $1M forest sensor, Godwit $998K credits</td>
+                </tr>
+                <tr>
+                  <td class="label">USDA Conservation Innovation</td>
+                  <td class="num">$258K – $2M</td>
+                  <td class="num">$90M/yr</td>
+                  <td>53 projects awarded FY23</td>
+                </tr>
+                <tr>
+                  <td class="label">Project Apis m.</td>
+                  <td class="num">$5K – $200K</td>
+                  <td class="num">$12M all-time</td>
+                  <td>Research institutions only — not us</td>
+                </tr>
+                <tr>
+                  <td class="label">AgFunder GROW</td>
+                  <td class="num">$100K</td>
+                  <td class="num">10 cohort/yr</td>
+                  <td>Pre-seed program, Singapore</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3><small>Evidence D</small>Comparable private rounds, biodiversity hardware</h3>
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Round</th>
+                  <th>Size</th>
+                  <th>Stage signal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="label">Hula Earth (DE)</td>
+                  <td>Pre-seed</td>
+                  <td class="num">€1.6M</td>
+                  <td>Nov 2024 · Point Nine · BioT + satellite</td>
+                </tr>
+                <tr>
+                  <td class="label">Chirrup.ai (UK)</td>
+                  <td>Seed</td>
+                  <td class="num">$1.2M</td>
+                  <td>Apr 2025 · birdsong, 100+ farms pitch</td>
+                </tr>
+                <tr>
+                  <td class="label">Wilder Sensing (UK)</td>
+                  <td>Pre-seed</td>
+                  <td class="num">$382K</td>
+                  <td>Dec 2024 · sub-scale</td>
+                </tr>
+                <tr>
+                  <td class="label">Pivotal Earth (UK)</td>
+                  <td>Seed</td>
+                  <td class="num">€5.1M</td>
+                  <td>Multi-taxa AI, supply-chain pivot</td>
+                </tr>
+                <tr>
+                  <td class="label">NatureMetrics (UK)</td>
+                  <td>Series B</td>
+                  <td class="num">$25M</td>
+                  <td>2025 · 600 enterprise customers · ceiling marker</td>
+                </tr>
+                <tr>
+                  <td class="label">Alvéole (CA)</td>
+                  <td>Series A</td>
+                  <td class="num">$8.1M CAD</td>
+                  <td>2022, after 9 years · services-led</td>
+                </tr>
+                <tr>
+                  <td class="label">AgriSound (UK)</td>
+                  <td>Seed</td>
+                  <td class="num">$240–740K</td>
+                  <td>Dec 2023 · ~$3M revenue · investor = customer</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="finding">
+              <div class="tag">Finding · Q2</div>
+              <p>
+                A $4–8M path over four years is <em>feasible but fragile</em>.
+                It requires stacking two USDA SBIR phases, a CIG award, and
+                a $1–2M pre-seed. Two direct US competitors (Atolla Tech,
+                Field Data Services) already took USDA SBIR dollars for
+                pollinator tracking — the channel is visible but contested.
+                The $15M figure from the previous memo assumed a healthy
+                Series B market; we would be crossing the valley during
+                the worst hardware-climate funding winter on record
+                (Series B –29% YoY H1 2025).
+              </p>
+            </div>
+
+            <div class="foot">
+              <span>⁶ White House OMB FY2026 budget proposal; <em>Agriculture.com</em>, <em>USDA 2026 budget summary</em>.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ QUESTION 3 ============ -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="marker">§ Q3 · Customer</div>
+          <h2>
+            Who is the 2026–2028 revenue customer? <em>This is the kill shot.</em>
+          </h2>
+        </div>
+
+        <div class="two-col">
+          <div class="lede">Seven accounts, zero open doors</div>
+          <div class="prose">
+            <p>
+              We mapped the plausible US enterprise customers for a
+              pollinator-acoustic MRV product — the companies whose 2026 buying
+              decisions would constitute the "three to five pilot deals at
+              $50K–$150K" that would validate the forward curve. Every visible
+              budget line is already allocated, and none of it is allocated to a
+              new acoustic vendor.
+            </p>
+
+            <h3><small>Evidence E</small>Named accounts, current biodiversity spend</h3>
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Account</th>
+                  <th>Where biodiversity budget flows today</th>
+                  <th>Open to us?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="label">Unilever</td>
+                  <td>NatureMetrics (eDNA) · Regrow (farm data) · NASA Harvest · Biome Makers · Pur · 1M ha regen target by 2030</td>
+                  <td class="verdict-cell vc-red">Closed</td>
+                </tr>
+                <tr>
+                  <td class="label">General Mills</td>
+                  <td>Regrow Sustainability Insights across 175M acres · Harvest SARA with U. Maryland</td>
+                  <td class="verdict-cell vc-red">Closed</td>
+                </tr>
+                <tr>
+                  <td class="label">Blue Diamond Growers</td>
+                  <td>$45M USDA Climate-Smart grant → cost-share to growers ($35–200/ac) · Project Apis m. · Pollinator Partnership</td>
+                  <td class="verdict-cell vc-red">Pass-through</td>
+                </tr>
+                <tr>
+                  <td class="label">Driscoll's</td>
+                  <td>Organic certification requirements · internal entomology team · Triple Bottom Line</td>
+                  <td class="verdict-cell vc-red">Certification</td>
+                </tr>
+                <tr>
+                  <td class="label">The Wonderful Co.</td>
+                  <td>Owns Wonderful Bees (70K+ colonies for 35K ac) · $400M sustainable ag investment internal</td>
+                  <td class="verdict-cell vc-red">Vertical</td>
+                </tr>
+                <tr>
+                  <td class="label">Almond Board of CA</td>
+                  <td>170K ac Bee Friendly certified (86% of US) · Bee+ Scholarship cover crops · $750K pollinator spend</td>
+                  <td class="verdict-cell vc-amber">Research only</td>
+                </tr>
+                <tr>
+                  <td class="label">Walmart / Kroger / Whole Foods</td>
+                  <td>IPM certification mandates ($2025, 2028/30, 2023) via 3rd-party auditors · GLOBALG.A.P. · Bee Friendly Farming</td>
+                  <td class="verdict-cell vc-red">Certification</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pull">
+              The US enforces pollinator compliance through a certification
+              ecosystem. The certification body is the gatekeeper and the
+              grower pays the auditor. There is no buyer for supplier-level
+              sensor data anywhere in that flow.
+              <span class="attribution">— The structural observation</span>
+            </div>
+
+            <h3><small>Evidence F</small>The signal that structural barriers are real</h3>
+            <p>
+              AgriSound — the <em>only</em> well-known pollinator-acoustic
+              vendor with live enterprise contracts — has been operating
+              since 2019 and has signed M&amp;S, Tesco, British Sugar,
+              Noble Foods, Compleat Food Group, Innocent Drinks, Dole UK, and
+              Importaco. Its sole North America footprint as of November 2025
+              is a year-long pilot with Niagara College in Ontario.⁷ Five
+              years in, no US commercial customer, no US distributor, no US
+              market entry announcement. Either they are about to launch and
+              the market is about to open — or the US structurally doesn't pay
+              for this product. The preponderance of the other evidence points
+              firmly at the second.
+            </p>
+
+            <h3><small>Evidence G</small>What is actually purchased in the US at the supplier layer</h3>
+            <p>
+              The Almond Board's 170,000 Bee-Friendly-certified acres, the
+              $45M Blue Diamond Climate-Smart grant, and every major retailer
+              IPM policy (Walmart 2025, Kroger 2028/30, Whole Foods 2023) run
+              through one of four mechanisms: <strong>certification bodies,
+              grower cost-share, internal beekeeping operations, or research
+              grants to universities</strong>. Sensor vendors are not a line
+              item in any of these. Field to Market's 2026 WILD Index RFP
+              is the single identified pre-competitive channel where acoustic
+              data could plausibly enter the US methodology — a
+              <em>research</em> contribution, not a commercial pilot.
+            </p>
+
+            <div class="finding">
+              <div class="tag">Finding · Q3</div>
+              <p>
+                There is no visible $50K–$150K US CPG pilot budget for new
+                pollinator-acoustic vendors in 2026–2028. Every named account
+                is either locked with an incumbent, certification-gated,
+                vertically integrated, or channels money through USDA
+                pass-through to growers. The market the Watershed parallel
+                assumed (Unilever-style enterprise ESG procurement) already
+                happened; the chair is occupied.
+              </p>
+            </div>
+
+            <div class="foot">
+              <span>⁷ AgriSound press, "Canadian partnership with Niagara College," Nov 2025.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SCENARIO TABLE ============ -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="marker">§ Decision matrix</div>
+          <h2>Three wedges, scored against three questions.</h2>
+        </div>
+
+        <table class="scenarios">
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Q1 · method</th>
+              <th>Q2 · capital</th>
+              <th>Q3 · customer</th>
+              <th>Ruling</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="sn">
+                <small>A</small>
+                Pollinator-acoustic MRV as primary wedge, sold to US CPG sustainability
+              </td>
+              <td><span class="q-score vc-amber">Tight</span> Layer, not product</td>
+              <td><span class="q-score vc-amber">Tight</span> $4–8M fragile stack</td>
+              <td><span class="q-score vc-red">Blocked</span> No open budget</td>
+              <td><span class="verdict-tag vt-no">Do not build</span></td>
+            </tr>
+            <tr>
+              <td class="sn">
+                <small>B</small>
+                Broader biodiversity MRV platform with bees as one sensor layer
+              </td>
+              <td><span class="q-score vc-green">Strong</span> Multi-modal is the winning shape</td>
+              <td><span class="q-score vc-red">Blocked</span> Needs $15–25M vs. NatureMetrics &amp; Pivotal</td>
+              <td><span class="q-score vc-red">Blocked</span> Incumbents already signed</td>
+              <td><span class="verdict-tag vt-no">Do not build</span></td>
+            </tr>
+            <tr>
+              <td class="sn">
+                <small>C</small>
+                Three validation calls, then re-decide in six weeks
+              </td>
+              <td>—</td>
+              <td><span class="q-score vc-green">Zero burn</span></td>
+              <td><span class="q-score vc-green">Answers the blocker</span></td>
+              <td><span class="verdict-tag vt-rec">Recommended</span></td>
+            </tr>
+            <tr>
+              <td class="sn">
+                <small>D</small>
+                Sub-scale sideliner / mid-beekeeper tool, profitable niche
+              </td>
+              <td><span class="q-score vc-green">Adequate</span></td>
+              <td><span class="q-score vc-green">Bootstrap-viable</span></td>
+              <td><span class="q-score vc-amber">$3–5M ceiling</span> known from BroodMinder, HiveTracks</td>
+              <td><span class="verdict-tag vt-maybe">Lifestyle, not venture</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="two-col" style="margin-top: 40px">
+          <div class="lede">What this table really says</div>
+          <div class="prose">
+            <p>
+              Scenario A is the wedge we have been flirting with for a week
+              and it fails on Q3. Scenario B is the correct <em>shape</em> of
+              the winning category but fails on capital and incumbency.
+              Scenario C is the responsible move before any further
+              commitment. Scenario D is the honest answer if we are unwilling
+              to pivot out of bees.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TRIGGERS ============ -->
+      <section class="section">
+        <div class="sec-head">
+          <div class="marker">§ What flips the ruling</div>
+          <h2>
+            Trigger conditions that would <em>re-open</em> the case for
+            Scenario A or B.
+          </h2>
+        </div>
+
+        <div class="two-col">
+          <div class="lede">None of these are in place today</div>
+          <div class="prose">
+            <p>
+              The decision above is conditional on the market structure
+              observed in April 2026. Three events would materially change
+              the calculation. Monitoring them is cheaper than building
+              blind for them.
+            </p>
+          </div>
+        </div>
+
+        <div class="triggers">
+          <div class="trigger">
+            <div class="tag">Trigger 1 · Regulatory</div>
+            <h4>TNFD food &amp; agriculture final sector guidance names pollinator-specific metrics as mandatory.</h4>
+            <p>
+              Draft (June 2024) does not. The final guidance expected in
+              2026–2027 is the single clearest regulatory lever that would
+              force US multinationals (via CSRD E4 extraterritoriality) to
+              procure pollinator-layer data. Watch TNFD status reports.
+            </p>
+          </div>
+          <div class="trigger">
+            <div class="tag">Trigger 2 · Political</div>
+            <h4>Post-2028 administration restores SEC climate rule and expands to nature disclosure within 24 months.</h4>
+            <p>
+              A Democratic 2028 win focused on cost-of-living does not
+              automatically restore nature disclosure. The trigger requires
+              explicit SEC nature-risk rule-making — which has never existed
+              in the US. Low probability on current polling.
+            </p>
+          </div>
+          <div class="trigger">
+            <div class="tag">Trigger 3 · Procurement</div>
+            <h4>A named US CPG publishes an RFP for supplier-level biodiversity sensor data (not certification, not cost-share).</h4>
+            <p>
+              This would break the five-year structural pattern. A single
+              such RFP from Unilever US, General Mills, Mars, Mondelez, or a
+              major produce processor would invalidate the Q3 finding. As
+              of April 2026, none exists publicly.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CLOSING ============ -->
+      <section class="closing">
+        <div class="two-col">
+          <div class="lede">What we do in the next six weeks</div>
+          <div class="prose">
+            <h3><small>Recommendation</small>Three phone calls, no code</h3>
+            <p>
+              The responsible next step is not another research document
+              and not a product commitment. It is three targeted
+              conversations that test the Q3 blocker directly. If any one
+              of them returns a paid, near-term procurement signal, we
+              revisit. If none do, the ruling holds and we either commit
+              to Scenario D (sub-scale lifestyle) or pivot out of the
+              pollinator space entirely.
+            </p>
+            <ol style="padding-left: 20px; font-size: 16px; line-height: 1.65;">
+              <li style="margin-bottom: 8px;">
+                <strong>AgriSound, Casey Woodward (CEO).</strong> What is
+                blocking US commercial entry after five years? What would
+                have to be true to change that?
+              </li>
+              <li style="margin-bottom: 8px;">
+                <strong>A named sustainability officer at Blue Diamond,
+                Wonderful, or Driscoll's.</strong> Is there a pathway from
+                certification-based pollinator compliance to sensor-based
+                pollinator compliance in your 2027–2028 plan? Budget
+                line, procurement process, decision window.
+              </li>
+              <li style="margin-bottom: 8px;">
+                <strong>Field to Market, WILD Index working group.</strong>
+                Is acoustic pollinator data eligible to feed the 2026
+                National Indicators Report methodology? Who funds the data
+                collection if so?
+              </li>
+            </ol>
+            <p>
+              Budget four to six weeks. Zero engineering. One-page writeup
+              at the end. Then re-decide.
+            </p>
+
+            <div class="sig">
+              — Drafted in response to the three questions posed on the
+              build-in-the-trough thesis. This document supersedes the
+              prior strategy briefs. Prior sunk-cost reasoning on the
+              BuzzHive codebase is not relevant to the decision it proposes.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

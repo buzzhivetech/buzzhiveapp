@@ -1,0 +1,1366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phase 0 playbook · 12 conversations, 6 weeks, 1 decision</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #141310;
+        --ink-soft: #3d3a33;
+        --ink-dim: #6a6558;
+        --paper: #f6f3ec;
+        --paper-warm: #efeadf;
+        --paper-deep: #e8e2d1;
+        --rule: #d6cfbd;
+        --rule-soft: #e2dcc9;
+        --accent: #a84d2e;
+        --accent-soft: #c97a5b;
+        --green: #4a6741;
+        --gold: #b68a2c;
+        --red: #9a3324;
+        --blue: #2e5266;
+        --indigo: #3c3f7a;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Newsreader", Georgia, serif;
+        font-size: 16px;
+        line-height: 1.58;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .sans { font-family: "IBM Plex Sans", sans-serif; }
+      .mono { font-family: "IBM Plex Mono", monospace; }
+
+      /* COVER */
+
+      .cover {
+        padding: 40px 5vw 44px;
+        background: var(--paper-warm);
+        border-bottom: 2px solid var(--ink);
+      }
+      .cover .strip {
+        display: flex;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .cover .kind {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-top: 28px;
+      }
+      .cover h1 {
+        font-family: "Newsreader", serif;
+        font-weight: 500;
+        font-size: clamp(38px, 5vw, 68px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        margin: 12px 0 20px;
+        max-width: 1100px;
+      }
+      .cover h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+      .cover .deck {
+        font-size: clamp(16px, 1.3vw, 20px);
+        line-height: 1.5;
+        max-width: 820px;
+        color: var(--ink-soft);
+      }
+
+      .cover .stats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 24px;
+        margin-top: 36px;
+        padding-top: 22px;
+        border-top: 1px solid var(--rule);
+      }
+      .cover .stats .stat .n {
+        font-family: "Newsreader", serif;
+        font-size: 40px;
+        font-weight: 500;
+        color: var(--ink);
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .cover .stats .stat .l {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        margin-top: 8px;
+      }
+
+      .wrap { max-width: 1200px; margin: 0 auto; padding: 0 5vw; }
+
+      /* HOW TO USE */
+
+      .howto {
+        padding: 44px 0 28px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .howto h2 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 500;
+        margin: 0 0 18px;
+      }
+      .howto-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+      }
+      .howto-card {
+        padding: 18px 20px;
+        background: var(--paper-warm);
+        border-top: 2px solid var(--ink);
+      }
+      .howto-card .n {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .howto-card .h {
+        font-family: "Newsreader", serif;
+        font-size: 19px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      .howto-card .t {
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--ink-soft);
+      }
+
+      /* SCOREBOARD */
+
+      .scoreboard {
+        padding: 48px 0 36px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .scoreboard h2 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 500;
+        margin: 0 0 8px;
+      }
+      .scoreboard .lead {
+        font-size: 16px;
+        color: var(--ink-soft);
+        max-width: 820px;
+        margin: 0 0 24px;
+      }
+      .sb-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 13px;
+      }
+      .sb-table th {
+        text-align: left;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 600;
+        padding: 10px 14px;
+        border-bottom: 2px solid var(--ink);
+      }
+      .sb-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--rule-soft);
+        vertical-align: top;
+      }
+      .sb-table tr:nth-child(odd) td { background: var(--paper-warm); }
+      .sb-table td.num {
+        font-family: "IBM Plex Mono", monospace;
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .sb-table td.axis {
+        font-family: "IBM Plex Sans", sans-serif;
+        font-weight: 600;
+      }
+      .pill {
+        display: inline-block;
+        padding: 2px 8px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        border-radius: 3px;
+        font-weight: 600;
+      }
+      .pill.wk { background: var(--paper-deep); color: var(--ink); }
+      .pill.cost { background: var(--paper-deep); color: var(--ink-soft); }
+
+      /* AXIS */
+
+      .axis {
+        padding: 56px 0 40px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .axis-head {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+        margin-bottom: 36px;
+      }
+      .axis-num {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .axis-num .sz {
+        display: block;
+        font-family: "Newsreader", serif;
+        font-size: 68px;
+        font-weight: 400;
+        color: var(--ink);
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin-top: 10px;
+      }
+      .axis-num .meta {
+        margin-top: 18px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        color: var(--ink-dim);
+        letter-spacing: 0.14em;
+      }
+      .axis h3 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(30px, 3.4vw, 44px);
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.1;
+        margin: 0 0 10px;
+      }
+      .axis h3 em { color: var(--accent); font-style: italic; font-weight: 400; }
+      .axis .sub {
+        font-size: clamp(16px, 1.2vw, 18px);
+        color: var(--ink-soft);
+        line-height: 1.5;
+        max-width: 820px;
+      }
+
+      .axis-body {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+      }
+      .axis-body .lane {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        padding-top: 6px;
+      }
+      .axis-body .content { max-width: 900px; }
+      .axis-body .content p { margin: 0 0 12px; }
+
+      /* TARGETS TABLE */
+
+      .tg-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 13px;
+        margin-top: 6px;
+      }
+      .tg-table th {
+        text-align: left;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        font-weight: 600;
+        padding: 8px 12px;
+        border-bottom: 2px solid var(--ink);
+      }
+      .tg-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--rule-soft);
+        vertical-align: top;
+      }
+      .tg-table td.org { font-weight: 600; color: var(--ink); }
+      .tg-table td.name { color: var(--ink-soft); }
+      .tg-table td.via { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-dim); }
+      .tg-table td.note { font-size: 12px; color: var(--ink-soft); }
+
+      /* TEMPLATE BLOCK */
+
+      .tmpl {
+        margin: 20px 0;
+        border: 1px solid var(--rule);
+        background: var(--paper-warm);
+      }
+      .tmpl .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 16px;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+      .tmpl .head .kind { color: var(--accent-soft); font-weight: 600; }
+      .tmpl pre {
+        margin: 0;
+        padding: 18px 20px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        line-height: 1.55;
+        color: var(--ink);
+        background: var(--paper-warm);
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .tmpl .note {
+        padding: 10px 20px;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 12px;
+        color: var(--ink-dim);
+        border-top: 1px solid var(--rule-soft);
+        font-style: italic;
+      }
+
+      /* QUESTIONS */
+
+      .q-block { margin-top: 18px; }
+      .q-block h4 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        font-weight: 600;
+        margin: 0 0 12px;
+      }
+      .q-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        counter-reset: qnum;
+      }
+      .q-list li {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px dashed var(--rule-soft);
+        counter-increment: qnum;
+      }
+      .q-list li::before {
+        content: "Q" counter(qnum, decimal-leading-zero);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: 600;
+        padding-top: 2px;
+      }
+      .q-list li.kill-q::before { color: var(--red); content: "KILL"; font-size: 10px; }
+      .q-list li .qtext {
+        font-family: "Newsreader", serif;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .q-list li .why {
+        display: block;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 12px;
+        color: var(--ink-dim);
+        margin-top: 4px;
+        font-style: italic;
+      }
+
+      /* RUBRIC */
+
+      .rubric {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .rb {
+        padding: 14px 16px;
+        border-top: 3px solid var(--rule);
+        background: var(--paper-warm);
+      }
+      .rb.strong { border-top-color: var(--green); }
+      .rb.weak { border-top-color: var(--gold); }
+      .rb.kill { border-top-color: var(--red); }
+      .rb .lbl {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .rb.strong .lbl { color: var(--green); }
+      .rb.weak .lbl { color: var(--gold); }
+      .rb.kill .lbl { color: var(--red); }
+      .rb .t {
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+
+      /* WEEK 5-6 */
+
+      .synth {
+        padding: 56px 0 40px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .synth h3 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(30px, 3.4vw, 44px);
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.1;
+        margin: 0 0 16px;
+      }
+      .synth h3 em { color: var(--accent); font-style: italic; font-weight: 400; }
+
+      .verdict {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 24px;
+      }
+      .vd {
+        padding: 20px 22px;
+        background: var(--paper-warm);
+        border-left: 4px solid var(--ink);
+      }
+      .vd.go { border-left-color: var(--green); }
+      .vd.pivot { border-left-color: var(--gold); }
+      .vd.kill { border-left-color: var(--red); }
+      .vd .lbl {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .vd.go .lbl { color: var(--green); }
+      .vd.pivot .lbl { color: var(--gold); }
+      .vd.kill .lbl { color: var(--red); }
+      .vd .h {
+        font-family: "Newsreader", serif;
+        font-size: 19px;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+      .vd .t {
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--ink-soft);
+      }
+
+      /* ANTI-PATTERNS */
+
+      .anti {
+        padding: 48px 0 40px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .anti h3 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(26px, 3vw, 36px);
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.15;
+        margin: 0 0 16px;
+      }
+      .anti-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-width: 900px;
+      }
+      .anti-list li {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        gap: 18px;
+        padding: 14px 0;
+        border-bottom: 1px dashed var(--rule-soft);
+      }
+      .anti-list li::before {
+        content: "✕";
+        color: var(--red);
+        font-weight: 700;
+        font-size: 18px;
+      }
+      .anti-list li .ah {
+        font-family: "IBM Plex Sans", sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        color: var(--ink);
+        margin-bottom: 3px;
+      }
+      .anti-list li .at {
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--ink-soft);
+      }
+
+      /* CALL LOG TEMPLATE */
+
+      .log-tmpl {
+        margin-top: 22px;
+        border: 1px solid var(--rule);
+        background: var(--paper-warm);
+        padding: 20px 22px;
+      }
+      .log-tmpl h4 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        font-weight: 600;
+        margin: 0 0 12px;
+      }
+      .log-fields {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 8px 18px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+      }
+      .log-fields dt { color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.14em; }
+      .log-fields dd { margin: 0; color: var(--ink); border-bottom: 1px dotted var(--rule); padding-bottom: 3px; min-height: 18px; }
+
+      /* FOOTER */
+
+      .footer {
+        padding: 32px 0 44px;
+        color: var(--ink-dim);
+        font-size: 12px;
+      }
+      .footer .strip {
+        display: flex;
+        justify-content: space-between;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 900px) {
+        .cover .stats { grid-template-columns: repeat(2, 1fr); }
+        .axis-head, .axis-body { grid-template-columns: 1fr; gap: 16px; }
+        .axis-body .lane { border-bottom: 1px solid var(--rule); padding-bottom: 8px; }
+        .howto-grid, .rubric, .verdict { grid-template-columns: 1fr; }
+        .tg-table, .sb-table { font-size: 12px; }
+        .tg-table th, .tg-table td, .sb-table th, .sb-table td { padding: 8px 10px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <header class="cover">
+      <div class="strip">
+        <span>Phase 0 playbook · operational companion to board-briefing</span>
+        <span>Start date: 20 April 2026 · synthesis due: 1 June 2026</span>
+      </div>
+      <div class="kind">How to run it</div>
+      <h1>
+        Twelve conversations.<br/>
+        Six weeks. <em>One decision.</em>
+      </h1>
+      <div class="deck">
+        This playbook is the operational companion to the board briefing. It contains the target contact list for each axis, outreach templates you can copy, diagnostic call scripts, scoring rubrics, and the week-six synthesis framework. Open this document every morning of Phase 0. Close it when the go/no-go memo is written.
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n">12</div><div class="l">Conversations</div></div>
+        <div class="stat"><div class="n">6</div><div class="l">Weeks</div></div>
+        <div class="stat"><div class="n">4</div><div class="l">Axes</div></div>
+        <div class="stat"><div class="n">$5K</div><div class="l">Budget</div></div>
+        <div class="stat"><div class="n">1</div><div class="l">Decision</div></div>
+      </div>
+    </header>
+
+    <div class="wrap">
+
+      <!-- HOW TO USE -->
+
+      <section class="howto">
+        <h2>How to use this document</h2>
+        <div class="howto-grid">
+          <div class="howto-card">
+            <div class="n">01 · Cadence</div>
+            <div class="h">One axis per two weeks, overlapping</div>
+            <div class="t">Start the insurance axis immediately (week 1–2), beekeeper by end of week 1, biodiversity by week 3, consultancy by week 4. Synthesis week six. Do not wait for one axis to finish before starting the next — some contacts take 10 days to respond.</div>
+          </div>
+          <div class="howto-card">
+            <div class="n">02 · Discipline</div>
+            <div class="h">Log every call within two hours</div>
+            <div class="t">Use the call-log template at the bottom of each axis. Fill it in while the conversation is fresh. A week later you will remember the vibe, not the signal. The whole plan is designed to produce evidence — don't waste it by forgetting what was said.</div>
+          </div>
+          <div class="howto-card">
+            <div class="n">03 · Rigor</div>
+            <div class="h">Ask the kill question every time</div>
+            <div class="t">The last question on each script is explicitly designed to kill the thesis. Do not skip it because the conversation went well. A polite yes without the kill question is worthless data; a polite yes <em>after</em> the kill question is the only kind that counts.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCOREBOARD -->
+
+      <section class="scoreboard">
+        <h2>Scoreboard · status at a glance</h2>
+        <p class="lead">Update this table after every call. Keep a copy open in a separate window. The moment any axis returns three "kill" entries, stop that axis and move time into the others.</p>
+        <table class="sb-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;">#</th>
+              <th>Axis</th>
+              <th style="width: 140px;">Window</th>
+              <th style="width: 100px;">Cost</th>
+              <th style="width: 90px;">Calls</th>
+              <th>Target signal</th>
+              <th style="width: 110px;">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">01</td>
+              <td class="axis">Insurance (MGA + reinsurer)</td>
+              <td><span class="pill wk">Week 1–2</span></td>
+              <td><span class="pill cost">$0</span></td>
+              <td>5</td>
+              <td>2+ MGAs express data-licensing appetite with pricing discussion</td>
+              <td><em>pending</em></td>
+            </tr>
+            <tr>
+              <td class="num">02</td>
+              <td class="axis">Beekeeper (commercial, non-BeeHero)</td>
+              <td><span class="pill wk">Week 2–3</span></td>
+              <td><span class="pill cost">~$500</span></td>
+              <td>3</td>
+              <td>2+ operators accept data-sharing under defined terms</td>
+              <td><em>pending</em></td>
+            </tr>
+            <tr>
+              <td class="num">03</td>
+              <td class="axis">Biodiversity (acoustic + methodology)</td>
+              <td><span class="pill wk">Week 3–4</span></td>
+              <td><span class="pill cost">$0</span></td>
+              <td>3</td>
+              <td>1+ acoustic vendor offers data license; methodology shop confirms landscape schema</td>
+              <td><em>pending</em></td>
+            </tr>
+            <tr>
+              <td class="num">04</td>
+              <td class="axis">Consultancy (biodiversity spinouts)</td>
+              <td><span class="pill wk">Week 4–5</span></td>
+              <td><span class="pill cost">$0</span></td>
+              <td>1–2</td>
+              <td>1+ consultancy agrees to a 90-day design-partner pilot</td>
+              <td><em>pending</em></td>
+            </tr>
+            <tr>
+              <td class="num">05</td>
+              <td class="axis">Founder synthesis · go/no-go memo</td>
+              <td><span class="pill wk">Week 5–6</span></td>
+              <td><span class="pill cost">—</span></td>
+              <td>—</td>
+              <td>Written decision: go, pivot, or kill</td>
+              <td><em>pending</em></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- AXIS 01: INSURANCE -->
+
+      <section class="axis">
+        <div class="axis-head">
+          <div class="axis-num">
+            Axis 01 · Insurance
+            <span class="sz">01</span>
+            <div class="meta">Week 1–2 · 5 calls · $0</div>
+          </div>
+          <div>
+            <h3>Parametric MGAs and reinsurers. <em>Will they pay for pollination data?</em></h3>
+            <div class="sub">The highest-variance axis. If the answer is yes, Floodbase-style scientific data vendor unlocks. If the answer is no, the thesis compresses to consultancy + grower, which is a different (smaller) business. Test this first.</div>
+          </div>
+        </div>
+
+        <div class="axis-body">
+          <div class="lane">Targets</div>
+          <div class="content">
+            <table class="tg-table">
+              <thead>
+                <tr>
+                  <th style="width: 180px;">Organization</th>
+                  <th style="width: 200px;">Target contact</th>
+                  <th style="width: 110px;">Channel</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="org">Arbol</td>
+                  <td class="name">Siddhartha Jha (founder/CEO) or head of agriculture parametrics</td>
+                  <td class="via">Warm intro · riskify.ai contact may help</td>
+                  <td class="note">Already partnered with Pollen Systems on orchard products — closest existing analog to what we'd sell.</td>
+                </tr>
+                <tr>
+                  <td class="org">Floodbase</td>
+                  <td class="name">Bessie Schwarz (co-founder) or head of partnerships</td>
+                  <td class="via">LinkedIn · cold email</td>
+                  <td class="note">Ask as peer, not customer. They'll understand the scientific-vendor model — they invented it. High signal even if no commercial fit.</td>
+                </tr>
+                <tr>
+                  <td class="org">Descartes Underwriting</td>
+                  <td class="name">Head of US parametric ag (verify on LinkedIn; Tanguy Touffut if direct)</td>
+                  <td class="via">LinkedIn</td>
+                  <td class="note">Paris-based but active in US parametric ag. Test if bee/pollination fits their product roadmap.</td>
+                </tr>
+                <tr>
+                  <td class="org">Swiss Re Corp Solutions</td>
+                  <td class="name">Head of agriculture, North America</td>
+                  <td class="via">Warm intro preferred · otherwise LinkedIn</td>
+                  <td class="note">Harder to land but highest signal — they underwrite many MGAs including Floodbase. One conversation here is worth two with downstream MGAs.</td>
+                </tr>
+                <tr>
+                  <td class="org">MS&amp;AD Ventures or Munich Re</td>
+                  <td class="name">US parametric ag lead</td>
+                  <td class="via">LinkedIn · potential BeeHero intro</td>
+                  <td class="note">MS&amp;AD is BeeHero's known insurance partner. Munich Re has extensive agri-parametric experience. Pick whichever lands first.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="tmpl">
+              <div class="head"><span>Cold email template · insurance axis</span><span class="kind">copyable</span></div>
+<pre>Subject: Pollination-peril data — 20-min diagnostic call?
+
+Hi [first name],
+
+I'm [your name], founder of BuzzHive. We've spent the last six years
+instrumenting commercial beehives with continuous BLE telemetry, and
+we're evaluating whether a rigorously-structured pollination-event
+dataset — managed hive performance + native-pollinator acoustic
+presence + landscape phenology — has genuine appetite from MGAs
+pricing parametric pollination-peril products.
+
+Before we commit engineering to this, I'm doing 5 diagnostic calls
+with parametric teams. I'm not selling. I'd like 20 minutes to ask
+whether this is a data layer you'd license, what rigor you'd need it
+to pass, and what would rule it out.
+
+Would the week of [date] work? Any 20-min slot is useful.
+
+Best,
+[your name]
+[phone / calendar link]</pre>
+              <div class="note">Why this works: explicit "I'm not selling" defuses the gatekeeper reflex. Three specific questions previewed up-front signal a short, focused call. "20 minutes" is the magic number — 30+ is too much ask for a first contact.</div>
+            </div>
+
+            <div class="tmpl">
+              <div class="head"><span>Warm-intro ask · for board members / network</span><span class="kind">copyable</span></div>
+<pre>Hi [connector],
+
+Quick favor — I'm running a 6-week validation sprint at BuzzHive and
+I'm trying to land 5 short conversations with parametric-insurance
+folks about pollination-peril data products. Specifically I'd like to
+talk to anyone at: Arbol, Floodbase, Descartes Underwriting, Swiss Re
+Corp Solutions, or Munich Re / MS&amp;AD.
+
+Do you know anyone in those orgs on the agriculture or parametric
+side? I'm not pitching — I'm doing diagnostic interviews to decide
+whether to build. 20-minute calls, no follow-up obligation.
+
+If yes, happy to send a forwardable paragraph so you can intro with
+zero effort. Appreciate it either way.
+
+— [your name]</pre>
+              <div class="note">Connector-friendly. Names the specific orgs so they can scan their network quickly. Offers a forwardable paragraph — single biggest thing that converts "maybe" into "yes, here you go."</div>
+            </div>
+
+            <div class="q-block">
+              <h4>Diagnostic script · 20 minutes · insurance axis</h4>
+              <ol class="q-list">
+                <li><span class="qtext">Walk me through how your team thinks about agriculture parametric products today — what perils do you cover, what data sources trigger them, where are the gaps?<span class="why">Opens the conversation, lets them frame their world in their language. Don't lead with bees.</span></span></li>
+                <li><span class="qtext">Has pollination failure or bee colony loss ever come up as a peril worth writing? If yes, why hasn't it shipped; if no, what makes it outside your scope?<span class="why">Draws out whether the peril is on their radar at all. The "why not" answer is the most useful data.</span></span></li>
+                <li><span class="qtext">If a scientific-grade dataset existed — site-level, continuous, peer-reviewable methodology, combining managed hive telemetry with native-pollinator acoustic presence and landscape phenology — is that a data product you would license, co-develop, or not interesting?<span class="why">The core question. Don't leave it implicit. Force them to answer one of three.</span></span></li>
+                <li><span class="qtext">What rigor bar does data need to clear to be insurance-grade? Published methodology? Independent validation? Historical depth — three years, five years, ten?<span class="why">Calibrates the build cost on our side. Floodbase built on a Nature-cover methodology — what's our equivalent minimum?</span></span></li>
+                <li><span class="qtext">If we were structured correctly — the data passes your rigor bar, site coverage is national — what's the willingness-to-pay shape? Per-acre, per-policy, per-site, flat annual license, data-exchange?<span class="why">Don't ask "how much would you pay." Ask structure. Price comes later.</span></span></li>
+                <li class="kill-q"><span class="qtext">Honest question — is there any version of pollination or bee-colony data you would seriously pay for in the next 24 months? If the answer is no, what would have to change for the answer to become yes?<span class="why">The kill question. A polite yes to earlier questions doesn't survive this one. The follow-up "what would change" surfaces real blockers, not theoretical ones.</span></span></li>
+              </ol>
+            </div>
+
+            <div class="q-block">
+              <h4>Scoring rubric · insurance axis</h4>
+              <div class="rubric">
+                <div class="rb strong">
+                  <div class="lbl">Strong signal · pass</div>
+                  <div class="t">2+ MGAs say yes to Q3 <em>and</em> engage on Q5 (pricing structure) without being prompted. OR 1+ reinsurer says "let's talk about a pilot / co-development."</div>
+                </div>
+                <div class="rb weak">
+                  <div class="lbl">Weak signal · conditional</div>
+                  <div class="t">1+ MGA says yes to Q3 but requires a published methodology or 3+ years of data before buying. This is the Floodbase precedent — real but delays revenue by 24 months.</div>
+                </div>
+                <div class="rb kill">
+                  <div class="lbl">Kill · axis closed</div>
+                  <div class="t">0/3 MGAs express appetite in Q3 OR 3/3 answer Q6 with "no, we'd never pay for this — existing crop insurance and beekeeper contracts already hedge it." Drop the insurance leg of the thesis.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="log-tmpl">
+              <h4>Call-log template · fill in within 2 hours of call</h4>
+              <dl class="log-fields">
+                <dt>Date / time</dt><dd></dd>
+                <dt>Org · contact</dt><dd></dd>
+                <dt>Call length</dt><dd></dd>
+                <dt>Current product?</dt><dd></dd>
+                <dt>Pollination on radar?</dt><dd></dd>
+                <dt>Q3 answer</dt><dd></dd>
+                <dt>Rigor bar required</dt><dd></dd>
+                <dt>Pricing structure</dt><dd></dd>
+                <dt>Kill-q answer</dt><dd></dd>
+                <dt>Follow-up offered?</dt><dd></dd>
+                <dt>Rubric band</dt><dd>strong / weak / kill</dt>
+                <dt>Gut read</dt><dd></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AXIS 02: BEEKEEPER -->
+
+      <section class="axis">
+        <div class="axis-head">
+          <div class="axis-num">
+            Axis 02 · Beekeeper
+            <span class="sz">02</span>
+            <div class="meta">Week 2–3 · 3 calls · ~$500</div>
+          </div>
+          <div>
+            <h3>Commercial operators, non-BeeHero. <em>Will they let us instrument their hives?</em></h3>
+            <div class="sub">Our data-acquisition layer runs through beekeepers. If they refuse to share raw hive data with third parties under any terms, the thesis is broken upstream — no amount of downstream demand fixes it. Ask the hardest version of the question; this is the one where founders most often kid themselves.</div>
+          </div>
+        </div>
+
+        <div class="axis-body">
+          <div class="lane">Targets</div>
+          <div class="content">
+            <table class="tg-table">
+              <thead>
+                <tr>
+                  <th style="width: 200px;">Operation</th>
+                  <th style="width: 200px;">Target contact</th>
+                  <th style="width: 120px;">Channel</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="org">Adee Honey Farms</td>
+                  <td class="name">Bret Adee</td>
+                  <td class="via">Direct email · warm intro preferred</td>
+                  <td class="note">~90,000 hives. Largest US commercial operator. Known public voice on bee policy — more likely to engage on systemic questions than on a vendor pitch.</td>
+                </tr>
+                <tr>
+                  <td class="org">Olivarez Honey Bees (Big Island, HI + CA)</td>
+                  <td class="name">Ray Olivarez or operations lead</td>
+                  <td class="via">Direct email</td>
+                  <td class="note">Large almond-pollination operator. Verticals: queen rearing + pollination. Sensor-adjacent already.</td>
+                </tr>
+                <tr>
+                  <td class="org">Pick one: Miller / Browning / Strachan / Harper apiaries</td>
+                  <td class="name">Operations owner</td>
+                  <td class="via">Phone call · bee-industry conferences</td>
+                  <td class="note">500–2000 hive operators — the middle of the commercial market. Less likely to have tried sensors; their honest reaction is the most useful signal.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="tmpl">
+              <div class="head"><span>Cold email template · beekeeper axis</span><span class="kind">copyable</span></div>
+<pre>Subject: 20 min on sensor data &amp; pollination contracts — not selling
+
+Hi [first name],
+
+I'm [your name], founder of BuzzHive. We build BLE telemetry for
+commercial hives and I'm about to make a decision about what product
+to build next. Before I commit engineering, I want to hear from three
+commercial operators — non-BeeHero customers — about whether the
+direction we're considering is one you'd actually want.
+
+Specifically I'd like to ask you: what data (if any) you'd be
+willing to share with a neutral platform, what you'd want in return,
+and what has worked or failed for you with sensor systems to date.
+Not pitching. 20-minute call, phone works.
+
+Would the week of [date] work? Any time is fine.
+
+Best,
+[your name]
+[phone]</pre>
+              <div class="note">Commercial beekeepers are phone people, not email people. A cold call with this script is often more effective. Respond to voicemails quickly — they do.</div>
+            </div>
+
+            <div class="q-block">
+              <h4>Diagnostic script · 20–30 minutes · beekeeper axis</h4>
+              <ol class="q-list">
+                <li><span class="qtext">Walk me through your operation — how many hives, what verticals (pollination / honey / queens), what's your contract structure for pollination?<span class="why">Mandatory context. The right next question depends on whether they're 80% almond pollination or 80% honey.</span></span></li>
+                <li><span class="qtext">What data, if any, are you sharing with growers today? What do they ask for, what do they actually want, what's the friction?<span class="why">Surfaces whether data-sharing norms already exist in their industry — that changes everything about what we can build on top.</span></span></li>
+                <li><span class="qtext">What's been your experience with sensors in your operation? What's worked, what's failed, what made you stop?<span class="why">BroodMinder-style sensors have a long track record of beekeeper rejection. Why — labor? failure rate? data trust? — determines whether our approach can succeed where they didn't.</span></span></li>
+                <li><span class="qtext">If a neutral platform existed that deployed sensors across your operation at no cost to you, produced continuous hive-performance reports, and could serve both you and your pollination clients — what would you need to see in return to participate? Free sensors? Data revenue share? Ownership?<span class="why">Don't offer terms. Ask what they'd need. Their answer tells you the feasible business model.</span></span></li>
+                <li><span class="qtext">Would you be willing to share raw hive telemetry with a grower, a CPG buyer, or an insurance underwriter — through a neutral platform that controls access? What conditions would make that yes, what makes it no?<span class="why">The hardest question. This is where "I'll share with anyone" becomes "I'll never share raw data with an insurer." Do not skip.</span></span></li>
+                <li><span class="qtext">If the 2024–25 colony losses happened again next year, what would you want to exist that doesn't exist today — data, insurance, contracts, anything?<span class="why">Opens the disaster-coping mindset. Their answer often reveals the product nobody has named yet.</span></span></li>
+                <li class="kill-q"><span class="qtext">Honest question: is there any version of an instrumented-hive platform owned by a third party that you would participate in? If no, what's the real blocker?<span class="why">Kill question. If three of three say "absolutely not under any terms," the upstream layer is broken and no downstream demand saves it.</span></span></li>
+              </ol>
+            </div>
+
+            <div class="q-block">
+              <h4>Scoring rubric · beekeeper axis</h4>
+              <div class="rubric">
+                <div class="rb strong">
+                  <div class="lbl">Strong signal · pass</div>
+                  <div class="t">2+ operators say yes to Q4/Q5 with specific, feasible terms (free hardware + data ownership + shared reporting, or similar). At least one volunteers a pilot.</div>
+                </div>
+                <div class="rb weak">
+                  <div class="lbl">Weak signal · conditional</div>
+                  <div class="t">1+ operator says yes conditionally; others say "maybe" but want to see a reference customer first. Means we need one anchor operator, which becomes the critical path.</div>
+                </div>
+                <div class="rb kill">
+                  <div class="lbl">Kill · axis closed</div>
+                  <div class="t">3/3 answer Q7 with "we would never share raw data with insurers/brands regardless of terms." Thesis broken upstream; consider a grower-first model instead of a beekeeper-first model.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="log-tmpl">
+              <h4>Call-log template</h4>
+              <dl class="log-fields">
+                <dt>Date / time</dt><dd></dd>
+                <dt>Operation · contact</dt><dd></dd>
+                <dt>Hive count / verticals</dt><dd></dd>
+                <dt>Data shared today?</dt><dd></dd>
+                <dt>Sensor history</dt><dd></dd>
+                <dt>Q4 terms requested</dt><dd></dd>
+                <dt>Q5 raw-data answer</dt><dd></dd>
+                <dt>Kill-q answer</dt><dd></dd>
+                <dt>Pilot offered?</dt><dd></dd>
+                <dt>Rubric band</dt><dd></dd>
+                <dt>Gut read</dt><dd></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AXIS 03: BIODIVERSITY -->
+
+      <section class="axis">
+        <div class="axis-head">
+          <div class="axis-num">
+            Axis 03 · Biodiversity
+            <span class="sz">03</span>
+            <div class="meta">Week 3–4 · 3 calls · $0</div>
+          </div>
+          <div>
+            <h3>Acoustic vendors and methodology shops. <em>Can we integrate or do we have to rebuild?</em></h3>
+            <div class="sub">The native-pollinator acoustic layer is a must-have for the integrated product, and we are not building a classifier ourselves. If neither AgriSound nor Polliknow will license data on terms that preserve our unit economics, the thesis breaks on supply. The methodology call is diagnostic — what landscape data do credit-issuance bodies want, so we know what to stitch into the record.</div>
+          </div>
+        </div>
+
+        <div class="axis-body">
+          <div class="lane">Targets</div>
+          <div class="content">
+            <table class="tg-table">
+              <thead>
+                <tr>
+                  <th style="width: 180px;">Organization</th>
+                  <th style="width: 200px;">Target contact</th>
+                  <th style="width: 120px;">Channel</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="org">AgriSound (UK)</td>
+                  <td class="name">Casey Woodward (CEO/founder)</td>
+                  <td class="via">LinkedIn · direct email</td>
+                  <td class="note">Most advanced commercial acoustic-pollinator vendor. UK-based. Likely receptive to US data-licensing discussion — US is not their current primary market.</td>
+                </tr>
+                <tr>
+                  <td class="org">Polliknow (or Wilder Sensing)</td>
+                  <td class="name">Founder / head of partnerships</td>
+                  <td class="via">LinkedIn · email</td>
+                  <td class="note">Alternative acoustic-AI vendor. If AgriSound balks, this is the second option. Wilder Sensing is broader bioacoustic — may fit differently.</td>
+                </tr>
+                <tr>
+                  <td class="org">Plan Vivo or Verra (methodology)</td>
+                  <td class="name">Methodology development lead — pollinator / agriculture programs</td>
+                  <td class="via">Email to methodology@ address · conference intro</td>
+                  <td class="note">Not selling anything. Asking: what landscape data schema does a pollinator-outcome credit require? What data do existing pilots use? This is calibration, not commerce.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="tmpl">
+              <div class="head"><span>Cold email template · acoustic vendor</span><span class="kind">copyable</span></div>
+<pre>Subject: Data licensing / OEM partnership exploration
+
+Hi [first name],
+
+I'm [your name], founder of BuzzHive. We've been building hive
+telemetry for commercial beekeepers and are expanding to an
+integrated pollination-event data record — managed hive +
+native-pollinator acoustic + landscape phenology — sold to
+parametric insurers and biodiversity consultancies.
+
+We're not building our own acoustic classifier. We'd rather license
+from the vendor already doing the science well. I'd value 20 minutes
+to ask how you think about data licensing (per-site, per-API,
+white-label) and whether a US-deployed integration is something
+you'd consider.
+
+Any slot week of [date] works.
+
+Best,
+[your name]</pre>
+              <div class="note">Honesty about "we're not building our own classifier" is disarming. Vendors are more open when you concede your limits and name them as the expert.</div>
+            </div>
+
+            <div class="q-block">
+              <h4>Diagnostic script · 20 minutes · acoustic vendor</h4>
+              <ol class="q-list">
+                <li><span class="qtext">Walk me through your current data product — what do you actually sell? Raw audio features, species classifications, diversity indices, full dashboard?<span class="why">Gets the abstraction level right. We care about mid-level features we can integrate, not finished reports that compete with ours.</span></span></li>
+                <li><span class="qtext">Who currently licenses your data, and at what structure — per-site, per-API, annual license, per-report?<span class="why">Their answer is our unit economics constraint.</span></span></li>
+                <li><span class="qtext">What's your US deployment footprint today? If we sold to a US customer, would your hardware be feasible to deploy — reps, installation, support?<span class="why">Critical logistic question. UK-built hardware without US support is a landmine.</span></span></li>
+                <li><span class="qtext">Who owns the raw site data — you, the landowner, or the licensee? Is it exclusive or non-exclusive?<span class="why">Determines whether we can re-license to insurers and consultancies, or whether we're boxed in.</span></span></li>
+                <li><span class="qtext">Would a white-label / OEM arrangement be on the table, where your hardware ships under our brand for specific customers?<span class="why">Worth asking. They'll almost certainly say "not today" but the shape of the no is informative.</span></span></li>
+                <li class="kill-q"><span class="qtext">Is there a fundamental reason you wouldn't license your data stream to us on any terms? If yes, what is it — competitive, IP, technical?<span class="why">Kill question. Both vendors refusing on IP/competitive grounds ends the thesis in its integrated form.</span></span></li>
+              </ol>
+            </div>
+
+            <div class="q-block">
+              <h4>Diagnostic script · 20 minutes · methodology shop (Plan Vivo / Verra)</h4>
+              <ol class="q-list">
+                <li><span class="qtext">Are any pilot methodologies for pollinator-outcome credits or pollination-ecosystem-service credits currently in development or review at your organization?<span class="why">Baseline. If nothing is in the pipeline, the nature-credits buyer is 3+ years further out than we assumed.</span></span></li>
+                <li><span class="qtext">For a pollination-specific claim or credit, what landscape-level data would need to be collected — native pollinator species presence, habitat health metrics, floral resource continuity, yield outcome, hive-level stress?<span class="why">Defines the minimum viable data schema.</span></span></li>
+                <li><span class="qtext">Who is currently supplying data in pilot methodologies that exist? Is the data layer owned by credit issuers, developers, or independent vendors?<span class="why">Tells us if there's a vendor slot or if it's all vertically integrated.</span></span></li>
+                <li><span class="qtext">What would disqualify a dataset from being usable — unverified species identification, sampling gaps, lack of peer review, proprietary methods?<span class="why">The rigor bar we'd have to clear to be credit-grade.</span></span></li>
+                <li class="kill-q"><span class="qtext">Realistic horizon: when do you expect the first pollinator-outcome credits to actually be issued and transacted? 2027? 2029? 2032?<span class="why">Kill-ish. If the honest answer is "2030+," this buyer is out of the Phase 0 frame and we shouldn't plan runway around it.</span></span></li>
+              </ol>
+            </div>
+
+            <div class="q-block">
+              <h4>Scoring rubric · biodiversity axis</h4>
+              <div class="rubric">
+                <div class="rb strong">
+                  <div class="lbl">Strong signal · pass</div>
+                  <div class="t">1+ acoustic vendor offers a clear licensing path with named pricing structure. Methodology shop confirms an active pilot or clear data schema.</div>
+                </div>
+                <div class="rb weak">
+                  <div class="lbl">Weak signal · conditional</div>
+                  <div class="t">Acoustic vendor open in principle but wants us to pilot and feed data back first (non-cash partnership). Methodology shop says "maybe 2028."</div>
+                </div>
+                <div class="rb kill">
+                  <div class="lbl">Kill · axis closed</div>
+                  <div class="t">Both acoustic vendors refuse data interoperability or price integration out of the market. Plan B: build our own classifier (wrong team, 18-month delay) or drop the native-pollinator layer entirely.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="log-tmpl">
+              <h4>Call-log template</h4>
+              <dl class="log-fields">
+                <dt>Date · org · contact</dt><dd></dd>
+                <dt>Data product sold</dt><dd></dd>
+                <dt>Licensing structure</dt><dd></dd>
+                <dt>US deployment?</dt><dd></dd>
+                <dt>Data ownership</dt><dd></dd>
+                <dt>OEM openness</dt><dd></dd>
+                <dt>Kill-q answer</dt><dd></dd>
+                <dt>Rubric band</dt><dd></dd>
+                <dt>Gut read</dt><dd></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AXIS 04: CONSULTANCY -->
+
+      <section class="axis">
+        <div class="axis-head">
+          <div class="axis-num">
+            Axis 04 · Consultancy
+            <span class="sz">04</span>
+            <div class="meta">Week 4–5 · 1–2 calls · $0</div>
+          </div>
+          <div>
+            <h3>Biodiversity consultancies. <em>Will they deploy a white-label data platform?</em></h3>
+            <div class="sub">This is the fastest-to-revenue buyer category — smaller contracts, shorter sales cycles, and an active spinout trend (Alvéole Aura, Biodiversity Lab) to ride. Noah Wilson-Rich is the single highest-value call of Phase 0; treat him as such.</div>
+          </div>
+        </div>
+
+        <div class="axis-body">
+          <div class="lane">Targets</div>
+          <div class="content">
+            <table class="tg-table">
+              <thead>
+                <tr>
+                  <th style="width: 200px;">Organization</th>
+                  <th style="width: 200px;">Target contact</th>
+                  <th style="width: 120px;">Channel</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="org">The Biodiversity Lab</td>
+                  <td class="name">Noah Wilson-Rich (founder)</td>
+                  <td class="via">Website contact form · LinkedIn · warm intro via ex-Best Bees network</td>
+                  <td class="note">Launched Feb 2026. Founder of Best Bees. Open to vendor conversations at this stage — he's at peak hunger for a data supply chain.</td>
+                </tr>
+                <tr>
+                  <td class="org">Second biodiversity spinout (emerging)</td>
+                  <td class="name">Founder / head of operations</td>
+                  <td class="via">Monitor announcements through Q2 2026</td>
+                  <td class="note">If a second "former honeybee-amenity op → biodiversity consultancy" emerges during Phase 0, pick it up. If not, this slot stays open — one consultancy conversation is acceptable.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="tmpl">
+              <div class="head"><span>Cold email template · Noah Wilson-Rich</span><span class="kind">copyable</span></div>
+<pre>Subject: Data-infrastructure conversation — Biodiversity Blueprint
+
+Hi Noah,
+
+Congrats on launching The Biodiversity Lab — it's directly adjacent
+to a question I've been working through. I'm [your name], founder of
+BuzzHive, and I'm evaluating whether to build a neutral,
+white-label data infrastructure layer — integrated hive telemetry,
+native pollinator acoustic, landscape phenology — that consulting
+firms like yours could deploy at client sites and report from under
+their own brand.
+
+Not pitching a product — it doesn't exist yet. I'm running a 6-week
+validation sprint and your perspective is the single most valuable
+input I can get. 20 minutes? Any week of [date] works.
+
+Best,
+[your name]</pre>
+              <div class="note">The "doesn't exist yet" framing matters. You're asking him to help shape something, not sell him something. Most founders respond to that request.</div>
+            </div>
+
+            <div class="q-block">
+              <h4>Diagnostic script · 30 minutes · consultancy</h4>
+              <ol class="q-list">
+                <li><span class="qtext">Walk me through your Biodiversity Blueprint workflow — at a real client site, what do you collect, how, and from which vendors?<span class="why">This is the whole conversation in one question, if answered well. Let him talk for 10 minutes.</span></span></li>
+                <li><span class="qtext">Where does your margin bleed in a typical engagement — sampling, data integration, report writing, client management?<span class="why">Identifies the pain you can relieve. Consulting firms bleed on integration; that's our slot.</span></span></li>
+                <li><span class="qtext">If a neutral infrastructure platform existed — deployed at your sites, produced continuous per-site data, generated TNFD/CSRD-compliant dashboards under your brand, integrated eDNA reports from NatureMetrics, and was priced per-site — would that be a tool you'd license?<span class="why">The direct question. Don't dance around it.</span></span></li>
+                <li><span class="qtext">What's your price sensitivity? Per-site annual, per-engagement flat, platform subscription? What would feel like a steal, what would feel like gouging?<span class="why">His answer calibrates our pricing model. Treat what he says literally.</span></span></li>
+                <li><span class="qtext">Would you be open to being a design partner on a free pilot at one client site — 90 days, fully supported, in exchange for honest feedback and a case study if it works?<span class="why">Real conversion question. A yes here is the single most valuable outcome of Phase 0.</span></span></li>
+                <li class="kill-q"><span class="qtext">What would make you not use a vendor like the one I'm describing? Proprietary solution already? Data-ownership concerns? Methodology mismatch?<span class="why">Kill question. His "why not" is the most useful answer of the call.</span></span></li>
+              </ol>
+            </div>
+
+            <div class="q-block">
+              <h4>Scoring rubric · consultancy axis</h4>
+              <div class="rubric">
+                <div class="rb strong">
+                  <div class="lbl">Strong signal · pass</div>
+                  <div class="t">Noah says yes to Q5 (design-partner pilot). Names specific client site candidates or pricing structure unprompted.</div>
+                </div>
+                <div class="rb weak">
+                  <div class="lbl">Weak signal · conditional</div>
+                  <div class="t">Interested but wants to see a working demo first. Gives feedback on shape. No pilot commitment yet. Still useful — schedule follow-up after demo build.</div>
+                </div>
+                <div class="rb kill">
+                  <div class="lbl">Kill · axis closed</div>
+                  <div class="t">Already contracted with preferred vendor. No opening for a neutral platform. Or refuses conversation entirely. Single-call axis; one no closes it.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="log-tmpl">
+              <h4>Call-log template</h4>
+              <dl class="log-fields">
+                <dt>Date · contact</dt><dd></dd>
+                <dt>Current workflow</dt><dd></dd>
+                <dt>Margin pain points</dt><dd></dd>
+                <dt>Q3 platform answer</dt><dd></dd>
+                <dt>Price sensitivity</dt><dd></dd>
+                <dt>Pilot openness</dt><dd></dd>
+                <dt>Kill-q answer</dt><dd></dd>
+                <dt>Rubric band</dt><dd></dd>
+                <dt>Gut read</dt><dd></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEEK 5-6 SYNTHESIS -->
+
+      <section class="synth">
+        <div class="axis-head">
+          <div class="axis-num">
+            Week 5–6 · Synthesis
+            <span class="sz">05</span>
+            <div class="meta">Founder memo · go / pivot / kill</div>
+          </div>
+          <div>
+            <h3>The decision. <em>Write the memo, present to the board, commit.</em></h3>
+            <div class="sub">Twelve calls produce a lot of noise. The purpose of week six is to force the noise into one decision, in writing, without rationalization. Use the framework below.</div>
+          </div>
+        </div>
+
+        <div class="axis-body">
+          <div class="lane">Memo structure</div>
+          <div class="content">
+            <p><strong>Length · 4–6 pages.</strong> Shorter than the research memos, more decisive. A board reads 5 pages carefully; they skim 15.</p>
+            <p><strong>Sections:</strong></p>
+            <ul class="q-list">
+              <li><span class="qtext"><strong>Rubric scoreboard.</strong> For each of the four axes, one sentence: signal band (strong / weak / kill) and one-line rationale drawn from call notes. No narrative. Just the scoreboard.<span class="why">Reader absorbs in 15 seconds. Anchors the rest of the memo in evidence.</span></span></li>
+              <li><span class="qtext"><strong>What we learned that we did not expect.</strong> Every Phase 0 surfaces two or three findings that were not in the plan. Name them. They are the most valuable part of the sprint.<span class="why">Signals integrity. A memo with zero surprises is a memo that wasn't honest with itself.</span></span></li>
+              <li><span class="qtext"><strong>What changed in the thesis.</strong> If everything held, say so. If the wedge narrowed, say which layer survived and which didn't. If the wedge expanded, say which new buyer emerged.<span class="why">Boards reward specificity about thesis evolution far more than they reward defending the original plan.</span></span></li>
+              <li><span class="qtext"><strong>Verdict.</strong> One of three — go, pivot, kill. Named commitment.<span class="why">The word "go" must appear, or "pivot to X," or "return capital." No hedged verdicts.</span></span></li>
+              <li><span class="qtext"><strong>If go: the 6-month MVP plan.</strong> What we build, with whom, for whom, with what budget. Named anchor buyer (from Phase 0 conversations). Three milestones with dates.<span class="why">The board needs to approve the next stage; give them the specifics they need to vote yes.</span></span></li>
+              <li><span class="qtext"><strong>If pivot: the narrower bet + new kill conditions.</strong> Same rigor, smaller scope.</span></li>
+              <li><span class="qtext"><strong>If kill: honest capital-return calculation and team next-step.</strong> What's left in the bank, what the honest residual is, what the team does next.<span class="why">The hardest section to write. Write it first if you think it's the answer — writing the kill memo first protects you from rationalizing your way out of it.</span></span></li>
+            </ul>
+
+            <div class="verdict">
+              <div class="vd go">
+                <div class="lbl">Verdict · go</div>
+                <div class="h">Commit to 6-month MVP build</div>
+                <div class="t">Trigger: 3+ axes returned strong signal with at least one in insurance OR consultancy. Named anchor buyer identified. Team alignment on value-first framing.</div>
+              </div>
+              <div class="vd pivot">
+                <div class="lbl">Verdict · pivot</div>
+                <div class="h">Narrow to surviving axis</div>
+                <div class="t">Trigger: 1–2 axes returned strong signal; others weak or kill. Rewrite thesis around the surviving layer only. New Phase 0 on the narrowed bet, 4 weeks, $3K.</div>
+              </div>
+              <div class="vd kill">
+                <div class="lbl">Verdict · kill</div>
+                <div class="h">Return capital or restart</div>
+                <div class="t">Trigger: 3+ axes returned kill signal. Thesis dead. Board reconvene within 14 days to decide: return capital, or run a value-first restart on a different market entirely.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANTI-PATTERNS -->
+
+      <section class="anti">
+        <div class="axis-head">
+          <div class="axis-num">
+            Phase 0 hygiene
+            <span class="sz">!</span>
+            <div class="meta">Anti-patterns to avoid</div>
+          </div>
+          <div>
+            <h3>Six ways Phase 0 quietly fails.</h3>
+            <div class="sub">These are the traps most founder-led validation sprints fall into. None of them produce an obvious failure — they produce a warm, plausible-sounding memo that isn't evidence. Re-read this section at the end of week three and week five.</div>
+          </div>
+        </div>
+        <div class="axis-body">
+          <div class="lane">Do not do</div>
+          <div class="content">
+            <ul class="anti-list">
+              <li>
+                <div>
+                  <div class="ah">Pitching instead of diagnosing.</div>
+                  <div class="at">The moment you start describing a feature set, you are in sales mode. They will be polite. You will get noise, not signal. If you hear yourself explaining the product for more than 90 seconds, stop and ask a question.</div>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="ah">Skipping the kill question.</div>
+                  <div class="at">Because the conversation was warm. Because they said some nice things. The kill question exists precisely to cut through niceness. Ask it every time, without exception.</div>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="ah">Interpreting "interesting" as "yes."</div>
+                  <div class="at">"That's interesting, keep me posted" is always "no" until it comes with a follow-up meeting, an intro, or money. Log it as weak signal, not strong.</div>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="ah">Filling in gaps with imagination.</div>
+                  <div class="at">If a contact doesn't answer a question directly, don't reconstruct what they "probably" meant. Note it unanswered. Ask the next contact. Three unanswered instances of the same question is itself a signal.</div>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="ah">Believing the first "no" more than the fifth "yes" — or vice versa.</div>
+                  <div class="at">Rubrics exist to calibrate. One unusually negative call can be one bad personality match; one unusually positive call can be one outlier enthusiast. Trust the pattern, not the peaks.</div>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <div class="ah">Writing the memo last.</div>
+                  <div class="at">Start the memo in week three. Add notes as calls happen. By week six, the synthesis is half-written and far more honest — because the early thoughts haven't been filtered through hindsight bias.</div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="strip">
+          <span>BuzzHive · Phase 0 playbook · 17 April 2026</span>
+          <span>Operational · update in place · do not distribute</span>
+        </div>
+      </footer>
+
+    </div>
+
+  </body>
+</html>

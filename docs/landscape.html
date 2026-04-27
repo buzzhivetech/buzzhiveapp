@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bee Economy · Landscape Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --paper:        #FAF8F3;
+  --paper-2:      #F3F0E8;
+  --paper-3:      #ECE7DB;
+  --ink:          #1A1914;
+  --ink-soft:     #3D3A32;
+  --muted:        #6E6956;
+  --line:         #C9C1AB;
+  --line-soft:    #DDD6C1;
+
+  --live:         #3E6B3A;
+  --live-bg:      #E5EEDF;
+  --live-tint:    #D2E0C9;
+  --open:         #A06B1F;
+  --open-bg:      #F5EBD3;
+  --open-tint:    #EBDCB3;
+  --capped:       #8A6B24;
+  --capped-bg:    #EEE4C9;
+  --dead:         #A13E2B;
+  --dead-bg:      #F2DCD2;
+  --dead-tint:    #E6C4B4;
+
+  --accent:       #1F3A4A;
+  --accent-2:     #A13E2B;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.58;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'ss02', 'cv11';
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.12 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+}
+
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 56px 48px 120px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ═══════════ TYPE ═══════════ */
+.serif {
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 400;
+}
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+
+h1 {
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 400;
+  font-size: clamp(42px, 5.5vw, 76px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+h2 {
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 500;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+h3 {
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.22;
+  letter-spacing: -0.008em;
+  color: var(--ink);
+}
+
+h4 {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.003em;
+  color: var(--ink);
+}
+
+/* ═══════════ MASTHEAD ═══════════ */
+.mast {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 24px;
+  padding-bottom: 24px;
+  margin-bottom: 56px;
+  border-bottom: 2px solid var(--ink);
+}
+.mast .title {
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--ink);
+}
+.mast .title em {
+  font-style: italic;
+  color: var(--muted);
+  font-weight: 400;
+}
+.mast .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: right;
+}
+.mast .meta strong {
+  display: block;
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 12px;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════ HERO ═══════════ */
+.hero {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 64px;
+  padding: 24px 0 72px;
+  border-bottom: 1px solid var(--line);
+}
+.hero h1 { max-width: 720px; }
+.hero h1 .i {
+  font-style: italic;
+  color: var(--accent-2);
+  font-weight: 400;
+}
+.hero .lead {
+  margin-top: 36px;
+  font-size: 16.5px;
+  line-height: 1.62;
+  color: var(--ink-soft);
+  max-width: 640px;
+}
+.hero .lead p + p { margin-top: 12px; }
+.hero .lead strong { color: var(--ink); font-weight: 600; }
+
+.hero .summary {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 28px 32px;
+  align-self: start;
+}
+.hero .summary .h {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.hero .summary dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 16px;
+  font-size: 13.5px;
+}
+.hero .summary dt {
+  color: var(--ink-soft);
+  padding-right: 12px;
+}
+.hero .summary dd {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  color: var(--ink);
+  text-align: right;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.hero .summary dd.live { color: var(--live); }
+.hero .summary dd.open { color: var(--open); }
+.hero .summary dd.capped { color: var(--capped); }
+.hero .summary dd.dead { color: var(--dead); }
+
+/* ═══════════ SECTION ═══════════ */
+.sec { padding: 80px 0 0; }
+.sec-head {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: 24px;
+  align-items: baseline;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+}
+.sec-head .num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  padding-top: 6px;
+}
+.sec-head h2 { max-width: 760px; }
+.sec-head .aside {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: right;
+  padding-top: 8px;
+}
+
+.sec-intro {
+  max-width: 860px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 40px;
+}
+.sec-intro p + p { margin-top: 12px; }
+
+/* ═══════════ LANDSCAPE TABLE ═══════════ */
+.landscape {
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  overflow-x: auto;
+}
+.landscape table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 920px;
+  font-size: 13.5px;
+}
+.landscape thead th {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 14px 14px;
+  text-align: left;
+  vertical-align: middle;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.landscape thead th:last-child { border-right: none; }
+.landscape thead th.center { text-align: center; }
+.landscape tbody td {
+  padding: 14px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  border-right: 1px solid var(--line-soft);
+  vertical-align: top;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.landscape tbody td:last-child { border-right: none; }
+.landscape tbody tr:last-child td { border-bottom: none; }
+.landscape tbody tr:hover td { background: rgba(0,0,0,0.02); }
+
+.landscape .cat {
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 500;
+  font-size: 14.5px;
+  color: var(--ink);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.landscape .cat-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+.landscape .evidence {
+  font-size: 12.5px;
+  min-width: 200px;
+}
+.landscape .evidence strong { color: var(--ink); font-weight: 600; }
+.landscape .ceiling {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.verdict {
+  display: inline-block;
+  padding: 4px 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.verdict.live   { background: var(--live-bg);   color: var(--live);   border: 1px solid var(--live); }
+.verdict.open   { background: var(--open-bg);   color: var(--open);   border: 1px solid var(--open); }
+.verdict.capped { background: var(--capped-bg); color: var(--capped); border: 1px solid var(--capped); }
+.verdict.dead   { background: var(--dead-bg);   color: var(--dead);   border: 1px solid var(--dead); }
+
+.fit {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-align: center;
+  white-space: nowrap;
+}
+.fit .y { color: var(--live); }
+.fit .m { color: var(--open); }
+.fit .n { color: var(--dead); }
+
+/* ═══════════ DEEPDIVE CARDS ═══════════ */
+.deepdives {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+.dive {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 28px 26px 24px;
+  position: relative;
+}
+.dive.live   { border-top: 3px solid var(--live); }
+.dive.open   { border-top: 3px solid var(--open); }
+.dive.capped { border-top: 3px solid var(--capped); }
+.dive.dead   { border-top: 3px solid var(--dead); }
+
+.dive .tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.dive.live .tag   { color: var(--live); }
+.dive.open .tag   { color: var(--open); }
+.dive.capped .tag { color: var(--capped); }
+.dive.dead .tag   { color: var(--dead); }
+
+.dive h3 { margin-bottom: 6px; }
+.dive .tagline {
+  font-family: 'IBM Plex Serif', serif;
+  font-style: italic;
+  font-size: 14.5px;
+  color: var(--muted);
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.dive .facts {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  font-size: 12.5px;
+  margin-bottom: 18px;
+}
+.dive .facts .k { color: var(--muted); }
+.dive .facts .v {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink);
+  text-align: right;
+  font-weight: 500;
+}
+
+.dive p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+
+.dive .takeaway {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: rgba(0,0,0,0.03);
+  border-left: 2px solid var(--ink);
+  font-family: 'IBM Plex Serif', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.dive.live   .takeaway { border-left-color: var(--live); }
+.dive.open   .takeaway { border-left-color: var(--open); }
+.dive.capped .takeaway { border-left-color: var(--capped); }
+.dive.dead   .takeaway { border-left-color: var(--dead); }
+
+/* ═══════════ GRAVEYARD ═══════════ */
+.grave {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.grave .row {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+.grave .row h4 { margin-bottom: 4px; font-size: 15px; font-weight: 600; }
+.grave .row h4 .sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 8px;
+  letter-spacing: 0.06em;
+}
+.grave .row p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.grave .row .rev {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--dead);
+  text-align: right;
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.grave .row .rev strong {
+  display: block;
+  color: var(--ink);
+  font-size: 13px;
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 500;
+  letter-spacing: 0;
+  margin-bottom: 2px;
+}
+
+/* ═══════════ OPEN ZONES ═══════════ */
+.open-zones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.zone {
+  background: var(--paper-2);
+  border: 1px solid var(--open);
+  padding: 32px 32px 28px;
+  border-top: 4px solid var(--open);
+}
+.zone .tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--open);
+  margin-bottom: 12px;
+}
+.zone h3 {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  letter-spacing: -0.015em;
+}
+.zone .ts {
+  font-family: 'IBM Plex Serif', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px dashed var(--line);
+}
+.zone h4 { font-size: 12.5px; margin-top: 18px; margin-bottom: 6px; color: var(--open); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; }
+.zone p {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.zone ul {
+  list-style: none;
+  padding: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.zone ul li {
+  padding: 5px 0 5px 18px;
+  position: relative;
+  line-height: 1.5;
+}
+.zone ul li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--open);
+}
+.zone .stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 18px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+.zone .stats .k { color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 2px; }
+.zone .stats .v { color: var(--ink); font-family: 'IBM Plex Serif', serif; font-size: 14px; font-weight: 500; }
+
+/* ═══════════ FINAL TAKE ═══════════ */
+.finaltake {
+  margin-top: 56px;
+  padding: 48px 52px;
+  background: var(--ink);
+  color: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+.finaltake::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle at 100% 0%, rgba(161, 62, 43, 0.35) 0%, transparent 60%);
+  pointer-events: none;
+}
+.finaltake .tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #E8A28E;
+  margin-bottom: 14px;
+}
+.finaltake h2 {
+  color: var(--paper);
+  font-weight: 400;
+  font-size: clamp(28px, 3.4vw, 42px);
+  max-width: 900px;
+  margin-bottom: 24px;
+}
+.finaltake h2 em {
+  font-style: italic;
+  color: #E8A28E;
+}
+.finaltake p {
+  font-size: 15.5px;
+  line-height: 1.62;
+  color: rgba(250, 248, 243, 0.85);
+  margin-bottom: 14px;
+  max-width: 880px;
+}
+.finaltake p strong { color: var(--paper); font-weight: 600; }
+.finaltake p em {
+  font-family: 'IBM Plex Serif', serif;
+  font-style: italic;
+  color: #E8A28E;
+  font-weight: 400;
+}
+.finaltake .questions {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(250, 248, 243, 0.15);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+}
+.finaltake .q {
+  padding-left: 18px;
+  border-left: 2px solid #E8A28E;
+}
+.finaltake .q .n {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: #E8A28E;
+  letter-spacing: 0.18em;
+  margin-bottom: 6px;
+}
+.finaltake .q p {
+  font-family: 'IBM Plex Serif', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--paper);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ═══════════ METHOD ═══════════ */
+.method {
+  margin-top: 64px;
+  padding: 28px 32px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.method h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.method p { line-height: 1.55; margin-bottom: 8px; }
+.method p:last-child { margin-bottom: 0; }
+
+/* ═══════════ FOOT ═══════════ */
+.foot {
+  margin-top: 72px;
+  padding-top: 20px;
+  border-top: 2px solid var(--ink);
+  display: flex;
+  justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 960px) {
+  .wrap { padding: 36px 20px 72px; }
+  .hero { grid-template-columns: 1fr; gap: 32px; }
+  .deepdives { grid-template-columns: 1fr; }
+  .grave { grid-template-columns: 1fr; }
+  .open-zones { grid-template-columns: 1fr; }
+  .finaltake .questions { grid-template-columns: 1fr; gap: 16px; }
+  .sec-head { grid-template-columns: auto 1fr; }
+  .sec-head .aside { grid-column: 1 / -1; text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- ═══════════ MASTHEAD ═══════════ -->
+<div class="mast">
+  <div class="title">Bee Economy · <em>Landscape Audit</em></div>
+  <div></div>
+  <div class="meta">Research memo · Vol 01 N° 03<strong>Nov 2025</strong></div>
+</div>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <div>
+    <div class="eyebrow">Working backwards from where the money actually is</div>
+    <h1 style="margin-top:18px">
+      Where in the bee economy is <span class="i">venture-scale</span> value being captured —<br/>
+      and where is it structurally capped?
+    </h1>
+    <div class="lead">
+      <p>This memo audits thirteen categories in the bee economy against three filters: <strong>evidence of venture-scale outcomes</strong>, <strong>structural ceiling observed over a decade or more</strong>, and <strong>founder-skill fit for a software + hardware team</strong>.</p>
+      <p>It does not start from what BuzzHive has already built. Starting from sunk cost is the most reliable way to spend another two years confirming a capped category. The question is: given the bee economy as it actually exists in late 2025, what businesses can produce a $50M+ outcome, and which of those a software/hardware founder can plausibly build?</p>
+      <p>The answer is narrower than expected and pushes in a direction that requires rebuilding more than evolving.</p>
+    </div>
+  </div>
+  <aside class="hero summary">
+    <div class="h">Landscape at a glance</div>
+    <dl>
+      <dt>Categories audited</dt><dd>13</dd>
+      <dt>Venture-scale winners (≥ $50M)</dt><dd class="live">3</dd>
+      <dt>Categories accessible to sw/hw founder</dt><dd class="open">0–1</dd>
+      <dt>Categories with proven &lt;$5M ceiling</dt><dd class="capped">6</dd>
+      <dt>Categories with shutdown evidence</dt><dd class="dead">2</dd>
+      <dt>Bee-tech startups confirmed dead 2022–24</dt><dd class="dead">2+</dd>
+      <dt>Years of evidence for sensor-SaaS ceiling</dt><dd>10+</dd>
+    </dl>
+  </aside>
+</section>
+
+<!-- ═══════════ §01 — THE LANDSCAPE ═══════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="num">§ 01</div>
+    <h2>Thirteen categories, scored against evidence</h2>
+    <div class="aside">Public data · Nov 2025</div>
+  </div>
+
+  <div class="sec-intro">
+    <p>Each row below represents a distinct way to build a company in or adjacent to the bee economy. The verdict column reflects ten or more years of empirical evidence where available — not theory, not founder hope, not TAM math. The founder-fit column answers only: can a team with software, hardware, and firmware skills plausibly win this category without adding biotech, CPG ops, or PE-scale capital.</p>
+  </div>
+
+  <div class="landscape">
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Leader &amp; evidence</th>
+        <th>Observed ceiling</th>
+        <th class="center">SW/HW<br/>fit</th>
+        <th>Verdict</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td><div class="cat">Grower pollination analytics</div><div class="cat-sub">Sensor · grower pays</div></td>
+        <td class="evidence"><strong>BeeHero</strong> · $60M+ funded · $70M+ 2024 revenue · 300K hives · expanded from almonds to apple, blueberry, cherry, avocado, pear, macadamia, canola, hybrid seed</td>
+        <td class="ceiling">$100M+ <br/>open-ended</td>
+        <td class="fit"><span class="y">Yes</span></td>
+        <td><span class="verdict live">Won · late entry risky</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Robotic commercial hives</div><div class="cat-sub">Hardware · grower pays</div></td>
+        <td class="evidence"><strong>Beewise</strong> · $170M funded · 1,240 BeeHomes · 7B bees · 25K acres pollinated · BeeHome 4 launched 2023</td>
+        <td class="ceiling">$100M+<br/>capital-gated</td>
+        <td class="fit"><span class="n">No</span></td>
+        <td><span class="verdict live">Won · capital moat</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Veterinary / bee pharma</div><div class="cat-sub">Biotech · commercial BK</div></td>
+        <td class="evidence"><strong>Dalan</strong> $5.5M AFB vaccine USDA-licensed · <strong>GreenLight / Norroa</strong> EPA-registered RNAi varroa treatment Sep 2025 sold via Mann Lake</td>
+        <td class="ceiling">$50M+<br/>regulatory-gated</td>
+        <td class="fit"><span class="n">No</span></td>
+        <td><span class="verdict live">Active · biotech only</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">PE rollup of honey ops</div><div class="cat-sub">Operations · CPG</div></td>
+        <td class="evidence"><strong>Sweet Harvest / Nate's Hives</strong> 120K colonies via 5 acquisitions · <strong>Dutch Gold</strong> PE-acquired · <strong>AG Pollen / Gunter Honey</strong> · 5× honey import gap driver</td>
+        <td class="ceiling">PE-scale<br/>$50M–500M</td>
+        <td class="fit"><span class="n">No</span></td>
+        <td><span class="verdict live">Active · wrong founder type</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Queen genetics platform</div><div class="cat-sub">SaaS · breeder market</div></td>
+        <td class="evidence"><strong>ColonyIQ</strong> (pedigree &amp; VSH tracking), <strong>VarroaVault</strong> (mite-per-line analytics), <strong>ApiOmic</strong> ($3.2M Canadian research project). 1M queens/yr US market, $42–400 each, ~50 major breeders.</td>
+        <td class="ceiling">$5M–10M<br/>TAM-bound</td>
+        <td class="fit"><span class="m">Partial</span></td>
+        <td><span class="verdict open">Open · small TAM</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Pollination marketplace</div><div class="cat-sub">Two-sided match</div></td>
+        <td class="evidence"><strong>PollenOps</strong>, <strong>BEEsharing</strong>, <strong>BeeWeb</strong>, <strong>Pollination Network</strong> — all active, none at scale. Beekeeper side has low repeat, grower side has slow adoption.</td>
+        <td class="ceiling">~$5M<br/>2-sided friction</td>
+        <td class="fit"><span class="m">Partial</span></td>
+        <td><span class="verdict open">Fragmented · unwon</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Private pollination insurance</div><div class="cat-sub">Risk · grower pays</div></td>
+        <td class="evidence">Federal API (Apiculture Rainfall Index) exists with &lt;2% IL adoption. Howden/Pollination 2024 report positions nature-finance / insurance. No private commercial product specific to pollination failure exists.</td>
+        <td class="ceiling">Untested<br/>regulatory-heavy</td>
+        <td class="fit"><span class="m">Partial</span></td>
+        <td><span class="verdict open">Greenfield · long cycle</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Ops software for sideliners</div><div class="cat-sub">SaaS · BK pays</div></td>
+        <td class="evidence"><strong>HiveTracks</strong> 25K users · 50K hives · 145 countries · $2M ARR · 20 employees · $700K total funding · founded 2020. <strong>BroodMinder</strong> $5M revenue · 3 employees · founded 2015.</td>
+        <td class="ceiling">$2M–5M<br/>empirical</td>
+        <td class="fit"><span class="y">Yes</span></td>
+        <td><span class="verdict capped">Capped · lifestyle</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Sensor subscription SaaS</div><div class="cat-sub">Hardware + SaaS · BK pays</div></td>
+        <td class="evidence"><strong>BroodMinder</strong> $5M rev / 10 yrs. <strong>ApisProtect</strong> $210K rev / 8 yrs. <strong>Pollenity</strong> $803K raised / rebranded. <strong>Arnia</strong> small. <strong>Y-Trace</strong> 1–10 employees.</td>
+        <td class="ceiling">$200K–5M<br/>empirical</td>
+        <td class="fit"><span class="y">Yes</span></td>
+        <td><span class="verdict capped">Capped · proven</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Corporate rooftop BaaS</div><div class="cat-sub">Services · corp pays</div></td>
+        <td class="evidence"><strong>Best Bees</strong> $4.8M ARR / 15 yrs / 21 cities / 70% revenue to labor. <strong>Alvéole</strong> 600 rooftops · facing "beewashing" academic critique in target audience.</td>
+        <td class="ceiling">$5M–15M<br/>labor-gated</td>
+        <td class="fit"><span class="m">Partial</span></td>
+        <td><span class="verdict capped">Capped · hostile narrative</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Honey authentication / NMR</div><div class="cat-sub">Lab services · packer pays</div></td>
+        <td class="evidence"><strong>Bruker NMR</strong> owns analytical tech (28K sample DB, 50+ countries). <strong>Y-Trace</strong> commercial testing. EU adulteration grew 14%→46% 2017–2023.</td>
+        <td class="ceiling">Unclear<br/>capital-heavy</td>
+        <td class="fit"><span class="n">No</span></td>
+        <td><span class="verdict open">Real · wrong skills</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Computer vision hive inspection</div><div class="cat-sub">AI · BK/research pays</div></td>
+        <td class="evidence"><strong>HiveAnalyzer</strong> (brood assessment), <strong>Gratheon</strong> (entrance observer, YOLOv8 on Jetson), <strong>Brood Box</strong> (thermal + CV). <strong>The Bee Corp./Verifli</strong> raised $3M+ then shut down 2024.</td>
+        <td class="ceiling">Unproven<br/>no business model</td>
+        <td class="fit"><span class="y">Yes</span></td>
+        <td><span class="verdict capped">Tech ≠ business</span></td>
+      </tr>
+
+      <tr>
+        <td><div class="cat">Civic / municipal pollinator</div><div class="cat-sub">Public-sector pilots</div></td>
+        <td class="evidence">No winners. Cities moving to native pollinator gardens ($5K–75K grants, Toronto &amp; Cambridge). Ithaca, Geneva, Long Island banned urban beekeeping. UrbanLeap GovTech: $4.2M · 35 cities · shut 2022.</td>
+        <td class="ceiling">~ $0<br/>graveyard</td>
+        <td class="fit"><span class="n">No</span></td>
+        <td><span class="verdict dead">Dead</span></td>
+      </tr>
+
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ═══════════ §02 — THE THREE WINNERS ═══════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="num">§ 02</div>
+    <h2>The three zones where venture-scale value is being captured</h2>
+    <div class="aside">And why all three are closed to this team</div>
+  </div>
+
+  <div class="sec-intro">
+    <p>Across every ten-figure and nine-figure outcome visible in the bee economy, exactly three patterns recur. Each is locked in by a different kind of moat. None are software-and-hardware-founder plays.</p>
+  </div>
+
+  <div class="deepdives">
+
+    <div class="dive live">
+      <div class="tag">Zone 01 · Grower-paid analytics</div>
+      <h3>BeeHero</h3>
+      <div class="tagline">The almond analytics winner expanding into every high-value specialty crop.</div>
+      <div class="facts">
+        <div class="k">Total funding</div><div class="v">$60M+</div>
+        <div class="k">2024 revenue</div><div class="v">$70M+</div>
+        <div class="k">Revenue growth</div><div class="v">2× YoY for 4 yrs</div>
+        <div class="k">Hives managed</div><div class="v">300,000+</div>
+        <div class="k">Regional HQs</div><div class="v">US · AU · LatAm</div>
+        <div class="k">Crops in 2025</div><div class="v">Apple · Blueberry · Cherry · Avocado · Pear · Plum · Macadamia · Canola · Hybrid seed</div>
+      </div>
+      <p>BeeHero announced apple expansion February 2025. Their "Pollination Insight Platform" (PIP) is a grower-facing dashboard powered by in-hive and in-orchard IoT sensors. The grower — not the beekeeper — pays.</p>
+      <div class="takeaway">The Northeast specialty-crop pollination play is in BeeHero's announced expansion path. Entering it now means racing a $60M+ company with four consecutive years of revenue-doubling directly toward the same customers.</div>
+    </div>
+
+    <div class="dive live">
+      <div class="tag">Zone 02 · Biotech / pharma</div>
+      <h3>Dalan &amp; GreenLight</h3>
+      <div class="tagline">Two regulatory-gated products arrived in 2025 targeting the two biggest causes of colony loss.</div>
+      <div class="facts">
+        <div class="k">Dalan funding</div><div class="v">$5.5M</div>
+        <div class="k">Dalan product</div><div class="v">AFB vaccine (USDA)</div>
+        <div class="k">GreenLight / Norroa</div><div class="v">RNAi varroa tx</div>
+        <div class="k">Norroa efficacy</div><div class="v">70% reduction at 12wk</div>
+        <div class="k">Winter survival</div><div class="v">~2× vs chemical</div>
+        <div class="k">Distribution</div><div class="v">Mann Lake exclusive</div>
+      </div>
+      <p>Norroa received EPA registration September 2025 — the first RNA-based varroa treatment. Dalan completed full efficacy trials November 2025 toward full USDA licensure. Real medicine for real disease, sold through incumbent distributors at commercial scale.</p>
+      <div class="takeaway">Both winners required years in regulated biotech pipelines. EPA and USDA timelines, biochemistry team, GMP manufacturing. Zero overlap with software/hardware founder capability. A sensor cannot compete with a cure.</div>
+    </div>
+
+    <div class="dive live">
+      <div class="tag">Zone 03 · Operations rollup</div>
+      <h3>Sweet Harvest Foods</h3>
+      <div class="tagline">PE-style consolidation of commercial beekeeping into America's largest apiary.</div>
+      <div class="facts">
+        <div class="k">Colonies</div><div class="v">120,000+</div>
+        <div class="k">Bees</div><div class="v">6 billion</div>
+        <div class="k">Acquisitions</div><div class="v">5 in 3 yrs</div>
+        <div class="k">Beekeepers</div><div class="v">100+</div>
+        <div class="k">Sites</div><div class="v">10 nationwide</div>
+        <div class="k">Driver</div><div class="v">689M consumed vs 134M produced</div>
+      </div>
+      <p>Sweet Harvest built America's first in-house pollinator-science R&amp;D team, a new FL extraction facility in LaBelle, and is rolling up fragmented commercial operators to supply the 5× US honey import gap. Dutch Gold (New Water Capital) and AG Pollen/Gunter are parallel PE plays.</p>
+      <div class="takeaway">This is a CPG supply-chain roll-up, not a technology company. Requires $10M+ acquisition capital and operations leadership, not engineering. Right strategy for the bee economy, wrong founder archetype for software-led execution.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════ §03 — THE GRAVEYARD ═══════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="num">§ 03</div>
+    <h2>The graveyard — what selling sensors to beekeepers actually produces</h2>
+    <div class="aside">Ten-plus years of empirical data</div>
+  </div>
+
+  <div class="sec-intro">
+    <p>Below are the companies that have spent between five and fifteen years executing the pattern closest to the current BuzzHive direction: sensors, or smart-hive software, or urban hive services, sold to beekeepers or end-users. The revenue and team-size numbers are from Crunchbase, CBInsights, Tracxn, and company statements. Every one of them is capped.</p>
+  </div>
+
+  <div class="grave">
+
+    <div class="row">
+      <div>
+        <h4>BroodMinder <span class="sub">Wisconsin · founded 2015</span></h4>
+        <p>Freemium sensor subscription to hobbyists and sideliners. $50–200/yr tiers. The closest product-shape analog to BuzzHive as currently built.</p>
+      </div>
+      <div class="rev"><strong>$5M rev</strong>3 employees · 10 yrs</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h4>HiveTracks <span class="sub">North Carolina · founded 2020</span></h4>
+        <p>Beekeeper operations app. 25K users, 50K hives, 145 countries, $6.99/mo Pro tier. The most successful pure-software beekeeper SaaS.</p>
+      </div>
+      <div class="rev"><strong>$2M ARR</strong>20 emp · $700K raised · 5 yrs</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h4>ApisProtect <span class="sub">Ireland · founded 2016</span></h4>
+        <p>Most-funded bee-tech at one point. IoT and ML hive monitoring. CEO is an established IoT-bees researcher. Still this is what it reached.</p>
+      </div>
+      <div class="rev"><strong>$210K rev</strong>3 employees · 8 yrs · $1.83M raised</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h4>Pollenity (Bee Smart Technologies) <span class="sub">Bulgaria · founded 2015</span></h4>
+        <p>Had to rebrand mid-life. Raised five rounds totaling &lt;$1M. Most recent funding was a 2024 grant, not equity.</p>
+      </div>
+      <div class="rev"><strong>$803K raised</strong>10 yrs · 5 rounds · rebranded</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h4>The Bee Corp. / Verifli <span class="sub">Indiana · founded 2016</span></h4>
+        <p>Infrared hive-imaging mobile app. Founders named Forbes 30 Under 30 in 2022. Raised $3M+ including $1.48M NSF. <strong>Dissolved May 2024</strong>, tech transferred to USDA.</p>
+      </div>
+      <div class="rev"><strong>Shut down</strong>2024 · 8 yrs · tech to USDA</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h4>Best Bees <span class="sub">Boston · founded 2010</span></h4>
+        <p>Founder is a PhD in bee health. 21 cities, residential + corporate rooftops. 70% of revenue to labor costs by their own disclosure.</p>
+      </div>
+      <div class="rev"><strong>$4.8M ARR</strong>15 yrs · services not SaaS</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h4>Alvéole <span class="sub">Montreal · founded 2013</span></h4>
+        <p>600+ corporate rooftops across North America. Currently facing academic backlash — "beewashing" — from conservation biologists about honey bees displacing wild pollinators.</p>
+      </div>
+      <div class="rev"><strong>Services</strong>12 yrs · hostile narrative emerging</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <h4>UrbanLeap <span class="sub">California · 2017–2022</span></h4>
+        <p>GovTech procurement startup. Served <strong>35 municipal customers</strong>, deployed $16M in procurement decisions. <strong>Shut down October 2022.</strong> Cited "fixing government procurement proved to be hard."</p>
+      </div>
+      <div class="rev"><strong>Shut down</strong>5 yrs · $4.2M raised · 35 cities</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════ §04 — OPEN ZONES ═══════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <div class="num">§ 04</div>
+    <h2>The genuinely open zones — and their honest ceilings</h2>
+    <div class="aside">Not dead, but not $100M either</div>
+  </div>
+
+  <div class="sec-intro">
+    <p>Three categories are open to a software/hardware founder. None appear to produce $100M outcomes alone. Each could be a real business at $5–20M ARR. Each would require a customer segment and product shape substantially different from the current BuzzHive build.</p>
+  </div>
+
+  <div class="open-zones">
+
+    <div class="zone">
+      <div class="tag">Open Zone A</div>
+      <h3>Queen breeder operations platform</h3>
+      <div class="ts">The infrastructure layer under a $50–100M queen market that runs on spreadsheets and index cards.</div>
+
+      <h4>What it would be</h4>
+      <p>Software for the ~50 serious US queen breeders managing pedigree, VSH testing, instrumental insemination records, colony-level mite data, and commercial shipping. ColonyIQ and VarroaVault are early. ApiOmic is academic.</p>
+
+      <h4>Why it's open</h4>
+      <ul>
+        <li>Breeders are high-ARPU, low-count ($5–20K/yr per breeder possible)</li>
+        <li>No dominant software incumbent</li>
+        <li>Commercial beekeepers replace 37% of queens annually — demand side is structural</li>
+        <li>Norroa and new varroa tools make genetics tracking more valuable, not less</li>
+      </ul>
+
+      <h4>Honest ceiling</h4>
+      <p>50 US + ~200 global serious breeders × $5K/yr avg = $1.25M realistic ARR. Expansion to queen buyers (commercial beekeepers who want verified genetics) could 5× that. Total realistic: $5–10M ARR.</p>
+
+      <div class="stats">
+        <div><div class="k">US market</div><div class="v">1M queens/yr</div></div>
+        <div><div class="k">Breeder ARPU</div><div class="v">$5–20K</div></div>
+        <div><div class="k">Realistic TAM</div><div class="v">$5–10M ARR</div></div>
+        <div><div class="k">Competition</div><div class="v">Fragmented &amp; early</div></div>
+      </div>
+    </div>
+
+    <div class="zone">
+      <div class="tag">Open Zone B</div>
+      <h3>Private pollination-failure insurance</h3>
+      <div class="ts">A genuine greenfield sitting between existing federal API and unserved commercial crop risk.</div>
+
+      <h4>What it would be</h4>
+      <p>A private risk product that pays growers when contracted pollination fails to produce documented crop yield. Underwritten using sensor verification of hive-hours delivered and orchard activity. The sensor is no longer the product — it's the underwriting data.</p>
+
+      <h4>Why it's open</h4>
+      <ul>
+        <li>Federal API has &lt;2% Illinois beekeeper adoption — crop side is untouched</li>
+        <li>Howden / Pollination 2024 report positioned nature-finance as an investable category</li>
+        <li>Crop insurance is a $15B/yr industry with no pollination-specific product</li>
+        <li>Growers lose $100K–$1M per failed-pollination event — real, priced pain</li>
+      </ul>
+
+      <h4>Honest ceiling</h4>
+      <p>Requires either an MGA (managing general agent) license, reinsurance relationships, or partnership with an existing crop insurer. 3–5 year regulatory and actuarial build. If it works, it's structurally larger than any other zone listed — potentially $50M+ ARR.</p>
+
+      <div class="stats">
+        <div><div class="k">Crop ins. market</div><div class="v">$15B/yr</div></div>
+        <div><div class="k">Time to product</div><div class="v">3–5 yrs</div></div>
+        <div><div class="k">Capital required</div><div class="v">$10M+</div></div>
+        <div><div class="k">Competition</div><div class="v">None direct</div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════ §05 — THE FINAL TAKE ═══════════ -->
+<section class="sec">
+  <div class="finaltake">
+    <div class="tag">§ 05 · The uncomfortable reading</div>
+    <h2>The data does not point to a <em>$100M bee-tech company</em> that a software and hardware founder can build today.</h2>
+
+    <p>Every ten-figure and nine-figure outcome visible in this research is gated by a moat this team does not have: <strong>BeeHero's four-year compounding grower-channel lead</strong>, <strong>Beewise's $170M mechanical capital</strong>, <strong>Dalan and GreenLight's regulatory and biotech pipelines</strong>, or <strong>Sweet Harvest Foods' PE-scale acquisition and CPG distribution</strong>.</p>
+
+    <p>Every category where a software/hardware team <em>can</em> plausibly execute — sensor SaaS, beekeeper ops software, computer vision, urban/corporate services, civic programs, marketplaces — has produced ten years of empirical evidence that the ceiling is between <strong>$200K and $5M ARR</strong>. BroodMinder after 10 years is $5M. HiveTracks after 5 years is $2M. ApisProtect after 8 years is $210K. The Bee Corp. reached $3M in funding and shut down.</p>
+
+    <p>The two genuinely open zones — <em>queen breeder operations</em> and <em>private pollination insurance</em> — are either small-by-design ($5–10M realistic ARR) or require 3–5 years of regulatory and actuarial build before a product exists.</p>
+
+    <p><strong>This research does not produce the answer "pivot BuzzHive to X."</strong> It produces a harder question the founder needs to sit with for more than the next session: given that bee-economy software plays have a measured ceiling of $5M after a decade, is bees still the right vertical for a team that can build software and hardware at this level?</p>
+
+    <div class="questions">
+      <div class="q">
+        <div class="n">Question 01</div>
+        <p>If the honest bee-economy ceiling for this team is $5M ARR after 10 years, is that the business the founders actually want to build?</p>
+      </div>
+      <div class="q">
+        <div class="n">Question 02</div>
+        <p>Is there a non-bee vertical where the same skill set — sensors, on-device intelligence, mobile, marketplace — compounds into a higher ceiling?</p>
+      </div>
+      <div class="q">
+        <div class="n">Question 03</div>
+        <p>If bees remain the vertical for conviction reasons, does the company pivot to the <em>insurance</em> open zone — which is larger but longer, capital-hungrier, and regulatory-gated?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ METHOD ═══════════ -->
+<div class="method">
+  <h4>Method &amp; sources</h4>
+  <p>Revenue and team-size figures drawn from Crunchbase, CBInsights, Tracxn, Growjo, and company press releases. Market sizing from AgFunder 2025 Global AgriFoodTech Report, PitchBook Q4 2024 AgTech Trends, USDA NASS, California Almond Board, PollenOps contract data, and peer-reviewed urban-pollinator ecology studies (Munich, Toronto, Montreal). Failure cases documented via GovTech closure announcements and Indiana Business reporting on The Bee Corp. dissolution. Pollination pricing from PollenOps state benchmarks 2025–26.</p>
+  <p>No figure reported here is forward-looking. Every ceiling statement is backed by at least one named company with ≥5 years of operating history. Where evidence was insufficient, the cell is marked "untested" or "unproven" rather than modeled from TAM.</p>
+</div>
+
+<!-- ═══════════ FOOT ═══════════ -->
+<div class="foot">
+  <div>BuzzHive · Landscape Audit v0.1</div>
+  <div>13 categories · 8 companies audited · 0 conclusions pre-drafted</div>
+</div>
+
+</div>
+</body>
+</html>
