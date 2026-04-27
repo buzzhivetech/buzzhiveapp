@@ -22,17 +22,25 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
   String _selectedRange = AppConstants.range24h;
   SensorMetric _selectedMetric = SensorMetric.temperature;
 
-  int get _startMs {
+  late int _startMs;
+  late int _endMs;
+
+  @override
+  void initState() {
+    super.initState();
+    _recalcTimeWindow();
+  }
+
+  void _recalcTimeWindow() {
     final now = DateTime.now().millisecondsSinceEpoch;
-    return switch (_selectedRange) {
+    _endMs = now;
+    _startMs = switch (_selectedRange) {
       AppConstants.range24h => now - const Duration(hours: 24).inMilliseconds,
       AppConstants.range7d => now - const Duration(days: 7).inMilliseconds,
       AppConstants.range30d => now - const Duration(days: 30).inMilliseconds,
       _ => 0,
     };
   }
-
-  int get _endMs => DateTime.now().millisecondsSinceEpoch;
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +120,12 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
           );
         }).toList(),
         onChanged: (id) {
-          if (id != null) setState(() => _selectedSensorId = id);
+          if (id != null) {
+            setState(() {
+              _selectedSensorId = id;
+              _recalcTimeWindow();
+            });
+          }
         },
       ),
     );
@@ -133,7 +146,10 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
             .map((r) => ButtonSegment(value: r.key, label: Text(r.label)))
             .toList(),
         selected: {_selectedRange},
-        onSelectionChanged: (s) => setState(() => _selectedRange = s.first),
+        onSelectionChanged: (s) => setState(() {
+          _selectedRange = s.first;
+          _recalcTimeWindow();
+        }),
         showSelectedIcon: false,
       ),
     );
