@@ -25,6 +25,11 @@ class DashboardScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Dashboard'),
         actions: [
+          IconButton(
+            onPressed: () => context.push(Routes.analytics),
+            tooltip: 'Analytics',
+            icon: const Icon(Icons.show_chart),
+          ),
           _PendingSyncButton(),
         ],
       ),

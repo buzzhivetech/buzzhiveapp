@@ -6,6 +6,29 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 class BleProtocol {
   BleProtocol._();
 
+  // =====================================================================
+  // V0 hardware (ALL_FUNC.ino) — Battery Service + raw protobuf notify
+  // =====================================================================
+
+  /// Standard 16-bit Battery Service UUID advertised by V0 sensors.
+  static final v0ServiceUuid =
+      Uuid.parse('0000180F-0000-1000-8000-00805F9B34FB');
+
+  /// Standard Battery Level characteristic used by V0 to carry protobuf.
+  static final v0DataCharUuid =
+      Uuid.parse('00002A19-0000-1000-8000-00805F9B34FB');
+
+  /// V0 sensors advertise with this device name.
+  static const String v0DeviceNamePrefix = 'BuzzHive_Sensor';
+
+  /// Returns true when [device] is a V0 sensor (name-based detection).
+  static bool isV0Device(DiscoveredDevice device) =>
+      device.name.startsWith(v0DeviceNamePrefix);
+
+  // =====================================================================
+  // Future framed protocol — custom service + control/data/status chars
+  // =====================================================================
+
   /// Custom service UUID advertised by BuzzHive sensors.
   static final serviceUuid =
       Uuid.parse('BEE50001-CAFE-BABE-DEAD-BEEFCAFE0001');
