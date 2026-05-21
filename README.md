@@ -123,6 +123,10 @@ lib/
     └── map/presentation/
 ```
 
+## Onboarding
+
+New contributors should start with **[docs/ONBOARDING.md](docs/ONBOARDING.md)** — repo layout, Firebase vs Supabase status, current maturity, and remaining work (including RTDB rule deployment).
+
 ## Architecture
 
 - **Services** wrap SDK calls (Supabase or Firebase, never both in one file)
