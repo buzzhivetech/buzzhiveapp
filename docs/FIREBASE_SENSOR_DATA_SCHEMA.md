@@ -17,6 +17,7 @@ sensor_data/
       fx, fy, fz: number
       id: string        ← optional; can match node_id
       timestamp: number or string
+      raw_packet: string   ← optional; original LoRa payload (receiver firmware)
 ```
 
 - **Top-level key under `sensor_data` must be the node ID** (e.g. `10001`).
@@ -65,6 +66,8 @@ device_status/{deviceId}
 device_registry/{deviceId}
 hive_registry/{hiveId}
 receiver_registry/{receiverId}
+provisioning_ping/          ← optional; used only for authenticated GET during device setup
+receiver_connections/{receiverId}
 ```
 
 - `sensor_data` remains the backward-compatible ingest path for app and receiver uploads.
@@ -72,6 +75,45 @@ receiver_registry/{receiverId}
 - `analyzed_data` stores placeholder or future ML outputs.
 - `latest_hive_state` is the preferred UI read path for current hive health.
 - `device_status` exposes battery, firmware, and ingest connectivity.
+
+## Receiver connections (post–BLE provisioning)
+
+After the mobile app walks through receiver setup, it writes metadata under `receiver_connections` (see `AppConstants.firebaseReceiverConnectionsPath`). Authenticated users only (`auth != null` in security rules).
+
+```
+receiver_connections/
+  {receiver_node_id}/          ← user-assigned during setup (string, e.g. R001)
+    connected_sensors/
+      {sensor_node_id}: true   ← LoRa sensors allowed to upload through this receiver
+    app_connections/
+      {timestamp_ms}: "wifi" | "firebase"   ← audit trail when Wi‑Fi / Firebase checks succeeded
+```
+
+- **`connected_sensors`** is updated when provisioning completes (`PROVISION_COMPLETE` over BLE).
+- **`app_connections`** records two events when Wi‑Fi and Firebase verification succeed (`WIFI_OK` / `FIREBASE_OK` notifications).
+
+## Provisioning ping (device Firebase check)
+
+Receivers validate RTDB access using the signed-in user’s **Firebase ID token** (the app uses anonymous Firebase Auth for token issuance). The firmware performs an authenticated HTTP GET to:
+
+`provisioning_ping.json?auth=<idToken>`
+
+Rules: `provisioning_ping` is readable only when `auth != null`. No writes required; the path may be empty.
+
+**Console:** Enable **Anonymous** under Firebase Authentication → Sign-in method so the app can obtain an ID token before provisioning.
+
+## BLE provisioning contract (receiver firmware ↔ app)
+
+**Service / characteristics** — UUIDs match `buzzhiveapp/lib/core/constants/ble_protocol.dart`:
+
+| Role | UUID |
+|------|------|
+| Service | `4fafc201-1fb5-459e-8fcc-c5c9c331914b` |
+| Wi‑Fi write | `beb5483e-36e1-4688-b7f5-ea07361b26a8` — payload `SSID\nPASSWORD\noptionalSensorIdsCsv` |
+| Auth write | `beb5483e-36e1-4688-b7f5-ea07361b26aa` — payload `receiver_node_id\nfirebase_id_token` (JWT) |
+| Status notify | `beb5483e-36e1-4688-b7f5-ea07361b26a9` |
+
+**Status strings (UTF-8):** `READY`, `WIFI_OK`, `FIREBASE_OK`, `PROVISION_COMPLETE`; failures `ERR_WIFI|code|detail` or `ERR_FIREBASE|code|detail`. On failure the receiver stops BLE and reboots so the user can retry.
 
 ## Shared envelope contract
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import '../../../core/constants/ble_protocol.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/utils/ble_permissions.dart';
 import '../../../providers/ble_providers.dart';
+import '../../../providers/service_providers.dart';
 
 /// Multi-phase BLE receiver setup flow.
 ///
@@ -17,9 +19,9 @@ import '../../../providers/ble_providers.dart';
 ///   1. Scan   -- discover nearby BuzzHive receivers in setup mode
 ///   2. Connect -- establish BLE connection
 ///   3. Ready  -- subscribe to status char, wait for READY signal
-///   4. Credentials -- user enters/confirms WiFi password (SSID pre-filled)
-///   5. Provisioning -- write credentials, wait for WIFI_OK / FIREBASE_OK
-///   6. Done   -- receiver confirmed Firebase, show success
+///   4. Credentials -- WiFi, receiver node ID, optional sensor allow-list
+///   5. Provisioning -- write credentials + Firebase auth token
+///   6. Done   -- PROVISION_COMPLETE; receiver_connections updated in RTDB
 ///   7. Error  -- show failure with retry option
 class ReceiverSetupScreen extends ConsumerStatefulWidget {
   const ReceiverSetupScreen({super.key});
@@ -52,6 +54,7 @@ class _ReceiverSetupScreenState extends ConsumerState<ReceiverSetupScreen> {
 
   final _ssidController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _receiverIdController = TextEditingController();
   final _sensorIdsController = TextEditingController();
   bool _obscurePassword = true;
   bool _sendInProgress = false;
@@ -71,8 +74,23 @@ class _ReceiverSetupScreenState extends ConsumerState<ReceiverSetupScreen> {
     _statusSub?.cancel();
     _ssidController.dispose();
     _passwordController.dispose();
+    _receiverIdController.dispose();
     _sensorIdsController.dispose();
     super.dispose();
+  }
+
+  List<String> _parsedSensorIds() => _sensorIdsController.text
+      .trim()
+      .split(RegExp(r'[,\s]+'))
+      .where((s) => s.isNotEmpty)
+      .toList();
+
+  /// Ends the BLE session (flutter_reactive_ble disconnects when the connection subscription is cancelled).
+  Future<void> _disconnectBle() async {
+    await _statusSub?.cancel();
+    _statusSub = null;
+    await _connSub?.cancel();
+    _connSub = null;
   }
 
   // ---- Phase 1: Scan ----
@@ -142,7 +160,12 @@ class _ReceiverSetupScreenState extends ConsumerState<ReceiverSetupScreen> {
       if (!connCompleter.isCompleted) connCompleter.completeError(e);
     });
 
-    connCompleter.future.then((_) {
+    connCompleter.future.then((_) async {
+      try {
+        await ble.requestMtu(device.id);
+      } on Object catch (_) {
+        // MTU negotiation is best-effort for large JWT writes.
+      }
       if (mounted) _waitForReady();
     }).catchError((Object e) {
       _connSub?.cancel();
@@ -187,13 +210,10 @@ class _ReceiverSetupScreenState extends ConsumerState<ReceiverSetupScreen> {
     String? ssid;
     try {
       ssid = await NetworkInfo().getWifiName();
-      // iOS/Android may wrap the SSID in quotes
       if (ssid != null && ssid.startsWith('"') && ssid.endsWith('"')) {
         ssid = ssid.substring(1, ssid.length - 1);
       }
-    } on Object catch (_) {
-      // Permission denied or WiFi off — user will type manually
-    }
+    } on Object catch (_) {}
 
     if (!mounted) return;
     setState(() {
@@ -210,39 +230,57 @@ class _ReceiverSetupScreenState extends ConsumerState<ReceiverSetupScreen> {
   Future<void> _sendCredentials() async {
     final ssid = _ssidController.text.trim();
     final password = _passwordController.text;
+    final receiverNodeId = _receiverIdController.text.trim();
+
     if (ssid.isEmpty) {
       setState(() => _error = 'Enter a WiFi network name');
       return;
     }
+    if (receiverNodeId.isEmpty) {
+      setState(() => _error = 'Enter this receiver\'s node ID');
+      return;
+    }
 
-    final sensorIds = _sensorIdsController.text
-        .trim()
-        .split(RegExp(r'[,\s]+'))
-        .where((s) => s.isNotEmpty)
-        .toList();
+    final sensorIds = _parsedSensorIds();
 
     setState(() {
       _phase = _Phase.provisioning;
       _sendInProgress = true;
       _error = null;
-      _provisioningStatus = 'Sending WiFi credentials...';
+      _provisioningStatus = 'Preparing secure token...';
     });
 
     try {
+      final auth = FirebaseAuth.instance;
+      if (auth.currentUser == null) {
+        await auth.signInAnonymously();
+      }
+      final token = await auth.currentUser?.getIdToken(true);
+      if (token == null || token.isEmpty) {
+        throw StateError(
+          'Could not obtain Firebase ID token. Enable Anonymous sign-in '
+          'in the Firebase console (Authentication → Sign-in method), then retry.',
+        );
+      }
+
       final ble = ref.read(bleSensorTransferServiceProvider);
 
       _statusSub?.cancel();
       _statusSub = ble
           .subscribeToReceiverStatus(_selectedDevice!.id)
-          .listen(_onProvisioningStatus, onError: (Object e) {
-        if (!mounted) return;
-        setState(() {
-          _error = e is BleTransferException ? e.message : e.toString();
-          _phase = _Phase.error;
-          _sendInProgress = false;
-        });
-      });
+          .listen(
+        (status) => unawaited(_handleProvisioningStatus(status)),
+        onError: (Object e) {
+          if (!mounted) return;
+          setState(() {
+            _error = e is BleTransferException ? e.message : e.toString();
+            _phase = _Phase.error;
+            _sendInProgress = false;
+          });
+        },
+      );
 
+      setState(() => _provisioningStatus = 'Sending WiFi credentials...');
       await ble.writeWifiCredentials(
         _selectedDevice!.id,
         ssid: ssid,
@@ -251,15 +289,26 @@ class _ReceiverSetupScreenState extends ConsumerState<ReceiverSetupScreen> {
       );
 
       if (mounted) {
+        setState(() => _provisioningStatus = 'Sending Firebase auth...');
+      }
+
+      await ble.writeReceiverProvisionAuth(
+        _selectedDevice!.id,
+        receiverNodeId: receiverNodeId,
+        firebaseIdToken: token,
+      );
+
+      if (mounted) {
         setState(
-            () => _provisioningStatus = 'Credentials sent. Connecting to WiFi...');
+          () => _provisioningStatus = 'Provisioning receiver on network...',
+        );
       }
     } on Object catch (e) {
       if (mounted) {
         setState(() {
           _error = e is BleTransferException
               ? e.message
-              : 'Failed to send credentials. Try again.';
+              : e.toString();
           _phase = _Phase.credentials;
           _sendInProgress = false;
         });
@@ -267,31 +316,67 @@ class _ReceiverSetupScreenState extends ConsumerState<ReceiverSetupScreen> {
     }
   }
 
-  void _onProvisioningStatus(String status) {
+  Future<void> _handleProvisioningStatus(String status) async {
     if (!mounted) return;
+
+    if (status.startsWith(BleProtocol.errWifiPrefix) ||
+        status.startsWith(BleProtocol.errFirebasePrefix)) {
+      await _disconnectBle();
+      if (!mounted) return;
+      setState(() {
+        _error = BleProtocol.provisioningErrorMessage(status);
+        _phase = _Phase.credentials;
+        _sendInProgress = false;
+      });
+      return;
+    }
+
+    final rx = ref.read(firebaseReceiverConnectionsServiceProvider);
+    final receiverNodeId = _receiverIdController.text.trim();
+
     switch (status) {
       case BleProtocol.statusWifiOk:
-        setState(() =>
-            _provisioningStatus = 'WiFi connected! Verifying Firebase...');
-      case BleProtocol.statusWifiFail:
+        if (receiverNodeId.isNotEmpty) {
+          try {
+            await rx.recordAppConnectionEvent(receiverNodeId, 'wifi');
+          } on Object catch (_) {}
+        }
+        if (!mounted) return;
         setState(() {
-          _error = 'Receiver could not connect to that WiFi network. '
-              'Check the SSID and password and try again.';
-          _phase = _Phase.credentials;
-          _sendInProgress = false;
+          _provisioningStatus =
+              'WiFi connected. Verifying Firebase...';
         });
+        break;
+
       case BleProtocol.statusFirebaseOk:
+        if (receiverNodeId.isNotEmpty) {
+          try {
+            await rx.recordAppConnectionEvent(receiverNodeId, 'firebase');
+          } on Object catch (_) {}
+        }
+        if (!mounted) return;
+        setState(() {
+          _provisioningStatus = 'Firebase verified. Finalizing...';
+        });
+        break;
+
+      case BleProtocol.statusProvisionComplete:
+        final sensors = _parsedSensorIds();
+        if (receiverNodeId.isNotEmpty) {
+          try {
+            await rx.setConnectedSensors(receiverNodeId, sensors);
+          } on Object catch (_) {}
+        }
+        await _disconnectBle();
+        if (!mounted) return;
         setState(() {
           _phase = _Phase.done;
           _sendInProgress = false;
         });
-      case BleProtocol.statusFirebaseFail:
-        setState(() {
-          _error = 'WiFi connected, but the receiver could not reach Firebase. '
-              'Check your internet connection and try again.';
-          _phase = _Phase.credentials;
-          _sendInProgress = false;
-        });
+        break;
+
+      default:
+        break;
     }
   }
 
@@ -427,19 +512,29 @@ class _ReceiverSetupScreenState extends ConsumerState<ReceiverSetupScreen> {
           Icon(Icons.wifi, size: 48, color: theme.colorScheme.primary),
           const SizedBox(height: 12),
           Text(
-            'Enter WiFi Credentials',
+            'Receiver & WiFi',
             style: theme.textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            'The receiver needs WiFi to upload sensor data to the cloud.',
+            'Enter this device\'s receiver node ID and the WiFi used for cloud uploads.',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
+          TextField(
+            controller: _receiverIdController,
+            decoration: const InputDecoration(
+              labelText: 'Receiver node ID',
+              hintText: 'e.g. R001',
+              prefixIcon: Icon(Icons.hub),
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 16),
           TextField(
             controller: _ssidController,
             decoration: const InputDecoration(

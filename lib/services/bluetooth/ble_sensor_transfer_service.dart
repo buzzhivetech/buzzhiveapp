@@ -181,6 +181,7 @@ class BleSensorTransferService {
       servicesWithCharacteristicsToDiscover: {
         BleProtocol.receiverServiceUuid: [
           BleProtocol.receiverCredCharUuid,
+          BleProtocol.receiverAuthCharUuid,
           BleProtocol.receiverStatusCharUuid,
         ],
       },
@@ -228,6 +229,24 @@ class BleSensorTransferService {
     );
     await _ble.writeCharacteristicWithResponse(
       _receiverChar(deviceId, BleProtocol.receiverCredCharUuid),
+      value: bytes,
+    );
+  }
+
+  /// Second provisioning write: receiver node id (line 1) + Firebase ID token (line 2).
+  Future<void> writeReceiverProvisionAuth(
+    String deviceId, {
+    required String receiverNodeId,
+    required String firebaseIdToken,
+  }) async {
+    final payload = '$receiverNodeId\n$firebaseIdToken';
+    final bytes = utf8.encode(payload);
+    AppLogger.info(
+      'Writing receiver auth to receiver (${bytes.length} bytes)',
+      name: _log,
+    );
+    await _ble.writeCharacteristicWithResponse(
+      _receiverChar(deviceId, BleProtocol.receiverAuthCharUuid),
       value: bytes,
     );
   }

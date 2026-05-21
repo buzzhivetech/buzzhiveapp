@@ -14,6 +14,9 @@ class AppConstants {
 
   /// Firebase Realtime Database path for sensor data.
   static const String firebaseSensorDataPath = 'sensor_data';
+
+  /// Receiver registry: connected sensors + app-assisted provisioning history.
+  static const String firebaseReceiverConnectionsPath = 'receiver_connections';
   static const String firebaseRawIngestPath = 'raw_ingest';
   static const String firebaseAnalyzedDataPath = 'analyzed_data';
   static const String firebaseLatestHiveStatePath = 'latest_hive_state';

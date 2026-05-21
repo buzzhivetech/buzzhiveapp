@@ -100,6 +100,11 @@ class BleProtocol {
   static final receiverCredCharUuid =
       Uuid.parse('beb5483e-36e1-4688-b7f5-ea07361b26a8');
 
+  /// Write-only: receiver node id (line 1) + Firebase ID token (line 2, JWT).
+  /// Split from WiFi payload so large JWTs fit after MTU negotiation.
+  static final receiverAuthCharUuid =
+      Uuid.parse('beb5483e-36e1-4688-b7f5-ea07361b26aa');
+
   /// Notify/read characteristic: receiver reports provisioning status.
   static final receiverStatusCharUuid =
       Uuid.parse('beb5483e-36e1-4688-b7f5-ea07361b26a9');
@@ -118,4 +123,30 @@ class BleProtocol {
   static const String statusWifiFail = 'WIFI_FAIL';
   static const String statusFirebaseOk = 'FIREBASE_OK';
   static const String statusFirebaseFail = 'FIREBASE_FAIL';
+  static const String statusProvisionComplete = 'PROVISION_COMPLETE';
+
+  /// Structured Wi‑Fi failure: ERR_WIFI|wl_status_code|detail
+  static const String errWifiPrefix = 'ERR_WIFI';
+
+  /// Structured Firebase failure: ERR_FIREBASE|http_or_rule_code|detail
+  static const String errFirebasePrefix = 'ERR_FIREBASE';
+
+  /// Parses [ERR_WIFI|code|detail] / [ERR_FIREBASE|code|detail]; returns user-facing text.
+  static String provisioningErrorMessage(String status) {
+    if (status.startsWith('$errWifiPrefix|')) {
+      final parts = status.split('|');
+      if (parts.length >= 3) {
+        return 'Wi‑Fi setup failed (code ${parts[1]}): ${parts.sublist(2).join('|')}';
+      }
+      return 'Wi‑Fi setup failed: $status';
+    }
+    if (status.startsWith('$errFirebasePrefix|')) {
+      final parts = status.split('|');
+      if (parts.length >= 3) {
+        return 'Firebase check failed (code ${parts[1]}): ${parts.sublist(2).join('|')}';
+      }
+      return 'Firebase check failed: $status';
+    }
+    return status;
+  }
 }

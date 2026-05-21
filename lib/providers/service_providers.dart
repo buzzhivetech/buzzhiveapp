@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/firebase/firebase_sensor_data_service.dart';
+import '../services/firebase/firebase_receiver_connections_service.dart';
 import '../services/supabase/supabase_auth_service.dart';
 import '../services/supabase/supabase_user_data_service.dart';
 
@@ -14,4 +15,9 @@ final supabaseUserDataServiceProvider = Provider<SupabaseUserDataService>((ref) 
 
 final firebaseSensorDataServiceProvider = Provider<FirebaseSensorDataService>((ref) {
   return FirebaseSensorDataService();
+});
+
+final firebaseReceiverConnectionsServiceProvider =
+    Provider<FirebaseReceiverConnectionsService>((ref) {
+  return FirebaseReceiverConnectionsService();
 });
